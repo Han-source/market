@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="www.dream.com.chat.persistence.ChatMapper">
+   <!-- resultMap : DB Table 정의 내역과 객체 정의 내역에 있어 mismatch(부조화)가 있을 시 이를 연동, 
+      짝 지어주는 정보를 정의함 -->
+
+   <resultMap type="www.dream.com.chat.model.ChatVO" id="chatMap">
+      <!-- 왼쪽은 java에서 오른쪽은 ddl로 정의한 속성을 짝지어준다 -->
+      <id property="chatID" column="chat_id"></id>
+      <result property="fromID" column="from_id"></result>
+      <result property="toID" column="to_id"></result>
+      <result property="chatContent" column="chat_content"></result>
+      <result property="chatTime" column="chat_time"></result>
+      
+   </resultMap>
+   
+   <!-- public List<ChatVO> getChatListByID(@Param("chat") ChatVO chatVO); -->
+     <select id = "getChatListByID" resultMap="chatMap">
+      <![CDATA[   
+      select *
+       from s_chat
+       where ((from_id = #{chat.fromID} and to_id = #{chat.toID})
+          or (from_id = #{chat.toID} and to_id = #{chat.fromID}))
+          and chat_id > #{chat.chatID}
+       order by chat_time
+      ]]>
+   </select>
+	<!-- public List<ChatVO> getChatListByRecent(@Param("chat") ChatVO chatVO); -->
+	<select id = "getChatListByRecent" resultMap="chatMap">
+      <![CDATA[   
+      select *
+       from s_chat
+       where ((from_id = #{chat.fromID} and to_id = #{chat.toID})
+          or (from_id = #{chat.toID} and to_id = #{chat.fromID}))
+          and chat_id > (select max(chat_ID) - 100 from s_chat where (from_ID = #{chat.fromID} AND to_ID = #{chat.toID}) or (from_ID = #{chat.toID} and to_ID = #{chat.fromID}))
+       order by chat_time
+      ]]>
+   </select>
+   
+    <!-- public List<ChatVO> getChatBox(@Param("userId") String userId);-->
+   <select id = "getChatBox" resultMap="chatMap">
+      <![CDATA[   
+	      select * 
+	        from s_chat 
+	       where chat_id in 
+	           (select MAX(chat_id) 
+	              from s_chat 
+	             where to_id = #{userId}
+	             or from_id = #{userId} 
+	           group by from_id, to_id)
+      ]]>
+   </select>   
+   <!-- public int getUnreadChat(String toId); -->
+   <select id = "getUnreadChat" resultType="int">
+      <![CDATA[   
+	      select count(chat_id)
+	        from s_chat
+	       where to_id= #{toID} and chat_Read = 0
+      ]]>
+   </select>   
+   
+   
+   
+   <!--   public int submit(@Param("chat") ChatVO chatVO); -->   
+   <insert id="submit">
+      insert into s_chat(chat_id, from_id, to_id, chat_content, chat_time)
+      values (chat_seq_id.nextval, #{chat.fromID}, #{chat.toID}, #{chat.chatContent}, sysdate)
+   </insert>
+
+	<!-- public ChatVO readChatUpdate(@Param("chat") ChatVO chatVO); -->
+	<update id="readChatUpdate">
+		update s_chat 
+		   set chat_read = 1 
+		 where (from_ID = #{chat.toID} and to_ID = #{chat.fromID})
+	</update>
+	
+	<!-- public void deleteSugChat(@Param("chat") ChatVO chatVO, @Param("postId") String postId); -->
+	<delete id="deleteSugChat">
+		delete from s_chat
+  	     where chat_content like '%' || #{postId} || '%'
+		   and from_id = #{chat.toID}
+		   and to_id = #{chat.fromID}
+	</delete>
+</mapper>
+
+   
