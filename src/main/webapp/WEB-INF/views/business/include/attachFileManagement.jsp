@@ -36,20 +36,13 @@
 
 			
 			<div id="uploadResult">
-				<div id="ninja-slider">
-			        <div class="slider-inner">
-			            <ul>
-			            	
-			                <li><a class="ns-img" href="img/b.jpg"></a>
-			                </li>
-			                <li>
-			                    <a href="/"><img class="ns-img" src="img/c.jpg" style="cursor:pointer;" /></a>
-			                </li>
-			                
-						            	
-			            </ul>
-			         </div>
-			      </div>
+				<div id="sliderFrame">
+		        <div id="slider">
+		        
+		        </div>
+		        <div id="htmlcaption" style="display: none;">
+		            <em>HTML</em> caption. Link to <a href="http://www.google.com/">Google</a>.
+		        </div>
 			</div>
 			<div class="bigWrapper">
 				<div class="bigNested">
@@ -96,10 +89,10 @@ function appendUploadUl(attachVOInJson) {
 					liTags += "</li>";
 					
 		} else if (attachVO.multimediaType === "image" || attachVO.multimediaType === "video") {
-			liTags += "<li data-attach_info=" + attachVOInJson + ">"
-					+ "<a class='ns-img'>"
+			liTags += "<li>"
+					+ "<a>"
 					+ "<img class='ns-img' src='/uploadFiles/display?fileName=" 
-					+ encodeURIComponent(attachVO.fileProductCallPath) + "'style='cursor:pointer;'>"
+					+ encodeURIComponent(attachVO.fileProductCallPath) + "'style = 'float: left;  width: 600px; height: 600px; object-fit: cover; display: inline-block; font-size: 0;'/>"
 					+ "</a>"; 
 					if(updateMode) {
 						liTags += "<span>X</span>";
@@ -107,8 +100,11 @@ function appendUploadUl(attachVOInJson) {
 					liTags += "</li>";
 			} 	  
 		}
-	$("#uploadResult div#ninja-slider div.slider-inner ul").append(liTags); //append 쓴이유  > 업로드 또하면
+	$("#uploadResult div#sliderFrame div#slider").append(liTags); 
 }
+$("#uploadResult div#ninja-slider div.slider-inner ul").on("click", function () {
+	alert('hi');
+})
 
 	$(document).ready(function() {
 		//업로드 파일에 대한 확장자 제한하는 정규식

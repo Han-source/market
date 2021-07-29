@@ -10,10 +10,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -144,6 +140,7 @@ public class AttachFileVO {
 			try {
 				Thumbnailator.createThumbnail(uploadedFile, thumbnailFile, 100, 100);
 				Thumbnailator.createThumbnail(uploadedFile, productThumbnailFile, 600, 600);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
