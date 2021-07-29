@@ -3,12 +3,15 @@
 #sliderFrame 
 {
     position:relative;
-    width:700px;
+    width: 100%;
+    /*You can also add: max-width:1200px; if you like*/
+    font-size:0;
+    height : 100%;
     margin:0 auto; /*center-aligned*/
 }
 
 #slider, #slider div.sliderInner {
-    width:600px;height:500px;/* Must be the same size as the slider images */
+    width:100%;height:100%;/* Must be the same size as the slider images */
 }
 
 #slider {
@@ -17,6 +20,7 @@
 	margin:0 auto; /*center-aligned*/
     transform: translate3d(0,0,0);
     box-shadow: 0px 1px 5px #999999;
+    width:600px;height:400px;
 }
 
 /* image wrapper */
@@ -104,7 +108,7 @@
 }
 
 #slider img, #slider>b, #slider a>b {
-	position:absolute; border:none; display:none; width: 500px; height: 500px
+	position:absolute; border:none; display:none; width: 600px; height: 400px
 }
 
 #slider div.sliderInner {
@@ -114,3 +118,8 @@
 }
 
 #slider>a, #slider video, #slider audio {display:none;}
+
+div#slider, #slider div.sliderInner div.mcSlc {
+    background-size: cover !important;
+    background-position: center center !important;
+}
