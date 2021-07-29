@@ -37,6 +37,12 @@
     <link rel="stylesheet" href="/resources/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/style.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/dropdw.css" type="text/css">
+    <link rel="stylesheet" href="/resources/css/js-image-slider.css" type="text/css" />
+	<link rel="stylesheet" href="/resources/css/generic.css" type="text/css" />
+
+
+
+    
 <!--     <link rel="stylesheet" href="/resources/css/bootstrap2.css"> -->
 <!--    <link rel="stylesheet" href="/resources/css/custom.css"> -->
 </head>

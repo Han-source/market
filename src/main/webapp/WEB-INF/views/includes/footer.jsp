@@ -57,7 +57,8 @@
     <script src="/resources/js/main.js"></script>
     <script src="/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-   <script src="/resources/js/sb-admin-2.min.js"></script>
+	<script src="/resources/js/sb-admin-2.min.js"></script>
+	<script src="/resources/js/js-image-slider.js"></script>
 
 
 

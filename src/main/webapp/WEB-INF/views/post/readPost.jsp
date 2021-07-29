@@ -65,10 +65,14 @@
 			$("#frmOper").attr("action", "/post/listBySearch").submit();
 		});
 		
+// 		$("button[data-oper='chat']").on("click", function() {
+// 			$("#frmChat").attr("action", "/chat/chatting");
+// 			frmChat.append(toId);
+// 			frmChat.submit();
+// 		});
+		
 		$("button[data-oper='chat']").on("click", function() {
-			$("#frmChat").attr("action", "/chat/chatting");
-			frmChat.append(toId);
-			frmChat.submit();
+		     window.open("../chat/chatting?toId=${post.writer.userId}", "_blank","width=400,height=500,left=1200,top=10");
 		});
 });
 </script>

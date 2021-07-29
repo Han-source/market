@@ -36,6 +36,13 @@
 
 			
 			<div id="uploadResult">
+				<div id="sliderFrame">
+					<div id="slider"> 
+					</div>
+					<div id="htmlcaption" style="display: none;">
+			            <em>HTML</em> caption. Link to <a href="http://www.google.com/">Google</a>.
+			        </div>
+				</div>
 			</div>
 			<div class="bigWrapper">
 				<div class="bigNested">
@@ -85,15 +92,15 @@ function appendUploadUl(attachVOInJson) {
 			liTags += "<li data-attach_info=" + attachVOInJson + ">"
 					+ "<a>"
 					+ "<img src='/uploadFiles/display?fileName=" 
-					+ encodeURIComponent(attachVO.fileCallPath) + "'>"
-					+ attachVO.pureFileName + "</a>"; 
+					+ encodeURIComponent(attachVO.fileProductCallPath) + "' style = 'width: 600px; height: 500px; object-fit: cover;'>"
+					+ "</a>"; 
 					if(updateMode) {
 						liTags += "<span>X</span>";
 					}
 					liTags += "</li>";
 			} 	  
 		}
-	$("#uploadResult").append(liTags); //append 쓴이유  > 업로드 또하면
+	$("#uploadResult div#sliderFrame div#slider").append(liTags); //append 쓴이유  > 업로드 또하면
 }
 
 	$(document).ready(function() {

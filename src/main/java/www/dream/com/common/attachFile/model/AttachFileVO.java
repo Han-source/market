@@ -36,6 +36,8 @@ import www.dream.com.framework.util.FileUtil;
 @NoArgsConstructor
 public class AttachFileVO {
 	public static final String THUMBNAIL_FILE_PREFIX = "thumb_";
+	public static final String PRODUCT_THUMBNAIL_FILE_PREFIX = "product_thumb_";
+
 	public static final String UUID_PURE_SEP = "_" ;
 	
 	//사용자가 업로드한 순수 파일 이름
@@ -45,13 +47,12 @@ public class AttachFileVO {
 	private String pureSaveFileName;
 	@Expose
 	private String pureThumbnailFileName;
-	
+	@Expose
+	private String pureProductThumbnailFileName;
 	
 	public static String filterPureFileName(String pureSaveFileName) {
 		return pureSaveFileName.substring(pureSaveFileName.indexOf(UUID_PURE_SEP) + 1);
 	};
-	
-	
 	
 	//서버에서 저장된 폴더 이름
 	@Expose
@@ -65,6 +66,10 @@ public class AttachFileVO {
 	
 	@Expose
 	private String fileCallPath;
+	
+	@Expose
+	private String fileProductCallPath;
+	
 	@Expose
 	private String originalFileCallPath;
 	
@@ -101,6 +106,9 @@ public class AttachFileVO {
 		
 		pureSaveFileName = uuid + UUID_PURE_SEP + pureFileName;
 		pureThumbnailFileName = THUMBNAIL_FILE_PREFIX + FileUtil.truncateExt(pureSaveFileName) + ".png";
+		//상품 상세조회 시 보여줄 사진 경로
+		pureProductThumbnailFileName = PRODUCT_THUMBNAIL_FILE_PREFIX + FileUtil.truncateExt(pureSaveFileName) + ".png";
+		fileProductCallPath = savedFolderPath + File.separator + pureProductThumbnailFileName;
 		fileCallPath = savedFolderPath + File.separator + pureThumbnailFileName;
 		originalFileCallPath = savedFolderPath + File.separator + pureSaveFileName;
 		
@@ -127,17 +135,19 @@ public class AttachFileVO {
 	}
 	
 	private void makeThumbnail(File uploadPath, File uploadedFile) {
+		pureProductThumbnailFileName = PRODUCT_THUMBNAIL_FILE_PREFIX + FileUtil.truncateExt(pureSaveFileName) + ".png";
 		pureThumbnailFileName = THUMBNAIL_FILE_PREFIX + FileUtil.truncateExt(pureSaveFileName) + ".png";
 		File thumbnailFile = new File(uploadPath, pureThumbnailFileName);
+		File productThumbnailFile = new File(uploadPath, pureProductThumbnailFileName);
 
 		if (multimediaType == MultimediaType.image) {
 			try {
-				Thumbnailator.createThumbnail(uploadedFile, thumbnailFile, 1000, 1000);
+				Thumbnailator.createThumbnail(uploadedFile, thumbnailFile, 100, 100);
+				Thumbnailator.createThumbnail(uploadedFile, productThumbnailFile, 600, 600);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (multimediaType == MultimediaType.video) {
-			
 			try {
 				int frameNumber = 0;
 				//Video 파일에서 첫번째 프레임의 이미지를 가지고오기

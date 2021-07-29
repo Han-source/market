@@ -127,8 +127,12 @@
    $(document).ready(function() {
       adjustCRUDAtAttach('조회');
       negoSubmitFunction();
+      var i = 0;
       <c:forEach var="attachVoInStr" items="${post.attachListInGson}" >
-         appendUploadUl('<c:out value="${attachVoInStr}" />');
+	      var img = 'img';
+	      var param = img + i;
+         appendUploadUl('<c:out value="${attachVoInStr}" />', param);
+         i += 1;
       </c:forEach>
       
       // 경매 버튼 클릭시 모달 활성화
