@@ -132,7 +132,7 @@ public class AttachFileVO {
 
 		if (multimediaType == MultimediaType.image) {
 			try {
-				Thumbnailator.createThumbnail(uploadedFile, thumbnailFile, 50, 50);
+				Thumbnailator.createThumbnail(uploadedFile, thumbnailFile, 1000, 1000);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -149,7 +149,7 @@ public class AttachFileVO {
 				
 				FileOutputStream fileOutputStream = new FileOutputStream(thumbnailFile);
 				//가져온 이미지를 썸네일로 만들기
-				Thumbnailator.createThumbnail(is, fileOutputStream, 50, 50);
+				Thumbnailator.createThumbnail(is, fileOutputStream, 100, 100);
 				fileOutputStream.close();
 			} catch (Exception e) {
 				e.printStackTrace();

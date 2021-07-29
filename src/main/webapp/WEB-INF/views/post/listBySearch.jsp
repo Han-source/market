@@ -10,8 +10,12 @@
 <jsp:useBean id="tablePrinter"
 	class="www.dream.com.framework.printer.TablePrinter" />
 <style>
-#index_01{ width: 24%; height: 150px; border: 1px solid dimgrey; margin: 0 auto; } 
-#header1{ height: 100px; border-bottom: 1px solid dimgrey; box-sizing: border-box; text-align: center; line-height: 100px; font-size: 1.5rem; } 
+#sliderBody{float: left; width:20%; height: 100px; padding:0px; margin-right:1%; } 
+#header1{ height: 100px; border-bottom: 1px solid dimgrey; box-sizing: border-box; text-align: center; line-height: 100px; font-size: 1.5rem; }
+.slider {
+   float: left; width:50%; padding:10px; height: 100%; overflow: hidden; 
+}
+ 
 </style>
 
 <!-- Begin Page Content -->
@@ -65,18 +69,16 @@
 
 			<!-- <input type="button" value="글쓰기" class="btn btn-primary"> ↑동일 표현 -->
 			<div >
-				<table class="table table-bordered" id="dataTable">
-					<thead>
-						<!-- <tr><%=tablePrinter.printHeader(PostVO.class)%></tr> -->
-					</thead>
+				<div>
 						<c:forEach items="${listPost}" var="post">
-						<tr id="index_01" class="card-body" style="float: left; width:24%; padding:10px; margin-right:1%">
-									<td class="card-body" id="${post.id}" style="float: left; width:50%; padding:10px; height: 100%; overflow: hidden;">
-										
-									</td>
+						<div id="sliderBody" class="sliderBody" >
+									<div class="slider" id="${post.id}">
+									    <ul class="slider__images" style="list-style:none;">
+										</ul>
+									</div>
 										<c:choose>
 								            <c:when test="${boardId == 4}"> 
-												<td class="card-body" style="float: left; width: 50%; padding:10px;">
+												<div class="card-body" style="float: left; width: 50%; padding:10px;">
 													<a class='anchor4product' href="${post.id}" >${post.title}</a>
 													<br>
 													${post.writer.name}
@@ -89,10 +91,10 @@
 														<input type="hidden" name="boardId" value="${boardId}"> 
 														<input type="hidden" name="boardId" value="${post.id}">
 													</form>
-												</td> 
+												</div> 
 								            </c:when>
 								            <c:otherwise> 
-												<td class="card-body" style="float: left; width: 50%; height: 100%; padding:10px;">
+												<div class="card-body" style="float: left; width: 50%; height: 100%; padding:10px;">
 													<a class='anchor4post' href="${post.id}" >${post.title}</a>
 													<br>
 													${post.writer.name}
@@ -105,12 +107,12 @@
 														<input type="hidden" name="boardId" value="${boardId}"> 
 														<input type="hidden" name="boardId" value="${post.id}">
 													</form>
-												</td> 
+												</div> 
 								            </c:otherwise>
 								        </c:choose>
-						</tr>									
+						</div>									
 						</c:forEach>
-				</table>
+				</div>
 
 				<!-- Paging 처리 05.27 -->
 				<!-- EL로 처리, Criteria.java에 있음  -->
@@ -258,7 +260,7 @@
 		frmSearching.submit();
 	});
 	
-	
+
 	<c:choose>
 	    <c:when test="${boardId == 4}"> 
 			<c:forEach var="list" items="${product}" varStatus="status">
@@ -266,11 +268,14 @@
 					var liTags = "";
 					var attachVo = JSON.parse(decodeURL("${attachVoInStr}"));
 							if(attachVo.uuid === "${product[status.index].listAttach[sta.index].uuid}"){
-								liTags+= "<p id = '#${product[status.index].id}' >"
+								liTags+= "<li>"
 									+ "<img src='/uploadFiles/display?fileName=" 
 									+ encodeURIComponent(attachVo.fileCallPath) + "' style = 'float: left;  width: 100px; height: 100px; object-fit: cover; display: inline-block; font-size: 0;'>"
-									+ "</p>";
-									$("#${product[status.index].id}").append(liTags);
+									+ "</li>";
+									$("#${product[status.index].id} ul.slider__images" ).on("click", function () {
+										alert('hi');
+									})
+									$("#${product[status.index].id} ul.slider__images" ).append(liTags);
 							}
 				</c:forEach>
 			</c:forEach>
@@ -285,7 +290,7 @@
 										+ "<img src='/uploadFiles/display?fileName=" 
 										+ encodeURIComponent(attachVo.fileCallPath) + "' style = 'float: left;  width: 100px; height: 100px; object-fit: cover; display: inline-block; font-size: 0;'>"
 										+ "</tr>";
-										$("#${listPost[status.index].id} ul").append(liTags);
+										$("#${listPost[status.index].id} ul.imgs").append(liTags);
 							}
 				</c:forEach>
 			</c:forEach> 
@@ -296,3 +301,4 @@
 	
 	
 </script>
+<script>
