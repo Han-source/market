@@ -62,7 +62,7 @@
             <input type="hidden" name="child" value="${child}">
             <input type="hidden" id="postId" name="postId" value="${post.id}">
          </form>
-         <%@include file="../common/attachFileManagement.jsp" %>
+         <%@include file="./include/attachFileManagement.jsp" %>
       </div>
       
          <div id="modalProductNego" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

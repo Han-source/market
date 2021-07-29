@@ -72,8 +72,7 @@
 						<c:forEach items="${listPost}" var="post">
 						<tr id="index_01" class="card-body" style="float: left; width:24%; padding:10px; margin-right:1%">
 									<td class="card-body" id="${post.id}" style="float: left; width:50%; padding:10px; height: 100%; overflow: hidden;">
-										<ul>
-										</ul>
+										
 									</td>
 										<c:choose>
 								            <c:when test="${boardId == 4}"> 
@@ -265,13 +264,13 @@
 			<c:forEach var="list" items="${product}" varStatus="status">
 				<c:forEach var="attachVoInStr" items="${list.attachListInGson}" varStatus="sta">
 					var liTags = "";
-					var attachVo = JSON.parse(decodeURL("${list.repersent}"));
+					var attachVo = JSON.parse(decodeURL("${attachVoInStr}"));
 							if(attachVo.uuid === "${product[status.index].listAttach[sta.index].uuid}"){
-								liTags+= "<li>"
+								liTags+= "<p id = '#${product[status.index].id}' >"
 									+ "<img src='/uploadFiles/display?fileName=" 
 									+ encodeURIComponent(attachVo.fileCallPath) + "' style = 'float: left;  width: 100px; height: 100px; object-fit: cover; display: inline-block; font-size: 0;'>"
-									+ "</li>";
-									$("#${listPost[status.index].id} ul").append(liTags);
+									+ "</p>";
+									$("#${product[status.index].id}").append(liTags);
 							}
 				</c:forEach>
 			</c:forEach>
@@ -279,13 +278,13 @@
 	    <c:otherwise> 	    	
 			<c:forEach var="list" items="${listPost}" varStatus="status">
 				<c:forEach var="attachVoInStr" items="${list.attachListInGson}" varStatus="sta">
-					var liTags = "";
-			    	var attachVo = JSON.parse(decodeURL("${list.repersent}"));
+				var liTags = "";
+				var attachVo = JSON.parse(decodeURL("${attachVoInStr}"));
 							if(attachVo.uuid === "${listPost[status.index].listAttach[sta.index].uuid}"){
-								liTags+= "<li>"
+								liTags+= "<tr>"
 										+ "<img src='/uploadFiles/display?fileName=" 
 										+ encodeURIComponent(attachVo.fileCallPath) + "' style = 'float: left;  width: 100px; height: 100px; object-fit: cover; display: inline-block; font-size: 0;'>"
-										+ "</li>";
+										+ "</tr>";
 										$("#${listPost[status.index].id} ul").append(liTags);
 							}
 				</c:forEach>
