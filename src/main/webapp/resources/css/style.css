@@ -388,7 +388,8 @@ ol {
 .inner-header .main-menu ul li .sub-menu {
 	position: absolute;
 	list-style: none;
-	width: 220px;
+	/* 	 드롭메뉴 가로 길이 */
+	width: 220px; 
 	left: 0;
 	top: 100%;
 	padding: 20px 0;

@@ -83,6 +83,7 @@
          });
 </script>
 
+
 <script type="text/javascript">
 
     function chatBoxFunction() {
@@ -129,17 +130,19 @@
       //            + '<td style="width: 150px;"><h5>' + lastID + '</h5>'
       //             + '<h5>' + chatContent + '</h5> '+  '</td>'
       //      + '</li>');
+   
       
-      $('#boxTable').append(
-            '<li style="border: 1px solid black;" onclick="window.open(\'../chat/chatting?toId='
-            	  + toID + '\',width=400, height=600, left=400, top=400)">'
-                  + '<td style="width: 150px;"><h5>' + lastID
-                  + '</h5></td>' + '<td>' + '<h5>' + chatContent
-                  + '</h5>' + '<div class="pull-right">' + chatTime
-                  + '</div>' + '</td>' + '</li>');
       
-      $('#boxTable').scrollTop($('#boxTable')[0].scrollHeight);
-   }
+      
+      
+	 $('#boxTable').append(
+              '<li class = "conversation" onclick="window.open(\'../chat/chatting?toId='+toID+'\', \'_blank\',\'width=400,height=500,left=1200,top=10\');">'
+                    + '<p class = "conversation_id">' + lastID + '</p>' 
+                    + '<p class = "created_date">' + chatTime +'</p>'
+                    + '<p class = "conversation_message">' + chatContent + '</p>' 
+               + '</li>' );
+        
+     }
    
    function getUnread() {
       var userID = "${userId}"

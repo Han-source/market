@@ -25,7 +25,7 @@
        where ((from_id = #{chat.fromID} and to_id = #{chat.toID})
           or (from_id = #{chat.toID} and to_id = #{chat.fromID}))
           and chat_id > #{chat.chatID}
-       order by chat_time
+       order by chat_time desc
       ]]>
    </select>
 	<!-- public List<ChatVO> getChatListByRecent(@Param("chat") ChatVO chatVO); -->
@@ -36,7 +36,7 @@
        where ((from_id = #{chat.fromID} and to_id = #{chat.toID})
           or (from_id = #{chat.toID} and to_id = #{chat.fromID}))
           and chat_id > (select max(chat_ID) - 100 from s_chat where (from_ID = #{chat.fromID} AND to_ID = #{chat.toID}) or (from_ID = #{chat.toID} and to_ID = #{chat.fromID}))
-       order by chat_time
+       order by chat_time desc
       ]]>
    </select>
    

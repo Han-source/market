@@ -7,7 +7,6 @@
 <html lang="en">
 
 <head>
-
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport"
@@ -24,9 +23,12 @@
    <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
       rel="stylesheet">
+      
+      
    <link href="/resources/css/sb-admin-2.min.css" rel="stylesheet">
-   <!-- <link href="/resources/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
+   <link href="/resources/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <!-- Css Styles -->
+    <link rel="stylesheet" href="/resources/css/chatBox.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/nice-select.css" type="text/css">
@@ -36,8 +38,7 @@
     <link rel="stylesheet" href="/resources/css/style.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/dropdw.css" type="text/css">
 <!--     <link rel="stylesheet" href="/resources/css/bootstrap2.css"> -->
-   <link rel="stylesheet" href="/resources/css/custom.css">
-
+<!--    <link rel="stylesheet" href="/resources/css/custom.css"> -->
 </head>
 
    <!-- Page Preloder -->
@@ -69,10 +70,17 @@
                   <!-- 그리고 url을 우리가 만드는건데, post가 board 안에 있는거니까 그 클래스 안에있는 객체명을 따라가야한다. -->
                      </c:forEach>
                   </sec:authorize>
+                  
+   
+  
+           
+                  
+                  
+                  
                <sec:authorize access="isAuthenticated()" >
                <li>메시지함
-                               <ul class="sub-menu" id="boxTable" >
-                               </ul>
+                        	 <ul class="sub-menu" id ="boxTable">               	
+                              </ul>
                </li>
                
                <li>내 정보
@@ -101,7 +109,9 @@
                         </ul>
                 </li>   
                  </sec:authorize>    
+              </ul>
           </nav>
        </div>
 
     </header>
+ 
