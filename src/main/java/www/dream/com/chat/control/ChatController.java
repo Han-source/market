@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import www.dream.com.bulletinBoard.model.PostVO;
+import www.dream.com.business.model.TradeConditionVO;
+import www.dream.com.business.service.BusinessService;
 import www.dream.com.chat.model.ChatVO;
 import www.dream.com.chat.service.ChatMethode;
 import www.dream.com.chat.service.ChatService;
@@ -39,6 +42,8 @@ public class ChatController extends HttpServlet {
 
 	@Autowired // 10. Autowired @ 생성
 	private ChatMethode chatMethode;
+	@Autowired
+	private BusinessService businessService;
 
 	// --------------------------채팅방 내용 조회-----------------------------------
 	@ResponseBody
@@ -207,5 +212,44 @@ public class ChatController extends HttpServlet {
 			// 즉 읽지 않은 채팅 수를 클라이언트에게 출력해주는 부분.
 			response.getWriter().write(chatService.getUnreadChat(userId) + "");
 		}
+	}
+	
+	/*------------------------거래수락시 실행할 함수---------------------------------------*/
+	@ResponseBody
+	@PostMapping(value = "agreeNegoSug", produces = "text/plane")
+	public void agreeNegoSug(@RequestParam(value = "toId", required = false) String toId, ChatVO chat, Model model,
+			@AuthenticationPrincipal Principal principal, HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		Party curUser = null;
+		if (principal != null) {
+			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+			CustomUser cu = (CustomUser) upat.getPrincipal();
+			curUser = cu.getCurUser();
+		}
+		chat.setFromID(curUser.getUserId());
+		String fromID = curUser.getUserId();
+		String toID = chat.getToID();
+		String chatContent = request.getParameter("chatContent");
+		String postId = request.getParameter("postId");
+		String agree = request.getParameter("agree");
+		PostVO newPost = new PostVO(); 
+		UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+	    CustomUser cu = (CustomUser) upat.getPrincipal();
+	    Party writer = cu.getCurUser();
+	    newPost.setWriter(writer);
+		TradeConditionVO tradeCondition = new TradeConditionVO();
+
+		if (agree != null) {
+			tradeCondition.setBuyerId(toID);
+			String str[] = chatContent.split("<");
+			int i = Integer.parseInt(str[0]);
+			tradeCondition.setDiscountPrice(i);
+			businessService.insertNegoProductPrice2Buyer(tradeCondition, postId, newPost);
+			response.getWriter().write("0");
+		}
+		if (postId != null) {
+			chatService.deleteSugChat(chat, postId);
+		}
+		
 	}
 }

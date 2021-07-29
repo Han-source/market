@@ -71,7 +71,101 @@
 	});
 </script>
 
-<script type="text/javascript">
+	<script type="text/javascript">
+		function updateProductPrice(negoPrice) {
+			var fromID = "${userId}";
+			var toID = "${toId}";
+			var chatContent = negoPrice;
+			var postId = $('#postId').val();
+			var agree = "수락"
+
+			var header = $("meta[name='_csrf_header']").attr("content");
+			var token = $("meta[name='_csrf']").attr("content");
+			var csrfHN = "${_csrf.headerName}";
+			var csrfTV = "${_csrf.token}";
+			$.ajax({
+				type : "POST",
+				url : "/chat/agreeNegoSug",
+				data : {
+					fromID : fromID,
+					toID : toID,
+					chatContent : chatContent,
+					postId : postId,
+					agree : agree,
+				},
+				beforeSend : function(xhr) {
+					xhr.setRequestHeader(csrfHN, csrfTV);
+				},
+				success : function() {
+					alert('가격제안이 수락되었습니다')
+					Agree();
+				}
+			});
+			// 메시지를 보냈으니 content의 값을 비워준다.
+			$('#negoPrice').val('');
+		}
+
+		function Agree() {
+			var fromID = "${userId}";
+			var toID = "${toId}";
+			var chatContent = "가격 제안이 수락되었습니다";
+			var postId = $('#postId').val();
+			
+
+			var header = $("meta[name='_csrf_header']").attr("content");
+			var token = $("meta[name='_csrf']").attr("content");
+			var csrfHN = "${_csrf.headerName}";
+			var csrfTV = "${_csrf.token}";
+			$.ajax({
+				type : "POST",
+				url : "/chat/chatting",
+				data : {
+					fromID : fromID,
+					toID : toID,
+					chatContent : chatContent,
+					postId : postId,
+				},
+				beforeSend : function(xhr) {
+					xhr.setRequestHeader(csrfHN, csrfTV);
+				},
+				success : function(result) {
+				}
+			});
+			// 메시지를 보냈으니 content의 값을 비워준다.
+			$('#negoPrice').val('');
+		}
+
+		
+		function disAgree() {
+			var fromID = "${userId}";
+			var toID = "${toId}";
+			var chatContent = "가격 제안이 거절 되었습니다";
+			var postId = $('#postId').val();
+			
+
+			var header = $("meta[name='_csrf_header']").attr("content");
+			var token = $("meta[name='_csrf']").attr("content");
+			var csrfHN = "${_csrf.headerName}";
+			var csrfTV = "${_csrf.token}";
+			$.ajax({
+				type : "POST",
+				url : "/chat/chatting",
+				data : {
+					fromID : fromID,
+					toID : toID,
+					chatContent : chatContent,
+					postId : postId,
+				},
+				beforeSend : function(xhr) {
+					xhr.setRequestHeader(csrfHN, csrfTV);
+				},
+				success : function(result) {
+				}
+			});
+			// 메시지를 보냈으니 content의 값을 비워준다.
+			$('#negoPrice').val('');
+		}
+
 	function submitFunction() {
 		var fromID = "${userId}";
 		var toID = "${toId}";
@@ -196,7 +290,11 @@
      	}
 		$('#chatList').scrollTop($('#chatList')[0].scrollHeight); // 스크롤을 맨 아래로 두기
 	}
-
+	
+	$('#negoAgree').on("click", function(e) {
+		alert('수락');
+	});
+	
 	function getUnread() {
 		var csrfHN = "${_csrf.headerName}";
 		var csrfTV = "${_csrf.token}";
