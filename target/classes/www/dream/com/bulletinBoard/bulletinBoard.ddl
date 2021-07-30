@@ -56,3 +56,6 @@ create index idx_Reply_board_id on s_reply(board_id, id);
 drop index idx_reply_board_id
 
 --상속구조일때 Top, Bottom, Hybrid 전략이 있는데, Bottom은 좋지않음, Top은 너무 부피가 커지고 그래서 Hybrid전략으로
+
+
+

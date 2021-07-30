@@ -189,6 +189,7 @@ function appendUploadUl(attachVOInJson) {
 });
 
 function showUploadedFile(result) {
+	
 	$(result).each(function (i, attachVOInJson) {
 		appendUploadUl(attachVOInJson);
 	});

@@ -16,36 +16,23 @@
 <title>Fleax Market</title>
 
 <!-- Custom fonts for this template -->
-<link href="/resources/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-
-
+<!-- <link href="/resources/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css"> -->
    <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
-   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-      rel="stylesheet">
+<!--    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" -->
+<!--       rel="stylesheet"> -->
       
       
    <link href="/resources/css/sb-admin-2.min.css" rel="stylesheet">
    <link href="/resources/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <!-- Css Styles -->
-    <link rel="stylesheet" href="/resources/css/chatBox.css" type="text/css">
+    <link rel="stylesheet" href="/resources/css/custom.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="/resources/css/font-awesome.min.css" type="text/css">
+<!--     <link rel="stylesheet" href="/resources/css/font-awesome.min.css" type="text/css"> -->
     <link rel="stylesheet" href="/resources/css/nice-select.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="/resources/css/magnific-popup.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="/resources/css/style.css" type="text/css">
-    <link rel="stylesheet" href="/resources/css/dropdw.css" type="text/css">
-    <link rel="stylesheet" href="/resources/css/js-image-slider.css" type="text/css" />
-	<link rel="stylesheet" href="/resources/css/generic.css" type="text/css" />
-	<link href="/resources/css/ninja-slider.css" rel="stylesheet" type="text/css" />
 
-
-
-
-    
-<!--     <link rel="stylesheet" href="/resources/css/bootstrap2.css"> -->
-<!--    <link rel="stylesheet" href="/resources/css/custom.css"> -->
 </head>
 
    <!-- Page Preloder -->
@@ -85,8 +72,8 @@
                   
                   
                <sec:authorize access="isAuthenticated()" >
-               <li>메시지함
-                        	 <ul class="sub-menu" id ="boxTable">               	
+               <li>메시지함<span id="unread" class="label label-info1"></span>
+                        	 <ul class="sub-menu2" id ="boxTable">               	
                               </ul>
                </li>
                

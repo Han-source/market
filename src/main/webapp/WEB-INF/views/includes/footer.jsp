@@ -59,7 +59,6 @@
 
 	<script src="/resources/js/sb-admin-2.min.js"></script>
 	<script src="/resources/js/js-image-slider.js"></script>
-    <script src="/resources/js/ninja-slider.js" type="text/javascript"></script>
 
 
 
@@ -165,6 +164,7 @@
             } else {
                // 0이 입력받을 때 공백 처리
                showUnread('');
+               $('.label-info1').css('background-color','#fff');
             }
          }
       });
@@ -177,7 +177,10 @@
    }
    // unread라는 id값을 가진 원소 내부 값을 result로 담아주기.
    function showUnread(result){
+	   var unreadVal = $('#unread').val();
+
       $('#unread').html(result);
+
    }
    // 사용자의 메시지함을 갱신하는 함수
     function getInfiniteBox() {

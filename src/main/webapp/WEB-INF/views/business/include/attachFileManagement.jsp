@@ -9,25 +9,20 @@
 <!-- End of 첨부 파일 목록-->
 
 <style type>
-	#uploadResult {border:1px solid #ced4da;border-radius:.25rem;}
-	#uploadResult ul{ display:flex; flex-flow: row; justify-content: center; align-items: center;}
-	#uploadResult ul li {list-style:none; padding: 10px; align-content: center; text-align: center;}
-	#uploadResult ul li img{ width: 60px;}
-	#uploadResult ul li span{color: white;}
 	.bigWrapper { position: absolute; display: none; justify-content: center; align-items: center; top: 0%; width: 100%; height: 100%;
 				z-index: 100;}
 	.bigNested { position: relative; display:flex; justify-content: center; align-items:center;}
 	.bigNested img {width: 600px;}
 	.bigNested video {width: 600px;}
+
+
 </style>
 
 <!-- 첨부파일 목록 출력 부분  -->
-
-	<!-- DataTales Example -->
 	<div>
 		<label>첨부파일</label>
 	</div>
-			<div class="form-group">
+		<div class="form-group">
 			<div id="uploadDiv">
 				<label class="btn btn-primary btn-file">
         첨부첨부<input id="inFiles" type="file" name="upLoadFile" style="display: none;" multiple>
@@ -35,19 +30,16 @@
 			</div>
 
 			
-			<div id="uploadResult">
+			<div id="uploadResult" style="width:300px; height:auto;">
 				<div id="sliderFrame">
 		        <div id="slider">
-		        
-		        </div>
-		        <div id="htmlcaption" style="display: none;">
-		            <em>HTML</em> caption. Link to <a href="http://www.google.com/">Google</a>.
 		        </div>
 			</div>
 			<div class="bigWrapper">
 				<div class="bigNested">
 				</div>
 			</div>
+		</div>
 	</div>
 
 <script type="text/javascript" src="\resources\js\util\utf8.js"> </script>
@@ -92,7 +84,7 @@ function appendUploadUl(attachVOInJson) {
 			liTags += "<li>"
 					+ "<a>"
 					+ "<img class='ns-img' src='/uploadFiles/display?fileName=" 
-					+ encodeURIComponent(attachVO.fileProductCallPath) + "'style = 'float: left;  width: 600px; height: 600px; object-fit: cover; display: inline-block; font-size: 0;'/>"
+					+ encodeURIComponent(attachVO.fileProductCallPath) + "'style = 'float: left;  width: 400px; height: 400px; object-fit: cover;  font-size: 0;'/>"
 					+ "</a>"; 
 					if(updateMode) {
 						liTags += "<span>X</span>";

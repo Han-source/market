@@ -25,6 +25,7 @@ button {
     color: #495057;
     cursor: pointer;
 }
+
 button > i {
     font-size: 1.75rem;
 }

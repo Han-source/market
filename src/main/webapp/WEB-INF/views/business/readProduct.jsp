@@ -10,6 +10,7 @@
 <div class="card shadow mb-4">
    <div class="card-body">
       <div class="form-group">
+      	  <%@include file="./include/attachFileManagement.jsp" %>
          <%@ include file="./include/productCommon.jsp" %>
          <!-- 공통적 속성인 실 내용들은 postCommon.jsp를 만들어서 보내버렸음 -->
 
@@ -62,7 +63,7 @@
             <input type="hidden" name="child" value="${child}">
             <input type="hidden" id="postId" name="postId" value="${post.id}">
          </form>
-         <%@include file="./include/attachFileManagement.jsp" %>
+         
       </div>
       
          <div id="modalProductNego" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

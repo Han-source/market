@@ -53,7 +53,6 @@ public class UploadController {
 	public ResponseEntity<List<String>> uploadFilesByAjax(@RequestParam("uploadFile") MultipartFile[] uploadFiles) throws IOException {
 		List<AttachFileVO> listAttachFileVO = new ArrayList<>();
 		File uploadPath = new File(UPLOAD_FOLDER, getFolderName());
-		AttachFileVO af = new AttachFileVO();
 		if (! uploadPath.exists()) {
 			//필요한 폴더 구조가 없다면 그 전체를 만들어 준다.
 			uploadPath.mkdirs(); //필요한 경로들을 다 만들겠다는 함수 mkdirs
@@ -113,7 +112,7 @@ public class UploadController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity(resource, headers, HttpStatus.OK);
+		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 	}
 	
 	@PreAuthorize("isAuthenticated()")
@@ -131,7 +130,7 @@ public class UploadController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity<>("Delete Success", HttpStatus.OK);
+		return new ResponseEntity<String>("Delete Success", HttpStatus.OK);
 	}
 	
 	

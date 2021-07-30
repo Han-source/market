@@ -139,7 +139,7 @@ public class AttachFileVO {
 		if (multimediaType == MultimediaType.image) {
 			try {
 				Thumbnailator.createThumbnail(uploadedFile, thumbnailFile, 100, 100);
-				Thumbnailator.createThumbnail(uploadedFile, productThumbnailFile, 600, 600);
+				Thumbnailator.createThumbnail(uploadedFile, productThumbnailFile, 400, 400);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
