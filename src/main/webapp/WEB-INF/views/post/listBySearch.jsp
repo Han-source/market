@@ -167,6 +167,31 @@
 	</div>
 	
 </div>
+
+<c:choose>
+	    <c:when test="${boardId == 4}"> 
+			<c:forEach var="list" items="${product}" varStatus="status">
+				<c:forEach var="attachVoInStr" items="${list.attachListInGson}" varStatus="sta">
+				<script>
+					$(document).ready(function() {
+						imageList('<c:out value="${attachVoInStr}" />', '<c:out value="${product[status.index].listAttach[sta.index].uuid}" />', '<c:out value="${product[status.index].id}" />');
+					});
+				</script>
+				</c:forEach>
+			</c:forEach>
+	    </c:when>
+	    <c:otherwise> 	    	
+			<c:forEach var="list" items="${listPost}" varStatus="status">
+				<c:forEach var="attachVoInStr" items="${list.attachListInGson}" varStatus="sta">
+					<script>
+						$(document).ready(function() {
+							imageList('<c:out value="${attachVoInStr}" />', '<c:out value="${listPost[status.index].listAttach[sta.index].uuid}" />', '<c:out value="${listPost[status.index].id}" />');
+						});
+					</script>							
+				</c:forEach>
+			</c:forEach> 
+	    </c:otherwise>
+	</c:choose>
 <!-- /.container-fluid -->
 
 
@@ -250,7 +275,6 @@
 		frmSearching.submit();
 	});
 	
-	
 	$('.anchor4product').on('click', function(e) {
 		e.preventDefault();
 		var productId = $(this).attr('href')
@@ -259,46 +283,20 @@
 		frmSearching.attr('method', 'get');
 		frmSearching.submit();
 	});
-	
-
-	<c:choose>
-	    <c:when test="${boardId == 4}"> 
-			<c:forEach var="list" items="${product}" varStatus="status">
-				<c:forEach var="attachVoInStr" items="${list.attachListInGson}" varStatus="sta">
-					var liTags = "";
-					var attachVo = JSON.parse(decodeURL("${attachVoInStr}"));
-							if(attachVo.uuid === "${product[status.index].listAttach[sta.index].uuid}"){
-								liTags+= "<li>"
-									+ "<img src='/uploadFiles/display?fileName=" 
-									+ encodeURIComponent(attachVo.fileCallPath) + "' style = 'float: left;  width: 100px; height: 100px; object-fit: cover; display: inline-block; font-size: 0;'>"
-									+ "</li>";
-									$("#${product[status.index].id} ul.slider__images" ).on("click", function () {
-										alert('hi');
-									})
-									$("#${product[status.index].id} ul.slider__images" ).append(liTags);
-							}
-				</c:forEach>
-			</c:forEach>
-	    </c:when>
-	    <c:otherwise> 	    	
-			<c:forEach var="list" items="${listPost}" varStatus="status">
-				<c:forEach var="attachVoInStr" items="${list.attachListInGson}" varStatus="sta">
-				var liTags = "";
-				var attachVo = JSON.parse(decodeURL("${attachVoInStr}"));
-							if(attachVo.uuid === "${listPost[status.index].listAttach[sta.index].uuid}"){
-								liTags+= "<tr>"
-										+ "<img src='/uploadFiles/display?fileName=" 
-										+ encodeURIComponent(attachVo.fileCallPath) + "' style = 'float: left;  width: 100px; height: 100px; object-fit: cover; display: inline-block; font-size: 0;'>"
-										+ "</tr>";
-										$("#${listPost[status.index].id} ul.imgs").append(liTags);
-							}
-				</c:forEach>
-			</c:forEach> 
-	    </c:otherwise>
-	</c:choose>
-	
 });
 	
+	
+	function imageList(attachVOInJson, uuid, id){
+		var liTags = "";
+		var attachVo = JSON.parse(decodeURL(attachVOInJson));
+				if(attachVo.uuid === uuid){
+					liTags+= "<li>"
+						+ "<img src='/uploadFiles/display?fileName=" 
+						+ encodeURIComponent(attachVo.fileCallPath) + "' style = 'float: left;  width: 100px; height: 100px; object-fit: cover; display: inline-block; font-size: 0;'>"
+						+ "</li>";
+						$("#"+ id +" ul.slider__images" ).append(liTags);
+				}
+	}	
 	
 </script>
 <script>

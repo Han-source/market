@@ -74,4 +74,13 @@ public class BusinessService {
 		businessMapper.insertNegoProductPrice2Buyer(tradeCondition, postId, post);
 	}
 
+	/* 장바구니 담기 기능 */
+	public void insertShopphingCart(String userId, String productId) {
+		businessMapper.insertShopphingCart(userId, productId);
+	}
+	/* 해당 상품을 내가 장바구니에 이미 담았는지를 검사 */
+	public int findShoppingCartByUserIdAndProductId(String userId, String productId) {
+		return businessMapper.findShoppingCartByUserIdAndProductId(userId, productId); 
+	}
+
 }

@@ -21,9 +21,9 @@ public interface BusinessMapper {
 	public List<TradeConditionVO> findAuctionPartyById(@Param("productId") String id);
 
 	/* 안전거래에서 해당 이용자가 네고한 적이 있는지를 가져오는 함수 */
-	public TradeConditionVO findNegoPriceByBuyerWithProductId(@Param("productId") String productId,
-			@Param("tc") TradeConditionVO tc);
-
+	public TradeConditionVO findNegoPriceByBuyerWithProductId(@Param("productId") String productId, @Param("tc") TradeConditionVO tc);
+	/* 해당 상품을 내가 장바구니에 이미 담았는지를 검사 */
+	public int findShoppingCartByUserIdAndProductId(@Param("userId") String userId, @Param("productId") String productId);
 	/* 일반 상품 등록 기능 */
 	public int insertCommonProduct(@Param("productVO") ProductVO productVO, @Param("post") PostVO post,
 			@Param("board") BoardVO board);
@@ -38,4 +38,7 @@ public interface BusinessMapper {
 	/* 상품 네고 기능 */
 	public void insertNegoProductPrice2Buyer(@Param("tradeCondition") TradeConditionVO tradeCondition,
 			@Param("postId") String postId, @Param("post") PostVO post);
+	
+	/* 장바구니 담기 기능 */
+	public void insertShopphingCart(@Param("userId") String userId, @Param("productId") String productId);
 }

@@ -56,17 +56,10 @@ public class BusinessController {
 			curUser = cu.getCurUser();
 			newProductCondition.setBuyerId(curUser.getUserId());
 			model.addAttribute("userId", curUser.getUserId());
-			TradeConditionVO a = new TradeConditionVO();
-
-			a = businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition);
-			model.addAttribute("negoBuyer",
-					businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
-
+			model.addAttribute("negoBuyer", businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
+			model.addAttribute("checkShoppingCart", businessService.findShoppingCartByUserIdAndProductId(curUser.getUserId(), productId));
 		}
-		UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
-		CustomUser cu = (CustomUser) upat.getPrincipal();
-		Party writer = cu.getCurUser();
-
+		
 		model.addAttribute("boardList", boardService.getList());
 		model.addAttribute("post", replyService.findProductById(productId, child));
 		model.addAttribute("product", businessService.findPriceById(productId));
@@ -79,8 +72,8 @@ public class BusinessController {
 	
 	@PostMapping(value = "readProduct")
 	@PreAuthorize("isAuthenticated()")
-	public String findProductById(@AuthenticationPrincipal Principal principal, @RequestParam("boardId") int boardId,
-			@RequestParam("child") int child, TradeConditionVO tradeCondition, PostVO newPost,@RequestParam("postId") String postId,
+	public String findProductById(@RequestParam("boardId") int boardId, @RequestParam("child") int child, 
+			TradeConditionVO tradeCondition, PostVO newPost,@RequestParam("postId") String postId,
 			RedirectAttributes rttr) {
 		BoardVO board = new BoardVO(boardId, child);
 		
@@ -126,6 +119,21 @@ public class BusinessController {
 
 		rttr.addFlashAttribute("result", newPost.getId());
 		return "redirect:/post/listBySearch?boardId=" + boardId + "&child=" + child;
+	}
+	
+	@PostMapping(value = "insertShoppingCart") // LCRUD 에서 Update 부분
+	@PreAuthorize("isAuthenticated()")
+	public String insertShoppingCart(String productId, @AuthenticationPrincipal Principal principal, @RequestParam("boardId") int boardId,
+			@RequestParam("child") int child) {
+		Party curUser = null;
+		if (principal != null) {
+			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+			CustomUser cu = (CustomUser) upat.getPrincipal();
+			curUser = cu.getCurUser();
+		}
+		
+		businessService.insertShopphingCart(curUser.getUserId(), productId);
+		return "redirect:/business/readProduct?boardId=" + boardId + "&child=" + child + "&productId=" + productId;
 	}
 
 }

@@ -42,3 +42,9 @@ create table s_trade_condition(
 	auction_current_price	number(19) default 0,
 	auction_end_date		timestamp default sysdate
 )
+
+create table s_shopping_bascket(
+	user_id			varchar2(10),
+	product_id		varchar2(4000),
+	primary key(user_id, product_id)
+)

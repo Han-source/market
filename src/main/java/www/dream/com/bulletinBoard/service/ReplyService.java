@@ -20,16 +20,11 @@ import www.dream.com.framework.util.ComparablePair;
 public class ReplyService {
 	@Autowired
 	private ReplyMapper replyMapper;
-
-	
 	
 	/*상품 상세 조회 기능*/
 	public PostVO findProductById( String id,  int child) {
 		return replyMapper.findProductById(id, child);
 	}
-	
-	
-	
 	
 	/* 댓글 목록 조회 */ // Criteria: 전체 개수 정보 , List<ReplyVO> : 해당 Page의 댓글 목록 정보 
 	public ComparablePair<Criteria, List<ReplyVO>> getReplyListWithPaging(String originalId,

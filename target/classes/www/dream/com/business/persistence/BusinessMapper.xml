@@ -89,6 +89,17 @@
 	]]>
 	</select>
 	
+	<!-- public int findShoppingCartByUserIdAndProductId(@Param("userId") String userId, @Param("productId") String productId); -->
+	<select id="findShoppingCartByUserIdAndProductId" resultType="_int"> 
+	<![CDATA[ 
+	select count(*)
+	  from s_shopping_bascket
+  	 where user_id = #{userId}
+	   and product_id = #{productId}
+		   
+	]]>
+	</select>
+	
 	<!-- 	public int insertCommonProduct(@Param("productVO") ProductVO productVO, @Param("post") PostVO post, @Param("board") BoardVO board); -->
 	<insert id="insertCommonProduct">
 		insert all
@@ -137,9 +148,17 @@
        values(#{tradeCondition.sellerId}, #{tradeCondition.buyerId}, #{post.id}, #{tradeCondition.auctionCurrentPrice})
    </insert>
 	<!--public void insertNegoProductPrice2Buyer(@Param("tradeCondition") TradeConditionVO tradeCondition, @Param("postId") String postId); -->
+
 	<insert id="insertNegoProductPrice2Buyer">
 	insert into s_trade_condition (seller_id, product_id, discount_price, buyer_id) 
 	   values (#{post.writer.userId}, #{postId}, #{tradeCondition.discountPrice}, #{tradeCondition.buyerId}) 
+	</insert>
+
+
+	<!-- public void insertShopphingCart(@Param("userId") String userId, @Param("productId") String productId); -->
+	<insert id="insertShopphingCart">
+	insert into s_shopping_bascket (user_id, product_id) 
+	   values (#{userId}, #{productId}) 
 	</insert>
 
 </mapper>

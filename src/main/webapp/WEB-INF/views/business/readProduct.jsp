@@ -26,10 +26,10 @@
             <c:if test="${customUser.curUser.userId ne post.writer.userId}">
                <button data-oper='chat' class="btn btn-secondary">채팅하기</button>
                <button data-oper='nego' class="btn btn-secondary">가격제안</button>
-    
+    		   <button id='cart' class="btn btn-secondary">장바구니 담기</button>
                   <c:if test="${child == 7}">
-            <button id ="btnAuction" type="button" class="btn btn-primary">경매 참여</button>
-            </c:if>
+	            <button id ="btnAuction" type="button" class="btn btn-primary">경매 참여</button>
+	            </c:if>
             </c:if>
          </sec:authorize>
          
@@ -64,8 +64,14 @@
             <input type="hidden" id="postId" name="postId" value="${post.id}">
          </form>
          
+         <form id='frmCart' action="/post/insertShoppingCart" method="post">
+            <input type="hidden" id="productId" name="productId" value="${post.id}">
+            <input type="hidden" name="boardId" value="${boardId}">
+			<input type="hidden" name="child" value="${child}">
+            <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
+         </form>
+         
       </div>
-      
          <div id="modalProductNego" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                <div class="modal-dialog">
                   <div class="modal-content">
@@ -113,7 +119,26 @@
                      </form>
                   </div>
                </div>
-            </div>      
+            </div>
+            
+            <div id="modalShopCart" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header" style="text-align: center;">
+                        <h4 class="modal-title" id="myModalLabel" align="center" style="margin: 0 auto;">해당 상품이 장바구니에 담겼습니다</h4>
+                     </div>
+                     <!-- End of modal-header -->
+                     <div class="modal-body" id = "modalProductNegoBody" style=" text-align: center;">
+                        <label>제시가격</label>
+                        <input class="form-control" name='negoPrice' id="negoPrice" value=''>
+                     </div>
+                     <div class="modal-footer">
+                        <button id='btnSubmitNego' type="button" class="btn btn-default" onclick="negoSubmitFunction();">전송</button>                        
+                        <button id='btnCloseModal' type="button" class="btn btn-default">취소</button>                        
+                     </div>
+                  </div>
+               </div>
+            </div>  
    </div>
 </div>
 
@@ -160,9 +185,21 @@
       
       $("button[data-oper='chat']").on("click", function() {
          $("#frmChat").attr("action", "/chat/chatting");
-         frmChat.append(toId);
          frmChat.submit();
       });
+
+      //장바구니 담기
+      $("#cart").on("click", function() {
+    	  if("${checkShoppingCart}" == "0"){
+	          $("#frmCart").attr("action", "/business/insertShoppingCart");
+	          $("#frmCart").submit();
+	          alert('상품이 장바구니에 담겼습니다')
+    	  }else {
+    		  alert('이미 상품이 담겨있습니다')
+    		  return;
+    	  }
+       });
+      
       //가격제안 버튼을 눌렀을때 모달창 보여주기.      
       $("button[data-oper='nego']").on("click", function() {
          $("#modalProductNego").modal("show");
