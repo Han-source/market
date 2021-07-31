@@ -192,8 +192,6 @@
 			</c:forEach> 
 	    </c:otherwise>
 	</c:choose>
-<!-- /.container-fluid -->
-
 
 <%@include file="../includes/footer.jsp"%>
 <script src="\resources\js\util\utf8.js"></script>
@@ -299,4 +297,3 @@
 	}	
 	
 </script>
-<script>

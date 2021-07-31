@@ -29,6 +29,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import www.dream.com.bulletinBoard.model.PostVO;
+import www.dream.com.bulletinBoard.service.BoardService;
+import www.dream.com.bulletinBoard.service.PostService;
 import www.dream.com.framework.springSecurityAdapter.CustomUser;
 import www.dream.com.party.model.ContactPoint;
 import www.dream.com.party.model.Member;
@@ -41,7 +44,10 @@ public class PartyController implements AuthenticationSuccessHandler, AccessDeni
 	
 	@Autowired // 10. Autowired @ 생성
 	private PartyService partyService; // 9. PartyClass와 이어줄거고
-	
+	@Autowired
+	private PostService postService;
+	@Autowired
+	private BoardService boardService;
 	@Autowired
 	private PasswordEncoder pwEncoder;
 	
@@ -170,6 +176,20 @@ public class PartyController implements AuthenticationSuccessHandler, AccessDeni
 		return "redirect:/";
 	}
 	
+	@GetMapping(value = "shoppingCart")
+	public void shoppingCart(Model model, @AuthenticationPrincipal Principal principal, Integer boardId, Integer child) {
+		Party curUser = null;
+		if (principal != null) {
+			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+			CustomUser cu = (CustomUser) upat.getPrincipal();
+			curUser = cu.getCurUser();
+			model.addAttribute("partyId", curUser.getUserId());
+			List<PostVO> a = postService.findProductShoppingCart(curUser.getUserId());
+			model.addAttribute("childBoardList", boardService.getChildBoardList(4));
+			model.addAttribute("shopCart", postService.findProductShoppingCart(curUser.getUserId()));
+		}
+		
+	}
 	
 	/**
 	 * 로그인 성공 시 각 사용자의 권한 유형에 따라 개인화된 화면을 연동 시켜주기 위한 기능을 이곳에서 개발합니다.

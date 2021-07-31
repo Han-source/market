@@ -81,6 +81,7 @@
                             <ul class="sub-menu">
                                 <li><a href="/party/modifyMember">회원 정보 수정</a></li>
                                 <li><a href="/chat/chatBox">채팅방</a></li>
+                                <li><a href="/party/shoppingCart">장바구니</a></li>
                                 <sec:authorize access="isAuthenticated()" >
                                 <li><a href="check-out.html">회원탈퇴</a></li>
                                 </sec:authorize>

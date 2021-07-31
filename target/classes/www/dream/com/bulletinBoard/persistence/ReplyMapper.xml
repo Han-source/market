@@ -38,9 +38,12 @@
       <result property="readCnt" column="read_cnt"></result>
       <result property="likeCnt" column="like_cnt"></result>
       <result property="dislikeCnt" column="dislike_cnt"></result>
+      <collection property="board" columnPrefix="board_" 
+         resultMap="www.dream.com.bulletinBoard.persistence.BoardMapper.boardMapper">
+      </collection>
       <collection property="listAttach" columnPrefix="af_" 
          resultMap="www.dream.com.common.attachFile.persistence.AttachFileVOMapper.rmAttachFileVO">
-      </collection>   
+      </collection>      
       <!-- Master-Detail(1:N) 구조에서 Detail이 Master를 함께 join으로 읽어서 객체를 만들때 association 
          tag 사용 -->
       <!--columnprefix = w_로 시작하는것들을 만나면 Matching 시켜라 -->
@@ -261,7 +264,22 @@
    ]]>
    </select>
    
-   
+   <!-- public List<PostVO> findProductShoppingCart(@Param("boardId") String boardId, @Param("child") int child, @Param("userId") int userId); -->
+   <select id="findProductShoppingCart" resultMap="rmPost"> 
+   <![CDATA[ 
+     select p.*, p.board_id board_id, p.child_board_id board_parent_id, w.user_id w_user_id, w.name w_name, w.descrim w_descrim, 
+      af.uuid af_uuid,
+      af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+      af.multimedia_type af_multimedia_type      
+        from s_reply p, sm_product_attach am, s_attach_file af, s_party w, s_shopping_bascket sb
+       where p.writer_id = w.user_id
+         and p.id = am.product_id
+         and am.uuid = af.uuid
+         and sb.product_id = p.product_id
+         and sb.user_id = #{userId}
+   ]]>
+   </select>
+      
    <!-- public int insert(@Param("board") BoardVO board, @Param("child") int child, @Param("post") PostVO post); -->
    <!-- id는 함수의 이름, 그리고 table에 대한 insert into 구문을 만들어야한다. -->
    <!-- default = 0 은 넣어줄 필요가 없다. -->

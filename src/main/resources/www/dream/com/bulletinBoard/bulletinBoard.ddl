@@ -44,7 +44,7 @@ create table s_reply(
 	descrim			varchar2(10)			not null, --reply, post 두 개의 String으로 구분할 것
 	--descrim이 post일 경우 사용되는 정보들
 	board_id		number(9)				REFERENCES s_board(id),
-	child_board_id	number(9),
+	child_board_id	number(9),				REFERENCES s_board(parent_id),
 	title			varchar2(100),
 	read_cnt		number(9)				default 0,
 	like_cnt		number(9)				default 0,

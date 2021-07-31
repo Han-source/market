@@ -32,7 +32,7 @@ public class PostVO extends ReplyVO implements IHashTagOpponent{
     private int likeCnt; // 좋아요 수
     private int dislikeCnt; // 싫어요 수
     
-    
+    private BoardVO board;
     private String representImage;
     private List<String> listAttachInStringFormat;
     private List<AttachFileVO> listAttach;

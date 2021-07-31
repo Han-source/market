@@ -99,6 +99,11 @@ public class PostService {
 	public List<PostVO> findProductByBoardId(int boardId, int child){
 		return replyMapper.findProductByBoardId(boardId, child);
 	}
+	/**boardId, childBoardId, userId로 내가 장바구니에 담은 상품 조회 */
+	public List<PostVO> findProductShoppingCart(String userId){
+		return replyMapper.findProductShoppingCart(userId);
+	}
+	
 	/**
 	 * 게시글 수정 처리
 	 * 첨부 파일 정보 
