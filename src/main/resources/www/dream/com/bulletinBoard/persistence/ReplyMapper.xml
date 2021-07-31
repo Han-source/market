@@ -249,18 +249,19 @@
    <!-- public List<PostVO> findProductByBoardId(@Param("boardId") int boardId, @Param("child") int child); -->
    <select id="findProductByBoardId" resultMap="rmPost"> 
    <![CDATA[ 
-      select p.*, w.user_id w_user_id, w.name w_name, w.descrim w_descrim, 
+            select p.*, w.user_id w_user_id, w.name w_name, w.descrim w_descrim, 
       af.uuid af_uuid,
       af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
       af.multimedia_type af_multimedia_type      
-        from s_reply p
-               left outer join sm_product_attach am on p.id = am.product_id
-               left outer join s_attach_file af on am.uuid = af.uuid
-               , s_party w
+        from s_reply p, s_attach_file af,
+               (select product_id, max(uuid) as uuid
+                      from sm_product_attach  
+                      group by product_id) am, s_party w
        where p.board_id = #{boardId}
-         and p.child_board_id = #{child} 
-         and p.writer_id = w.user_id
-         
+         and p.child_board_id = #{child}
+         and p.writer_id = w.user_id         
+         and am.uuid = af.uuid
+         and p.id = am.product_id
    ]]>
    </select>
    
