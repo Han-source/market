@@ -57,6 +57,48 @@ public class BusinessController {
 
 	@Autowired
 	private PostService postService;
+	
+	
+	/* 결제창 */
+	@GetMapping(value = "payment")
+	@PreAuthorize("isAuthenticated()")
+	public void paymentProduct(@RequestParam("boardId") int boardId, String productId, @RequestParam("child") int child,
+			Model model, @AuthenticationPrincipal Principal principal) {
+		Party curUser = null;
+		if (principal != null) {
+			TradeConditionVO newProductCondition = new TradeConditionVO();
+			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+			CustomUser cu = (CustomUser) upat.getPrincipal();
+			curUser = cu.getCurUser();
+			newProductCondition.setBuyerId(curUser.getUserId());
+			model.addAttribute("negoBuyer",businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
+			model.addAttribute("buyerId", newProductCondition.getBuyerId());
+		}
+		model.addAttribute("boardList", boardService.getList());
+		model.addAttribute("post", replyService.findProductById(productId, child));
+		model.addAttribute("product", businessService.findPriceById(productId));
+		model.addAttribute("condition", businessService.findAuctionPriceById(productId));
+		model.addAttribute("auctionParty", businessService.findAuctionPartyById(productId));
+		model.addAttribute("productList", postService.findProductByBoardId(boardId, child));
+		model.addAttribute("boardId", boardId);
+		model.addAttribute("child", child);
+
+	}
+	
+	@PostMapping(value = "payment")
+	@PreAuthorize("isAuthenticated()")
+	public String paymentProduct(@RequestParam("boardId") int boardId, @RequestParam("child") int child, TradeVO trade,
+			@AuthenticationPrincipal Principal principal,
+			RedirectAttributes rttr) {
+		BoardVO board = new BoardVO(boardId, child);
+
+		businessService.purchaseProduct(trade);
+		
+		
+		return null;
+	}
+	
+	
 
 	@GetMapping(value = "productList") // LCRUD 에서 L:list
 	public void listBySearch(@RequestParam("boardId") int boardId, @RequestParam("child") int child,
@@ -93,7 +135,7 @@ public class BusinessController {
 			curUser = cu.getCurUser();
 			newProductCondition.setBuyerId(curUser.getUserId());
 			model.addAttribute("userId", curUser.getUserId());
-			TradeConditionVO  a = businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition);
+			TradeConditionVO a = businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition);
 			model.addAttribute("negoBuyer",
 					businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
 			model.addAttribute("checkShoppingCart",
