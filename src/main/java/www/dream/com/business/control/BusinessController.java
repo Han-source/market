@@ -93,6 +93,7 @@ public class BusinessController {
 			curUser = cu.getCurUser();
 			newProductCondition.setBuyerId(curUser.getUserId());
 			model.addAttribute("userId", curUser.getUserId());
+			TradeConditionVO  a = businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition);
 			model.addAttribute("negoBuyer",
 					businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
 			model.addAttribute("checkShoppingCart",

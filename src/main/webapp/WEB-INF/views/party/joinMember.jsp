@@ -35,8 +35,9 @@
             <div class="card-body">
                     <form id="frmMember" method="post" action="/party/joinMember">
                 <div class="form-group idBox">
-                    <input id="userId" name="userId"  placeholder="아이디를 입력해주세요." class="form-control" >
-                    <button id="idCheck">중복체크</button>
+                    <input id="userId" name="userId"  placeholder="아이디를 입력해주세요." class="form-control" required>
+                    <p id="idCheckMsg"></p>
+                    
                 <!-- 여긴 중요한게, 객체를 만들어주는 부분이다. 제목을 넣는 부분 -->
                 </div>
                 
@@ -53,7 +54,7 @@
                 
                 <div class="form-group birthDtBox">
                     <label>생년월일</label>
-                    <input id="birthDt" type="date" pattern="yyyy-MM-dd" class="form-control" name="birthDate"  >
+                    <input id="birthDt" type="date" pattern="yyyy-MM-dd" class="form-control"  value='1980-01-01' name="birthDate"  >
                 </div>
                 
                 <div class="form-group">
@@ -87,24 +88,26 @@
 				<div class="form-group">
 					<label>"${contactPointType.description}"</label>
 					<input type="hidden" name="listContactPoint[${status.index}].contactPointType" value="${contactPointType.cpType}" class="form-control" readonly>
-					<input type="text" id="phoneNumber" onkeyup="validation()" name="listContactPoint[${status.index}].info"  class="form-control" maxlength="11">
+					<input type="text" id="addressTelNum" onkeyup="validation1()" name="listContactPoint[${status.index}].info"  class="form-control" maxlength="11">
 					
-					<section class="result" style="color:red;"></section>
+					<section class="result1" style="color:red;"></section>
 			</div>
 			</c:if>
 			<c:if test="${status.index eq 2}">
 				<div class="form-group">
 					<label>"${contactPointType.description}"</label>
 					<input type="hidden" name="listContactPoint[${status.index}].contactPointType" value="${contactPointType.cpType}" class="form-control" readonly>
-					<input name="listContactPoint[${status.index}].info"  class="form-control">
+					<input type="text" id="phoneNumber" onkeyup="validation2()" name="listContactPoint[${status.index}].info"  class="form-control">
+					
+					<section class="result2" style="color:blue;"></section>
 				<!-- 여긴 중요한게, 객체를 만들어주는 부분이다. 제목을 넣는 부분 -->
 				</div>
 			</c:if>
 			</c:forEach>      
-                
+
                 <input type="hidden" name = "descrim" value="${memberType.partyType}">
                 <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
-                <button id="btnJoin" type="submit" class="btn btn-primary">회원가입</button>
+                <button id="btnJoin" class="btn btn-primary" onclick="checkAllJoinMember(this.form).submit()" type="button">회원가입</button>
                 </form>
     
             </div>
@@ -137,27 +140,31 @@
             }
         );
         
-        $("#userId").on("focusout", function(e) {
-            //회원 ID가 유일한가를 Ajax 검사하고 그렇지 못할 때는 Focus를 다시 받아야 합니다. 
-        });
         var frmPost = $("#frmPost");
     
         //비밀번호 일치 확인
         $('#PwdCheck').keyup(function(){
-            if($('#userPwdOrgin').val()!=$('#userPwdCheck').val()){
-                $('#pwCheckMsg').text('');
-                  $('#pwCheckMsg').html("<font color='#FF3333'>패스워드 확인이 불일치 합니다. </font>");
-             }else{
-                  $('#pwCheckMsg').text('');
-                  $('#pwCheckMsg').html("<font color='#70AD47'>패스워드 확인이 일치 합니다.</font>");
-             }
+        	var a = $('#userPwdCheck').val();
+        	if($('#userPwdOrgin').val() == null){
+        		return;
+        	}
+        	if($('#userPwdCheck').val() != ""){
+	            if($('#userPwdOrgin').val()!=$('#userPwdCheck').val()){
+	                $('#pwCheckMsg').text('');
+	                  $('#pwCheckMsg').html("<font color='#FF3333'>패스워드 확인이 불일치 합니다. </font>");
+	             }else{
+	                  $('#pwCheckMsg').text('');
+	                  $('#pwCheckMsg').html("<font color='#70AD47'>패스워드 확인이 일치 합니다.</font>");
+	             }
+        	}else{
+        		return;
+        	}
         });
         
             
-            $("#idCheck").on("click", function(e){
+            $("#userId").blur(function(e){
                 e.preventDefault();
-    
-    
+                
             id = $("#userId").val();
             $.ajax({	
                 url: '/party/idCheck',
@@ -168,10 +175,12 @@
                 success: function(data){
                      if(data == 0){
                      console.log("아이디 없음");
-                     alert("사용하실 수 있는 아이디입니다.");
+                     $("#idCheckMsg").text("사용하실 수 있는 아이디입니다.");
+                     //alert("사용하실 수 있는 아이디입니다.");
                      }else{
                          console.log("아이디 있음");
-                         alert("중복된 아이디가 존재합니다.");
+                         $("#idCheckMsg").text("중복된 아이디가 존재합니다.");
+                        //alert("중복된 아이디가 존재합니다.");
                      }
                 },
                 error: function (){        
@@ -180,17 +189,30 @@
         });
     });
     
-    var result = document.querySelector(".result");
+    var result1 = document.querySelector(".result1");
     
-    function validation() {
+    function validation1() {
+        var number = document.getElementById("addressTelNum").value;
+        var numberpattern = /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/;
+    
+        if (numberpattern.test(number)) {
+            result1.innerHTML = "올바른 주소 전화번호입니다!";
+        }
+        else {
+            result1.innerHTML = "올바른 주소 전화번호를 입력해주세요!";
+        }
+    }
+    var result2 = document.querySelector(".result2");
+    
+    function validation2() {
         var number = document.getElementById("phoneNumber").value;
         var numberpattern = /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/;
     
         if (numberpattern.test(number)) {
-            result.innerHTML = "올바른 번호입니다!";
+            result2.innerHTML = "올바른 번호입니다!";
         }
         else {
-            result.innerHTML = "올바른 번호를 입력해주세요!";
+            result2.innerHTML = "올바른 번호를 입력해주세요!";
         }
     }
     
@@ -218,7 +240,7 @@
                     addr = data.jibunAddress;
                 }
     
-                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                // 우편번호와 주소 정보를 해당 필 에 넣는다.
                 document.getElementById('postcode').value = data.zonecode;
                 document.getElementById("address").value = addr;
                 // 커서를 상세주소 필드로 이동한다.
@@ -252,6 +274,68 @@
         // 실행되는 순간의 화면 너비와 높이 값을 가져와서 중앙에 뜰 수 있도록 위치를 계산한다.
         element_layer.style.left = (((window.innerWidth || document.documentElement.clientWidth) - width) / 2 - borderWidth) + 'px';
         element_layer.style.top = (((window.innerHeight || document.documentElement.clientHeight) - height) / 2 - borderWidth) + 'px';
+    }
+    
+    
+    function checkAllJoinMember(form) {
+        // 회원가입시에 정보 입력을 해야 가입이 가능
+        if(form.userId.value == "") {
+            alert('아이디를 기입하세요 게이야');
+            form.userId.focus();
+			return ;
+        }
+        if(form.userPwdOrigin.value == "") {
+            alert('비밀번호를 기입하세요');
+            form.userPwdOrigin.focus();
+            return ;
+        }
+        if(form.userPwd.value == "") {
+            alert('비밀번호 재확인을 기입하세요');
+            form.userPwd.focus();
+            return ;
+        }
+        if(form.name.value == "") {
+            alert('이름을 기입하세요');
+            form.name.focus();
+            return ;
+        }
+        if(form.birthDt.value == "") {
+            alert('생년월일을 기입하세요');
+            form.birthDt.focus();
+            return ;
+        }
+        if(form.postcode.value == "") {
+            alert('우편번호를 기입하세요');
+            form.postcode.focus();
+            return ;
+        }
+        if(form.address.value == "") {
+            alert('주소를 입력하세요');
+            form.address.focus();
+            return ;
+        }
+        if(form.detailAddress.value == "") {
+            alert('상세주소를 입력하세요');
+            form.detailAddress.focus();
+            return ;
+        }
+        
+        if(form.addressTelNum.value == "") {
+            alert('주소지에 있는 전화번호를 입력하세요');
+            form.addressTelNum.focus();
+            return ;
+        }
+        
+        if(form.phoneNumber.value == "") {
+            alert('핸드폰 번호를 입력하세요');
+            form.phoneNumber.focus();
+            return ;
+        }
+        
+        $("#frmMember").submit();
+        
+        alert(form.userId.value + '(' + form.name.value + ") 님의 \n 회원가입이 완료되었습니다.");
+        
     }
     
     </script>

@@ -42,17 +42,15 @@
          	<h2 id="auctionTimer"></h2>
 	         <canvas id="lookChartProduct" style="width:100vh ; height=100vw">
 			 </canvas>
-         </c:if>
-         <br>
-         <c:if test="${child == 7}">
-         <label>구매자 아이디 <input class="form-control"  value='${auctionMaxPrice.buyerId}' style='width:150px; height:50px'  readonly> </label>
-         <label>경매 최고 가격 <input class="form-control"  value='${auctionMaxPrice.auctionCurrentPrice}' style='width:150px; height:50px'  readonly> </label>
-
-          <hr size="10px">
-          <c:forEach items="${auctionParty}" var="party">
-               <label>구매자 아이디 <input class="form-control"  value='${party.buyerId}' style='width:150px; height:50px'  readonly> </label>
-            <label>경매 가격 <input class="form-control"  value='${party.auctionCurrentPrice}원' style='width:150px; height:50px' readonly></label>
-            <br>
+	         <label>구매자 아이디 <input class="form-control"  value='${auctionMaxPrice.buyerId}' style='width:150px; height:50px'  readonly> </label>
+	         <label>경매 최고 가격 <input class="form-control"  value='${auctionMaxPrice.auctionCurrentPrice}' style='width:150px; height:50px'  readonly> </label>
+	         <br>
+	
+	          <hr size="10px">
+	          <c:forEach items="${auctionParty}" var="party">
+	               <label>구매자 아이디 <input class="form-control"  value='${party.buyerId}' style='width:150px; height:50px'  readonly> </label>
+	            <label>경매 가격 <input class="form-control"  value='${party.auctionCurrentPrice}원' style='width:150px; height:50px' readonly></label>
+	            <br>
             </c:forEach>
          </c:if>
          
