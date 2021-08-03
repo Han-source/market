@@ -83,7 +83,7 @@
                                 <li><a href="/chat/chatBox">채팅방</a></li>
                                 <li><a href="/party/shoppingCart">장바구니</a></li>
                                 <sec:authorize access="isAuthenticated()" >
-                                <li><a href="check-out.html">회원탈퇴</a></li>
+                                <li><a href="party/removeMember">회원탈퇴</a></li>
                                 </sec:authorize>
                                  <sec:authorize access="isAuthenticated()">
                                  

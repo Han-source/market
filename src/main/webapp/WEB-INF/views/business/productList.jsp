@@ -91,13 +91,11 @@
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal"
 									aria-hidden="true">&times;</button>
-								<h4 class="modal-title" id="myModalLabel">Modal title</h4>
+								<h4 class="modal-title" id="myModalLabel">상품 등록 완료</h4>
 							</div>
 							<div class="modal-body" id = "modalBody">처리가 완료 되었습니다.</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-default"
-									data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary">Save changes</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 							</div>
 						</div>
 					</div>
@@ -156,9 +154,9 @@
 		}
 		if (result.length == ${PostVO.ID_LENGTH}) { 
 
-			$("#modalBody").html("게시글 " + result + "번이 등록되었습니다.");
+			$("#modalBody").html("상품 " + result + "번으로 등록되었습니다.");
 		} else {
-			$("#modalBody").html("게시글에 대한 " + result + "하였습니다.");
+			$("#modalBody").html("상품" + result + "하였습니다.");
 		}
 		
 		$("#myModal").modal("show");

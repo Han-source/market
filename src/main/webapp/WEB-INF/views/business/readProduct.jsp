@@ -240,9 +240,8 @@
       });
       
       $("button[data-oper='chat']").on("click", function() {
-         $("#frmChat").attr("action", "/chat/chatting");
-         frmChat.submit();
-      });
+		     window.open("../chat/chatting?toId=${post.writer.userId}", "_blank","width=400,height=500,left=1200,top=10");
+		});
 
       //장바구니 담기
       $("#cart").on("click", function() {
@@ -259,6 +258,10 @@
       //가격제안 버튼을 눌렀을때 모달창 보여주기.      
       $("button[data-oper='nego']").on("click", function() {
          $("#modalProductNego").modal("show");
+      });
+      
+      $("#btnSubmitNego").on("click", function(e) {
+         $("#modalProductNego").modal("hide");
       });
       
       //모달창을 닫기 버튼을 누르면 실행

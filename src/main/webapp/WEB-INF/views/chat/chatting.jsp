@@ -238,6 +238,7 @@
 				for (var i = 0; i < result.length; i++) {
 					if (result[i][0].value == fromID) {
 						result[i][0].value = '나';
+						
 					}
 					addChat(result[i][0].value, result[i][2].value,
 							result[i][3].value);

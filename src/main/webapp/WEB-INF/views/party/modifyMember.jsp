@@ -33,7 +33,7 @@
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-body">
-                    <form id="frmMember" method="post" action="/party/joinMember">
+                    <form id="frmMember" method="post" action="/party/modifyMember">
                 <div class="form-group idBox">
                     <input id="userId" name="userId"  value="${partyId}" class="form-control" readonly>
                 </div>
