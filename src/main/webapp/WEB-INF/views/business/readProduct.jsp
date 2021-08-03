@@ -25,7 +25,9 @@
           <sec:authorize access="isAuthenticated()">
             <c:if test="${customUser.curUser.userId ne post.writer.userId}">
                <button data-oper='chat' class="btn btn-secondary">채팅하기</button>
+               <c:if test="${child ne 7}">
                <button data-oper='nego' class="btn btn-secondary">가격제안</button>
+               </c:if>
     		   <button id='cart' class="btn btn-secondary">장바구니 담기</button>
     		   <button id='trade_kakao' class="btn btn-secondary">카카오페이로 결제하기</button>
                  <c:if test="${child == 7}">
@@ -109,7 +111,7 @@
                         </div>
                         <div class="modal-footer">
                         
-                           <button id='btnPriceModal' type="submit" class="btn btn-primary">입찰</button>
+                           <button id='btnPriceModal' type="button" class="btn btn-primary">입찰</button>
                            <button id='btnCloseModal' type="button" class="btn btn-default">취소</button>
                            <input type="hidden" id="sellerId" name="sellerId" value="${post.writer.userId}">
                            <input type="hidden" name="boardId" value="${boardId}">
@@ -151,8 +153,10 @@
 
 <script type="text/javascript"> // El에 JSP가 만들어져야 돌아감 ↓
    $(document).ready(function() {
-		makeChart();
-	   $("#charge_kakao").click(function () {
+	   if("${child == 7}"){
+			makeChart();
+	   }
+	   $("#trade_kakao").click(function () {
 	         var IMP = window.IMP; // 생략가능
 	         IMP.init('imp24192490');
 	         // 'iamport' 대신 부여받은 "가맹점 식별코드"를 사용
@@ -368,9 +372,9 @@ const countDownTimer = function (id, date) {
    countDownTimer('auctionTimer', '${condition.auctionEndDate}'); // 2024년 4월 1일까지, 시간을 표시하려면 01:00 AM과 같은 형식을 사용한다.
    
    </script>
- <canvas id="lookChartProduct" style="width:100vh ; height=100vw">
 
-</canvas>
+ 	<canvas id="lookChartProduct" style="width:100vh ; height=100vw">
+	</canvas>
 
 
 
