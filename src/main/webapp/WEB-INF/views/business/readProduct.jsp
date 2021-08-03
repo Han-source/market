@@ -39,10 +39,11 @@
          
          <!--  경매 타이머 구역 -->
          <c:if test="${child == 7}">
-         <h2 id="auctionTimer"></h2>
+         	<h2 id="auctionTimer"></h2>
+	         <canvas id="lookChartProduct" style="width:100vh ; height=100vw">
+			 </canvas>
          </c:if>
          <br>
-         
          <c:if test="${child == 7}">
          <label>구매자 아이디 <input class="form-control"  value='${auctionMaxPrice.buyerId}' style='width:150px; height:50px'  readonly> </label>
          <label>경매 최고 가격 <input class="form-control"  value='${auctionMaxPrice.auctionCurrentPrice}' style='width:150px; height:50px'  readonly> </label>
@@ -153,7 +154,7 @@
 
 <script type="text/javascript"> // El에 JSP가 만들어져야 돌아감 ↓
    $(document).ready(function() {
-	   if("${child == 7}"){
+	   if("${child}" == "7"){
 			makeChart();
 	   }
 	   $("#trade_kakao").click(function () {
@@ -372,11 +373,6 @@ const countDownTimer = function (id, date) {
    countDownTimer('auctionTimer', '${condition.auctionEndDate}'); // 2024년 4월 1일까지, 시간을 표시하려면 01:00 AM과 같은 형식을 사용한다.
    
    </script>
-
- 	<canvas id="lookChartProduct" style="width:100vh ; height=100vw">
-	</canvas>
-
-
 
 <!--DB와 Chart 값을 연동하여 경매에 입찰할때마다 입찰자, 입찰금액이 Update 가능  -->
 <script>
