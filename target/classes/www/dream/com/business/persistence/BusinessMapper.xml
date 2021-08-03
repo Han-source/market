@@ -5,30 +5,30 @@
 <!-- Sql에 있는 Data를 가져 오기 위해서 만들어놓은 기본 틀 -->
 
 <mapper
-	namespace="www.dream.com.business.persistence.BusinessMapper">
-	<!-- resultMap : DB Table 정의 내역과 객체 정의 내역에 있어 mismatch(부조화)가 있을 시 이를 연동, 
-		짝 지어주는 정보를 정의함 -->
-	<resultMap type="www.dream.com.business.model.ProductVO"
-		id="productMap"
-		extends="www.dream.com.bulletinBoard.persistence.BoardMapper.boardMapper">
-		<id property="productId" column="product_id"></id>
-		<result property="userId" column="user_id"></result>
-		<result property="productPrice" column="product_price"></result>
-		<result property="discrim" column="discrim"></result>
-	</resultMap>
+   namespace="www.dream.com.business.persistence.BusinessMapper">
+   <!-- resultMap : DB Table 정의 내역과 객체 정의 내역에 있어 mismatch(부조화)가 있을 시 이를 연동, 
+      짝 지어주는 정보를 정의함 -->
+   <resultMap type="www.dream.com.business.model.ProductVO"
+      id="productMap"
+      extends="www.dream.com.bulletinBoard.persistence.BoardMapper.boardMapper">
+      <id property="productId" column="product_id"></id>
+      <result property="userId" column="user_id"></result>
+      <result property="productPrice" column="product_price"></result>
+      <result property="discrim" column="discrim"></result>
+   </resultMap>
 
 
-	<resultMap type="www.dream.com.business.model.TradeVO"
-		id="tradeMap">
-		<id property="tradeId" column="trade_id"></id>
-		<result property="productFinalPrice" column="product_final_price"></result>
-		<result property="sellerId" column="seller_id"></result>
-		<result property="buyerId" column="buyer_id"></result>
-		<result property="tradeDate" column="trade_date"></result>
-	</resultMap>
+   <resultMap type="www.dream.com.business.model.TradeVO"
+      id="tradeMap">
+      <id property="tradeId" column="trade_id"></id>
+      <result property="productFinalPrice" column="product_final_price"></result>
+      <result property="sellerId" column="seller_id"></result>
+      <result property="buyerId" column="buyer_id"></result>
+      <result property="tradeDate" column="trade_date"></result>
+   </resultMap>
 
 
-	<resultMap type="www.dream.com.business.model.TradeConditionVO" id="conditionMap">
+   <resultMap type="www.dream.com.business.model.TradeConditionVO" id="conditionMap">
       <id property="sellerId" column="seller_id"></id>
       <result property="buyerId" column="buyer_id"></result>
       <result property="tradeId" column="trade_id"></result>
@@ -40,17 +40,17 @@
    </resultMap>
 
 
-	<!-- public ProductVO findPriceById(@Param("productId") String id, @Param("child") int child); // id와 childId를 통해 조회  -->
-	<select id="findPriceById" resultMap="productMap"> 
-	<![CDATA[ 
-	select sp.*
-		  from s_reply p, s_trade_product sp
-		 where p.id = #{productId}
-		 and p.product_id = sp.product_id
-	]]>
-	</select>
+   <!-- public ProductVO findPriceById(@Param("productId") String id, @Param("child") int child); // id와 childId를 통해 조회  -->
+   <select id="findPriceById" resultMap="productMap"> 
+   <![CDATA[ 
+   select sp.*
+        from s_reply p, s_trade_product sp
+       where p.id = #{productId}
+       and p.product_id = sp.product_id
+   ]]>
+   </select>
 
-	<!--  public TradeConditionVO findAuctionPriceById(@Param("productId") String id); // id와 childId를 통해 조회 -->
+   <!--  public TradeConditionVO findAuctionPriceById(@Param("productId") String id); // id와 childId를 통해 조회 -->
    <select id="findAuctionPriceById" resultMap="conditionMap"> 
    <![CDATA[ 
    select sc.*
@@ -72,93 +72,118 @@
        and sc.auction_current_price > 0
    ]]>
    </select>
-	
-	<!-- public TradeConditionVO findNegoPriceByBuyerWithProductId(@Param("productId") String productId, @Param("tc") TradeConditionVO tc); -->
-	<select id="findNegoPriceByBuyerWithProductId" resultMap="conditionMap"> 
-	<![CDATA[ 
-	select * from s_trade_product tp, s_trade_condition tc
+   
+   <!-- public TradeConditionVO findNegoPriceByBuyerWithProductId(@Param("productId") String productId, @Param("tc") TradeConditionVO tc); -->
+   <select id="findNegoPriceByBuyerWithProductId" resultMap="conditionMap"> 
+   <![CDATA[ 
+   select * from s_trade_product tp, s_trade_condition tc
      where tp.product_id = tc.product_id
-	   and tc.product_id = #{productId}
-	   and tc.buyer_id = #{tc.buyerId}
-   	   and auction_current_price in(
+      and tc.product_id = #{productId}
+      and tc.buyer_id = #{tc.buyerId}
+         and auction_current_price in(
            select max(auction_current_price)
              from s_trade_condition
             where product_id = #{productId}
            )
        
-	]]>
-	</select>
-	
-	<!-- public int findShoppingCartByUserIdAndProductId(@Param("userId") String userId, @Param("productId") String productId); -->
-	<select id="findShoppingCartByUserIdAndProductId" resultType="_int"> 
-	<![CDATA[ 
-	select count(*)
-	  from s_shopping_bascket
-  	 where user_id = #{userId}
-	   and product_id = #{productId}
-		   
-	]]>
-	</select>
-	
-	<!-- 	public int insertCommonProduct(@Param("productVO") ProductVO productVO, @Param("post") PostVO post, @Param("board") BoardVO board); -->
-	<insert id="insertCommonProduct">
-		insert all
-		<selectKey keyProperty="post.id" order="BEFORE"
-			resultType="string">
-			select get_id(seq_reply_id.nextval) from dual
-		</selectKey>
-		into s_reply(id, board_id, child_board_id, writer_id, title, content, descrim, product_id)
-			values(#{post.id}, #{board.id}, #{board.parentId}, #{post.writer.userId}, #{post.title}, #{post.content}, #{productVO.DESCRIM4POST}, #{post.id})
-			
-		into s_trade_product(product_id, board_id, parent_id, user_id, product_price)
-			values(#{post.id}, #{board.id}, #{board.parentId}, #{post.writer.userId}, #{productVO.productPrice})
-			
-		into s_trade_condition(seller_id, product_id)
-			values(#{post.writer.userId}, #{post.id})
-			
-		select * from dual
-	</insert>
-	
-	
-	<!--  public int insertAuctionProduct(@Param("productVO") ProductVO productVO, @Param("post") PostVO post,
-	 @Param("tradeCondition") TradeConditionVO tradeCondition,  @Param("board") BoardVO board); -->
+   ]]>
+   </select>
+   
+   <select id="lookChartProduct" resultMap="conditionMap">
+   select *
+      from s_trade_condition
+     where product_id = #{productId} 
+   </select>
+   
+   <!-- 경매 가격의 최대값 비교  -->
+   <!-- public int findMaxBidPrice(String productId) -->
+   
+   <select id="findMaxBidPrice" resultType="_int">
+   select max(auction_current_price)
+      from s_trade_condition
+     where product_id = #{productId}
+   </select>
+   
+   <!-- public int findShoppingCartByUserIdAndProductId(@Param("userId") String userId, @Param("productId") String productId); -->
+   <select id="findShoppingCartByUserIdAndProductId" resultType="_int"> 
+   <![CDATA[ 
+   select count(*)
+     from s_shopping_bascket
+      where user_id = #{userId}
+      and product_id = #{productId}
+         
+   ]]>
+   </select>
+   
+   
+   
+   <!--    public int insertCommonProduct(@Param("productVO") ProductVO productVO, @Param("post") PostVO post, @Param("board") BoardVO board); -->
+   <insert id="insertCommonProduct">
+      insert all
+      <selectKey keyProperty="post.id" order="BEFORE"
+         resultType="string">
+         select get_id(seq_reply_id.nextval) from dual
+      </selectKey>
+      into s_reply(id, board_id, child_board_id, writer_id, title, content, descrim, product_id)
+         values(#{post.id}, #{board.id}, #{board.parentId}, #{post.writer.userId}, #{post.title}, #{post.content}, #{productVO.DESCRIM4POST}, #{post.id})
+         
+      into s_trade_product(product_id, board_id, parent_id, user_id, product_price)
+         values(#{post.id}, #{board.id}, #{board.parentId}, #{post.writer.userId}, #{productVO.productPrice})
+         
+      into s_trade_condition(seller_id, product_id)
+         values(#{post.writer.userId}, #{post.id})
+         
+      select * from dual
+   </insert>
+   
+   
+   <!--  public int insertAuctionProduct(@Param("productVO") ProductVO productVO, @Param("post") PostVO post,
+    @Param("tradeCondition") TradeConditionVO tradeCondition,  @Param("board") BoardVO board); -->
 
-	<insert id="insertAuctionProduct">
-		insert all
-		<selectKey keyProperty="post.id" order="BEFORE"
-			resultType="string">
-			select get_id(seq_reply_id.nextval) from dual
-		</selectKey>
-		into s_reply(id, board_id, child_board_id, writer_id, title, content, descrim, product_id)
-			values(#{post.id}, #{board.id}, #{board.parentId}, #{post.writer.userId}, #{post.title}, #{post.content}, #{productVO.DESCRIM4POST}, #{post.id})
-			
-		into s_trade_product(product_id, board_id, parent_id, user_id, product_price)
-			values(#{post.id}, #{board.id}, #{board.parentId}, #{post.writer.userId}, #{productVO.productPrice})
-			
-		into s_trade_condition(seller_id, product_id, auction_current_price,  auction_end_date)
-			values(#{post.writer.userId}, #{post.id}, #{tradeCondition.auctionCurrentPrice}, #{tradeCondition.auctionEndDate})
-			
-		select * from dual
-	</insert>
-	
-	<!-- public int insertAuctionPrice(@Param("post") PostVO post, @Param("tradeCondition") TradeConditionVO tradeCondition,  @Param("board") BoardVO board); -->
+   <insert id="insertAuctionProduct">
+      insert all
+      <selectKey keyProperty="post.id" order="BEFORE"
+         resultType="string">
+         select get_id(seq_reply_id.nextval) from dual
+      </selectKey>
+      into s_reply(id, board_id, child_board_id, writer_id, title, content, descrim, product_id)
+         values(#{post.id}, #{board.id}, #{board.parentId}, #{post.writer.userId}, #{post.title}, #{post.content}, #{productVO.DESCRIM4POST}, #{post.id})
+         
+      into s_trade_product(product_id, board_id, parent_id, user_id, product_price)
+         values(#{post.id}, #{board.id}, #{board.parentId}, #{post.writer.userId}, #{productVO.productPrice})
+         
+      into s_trade_condition(seller_id, product_id, auction_current_price,  auction_end_date)
+         values(#{post.writer.userId}, #{post.id}, #{tradeCondition.auctionCurrentPrice}, #{tradeCondition.auctionEndDate})
+         
+      select * from dual
+   </insert>
+   
+   <!-- public int insertAuctionPrice(@Param("post") PostVO post, @Param("tradeCondition") TradeConditionVO tradeCondition,  @Param("board") BoardVO board); -->
    <insert id="insertAuctionPrice">
       insert 
         into s_trade_condition(seller_id, buyer_id, product_id,  auction_current_price)
        values(#{tradeCondition.sellerId}, #{tradeCondition.buyerId}, #{post.id}, #{tradeCondition.auctionCurrentPrice})
    </insert>
-	<!--public void insertNegoProductPrice2Buyer(@Param("tradeCondition") TradeConditionVO tradeCondition, @Param("postId") String postId); -->
+   <!--public void insertNegoProductPrice2Buyer(@Param("tradeCondition") TradeConditionVO tradeCondition, @Param("postId") String postId); -->
 
-	<insert id="insertNegoProductPrice2Buyer">
-	insert into s_trade_condition (seller_id, product_id, discount_price, buyer_id) 
-	   values (#{post.writer.userId}, #{postId}, #{tradeCondition.discountPrice}, #{tradeCondition.buyerId}) 
-	</insert>
+   <insert id="insertNegoProductPrice2Buyer">
+   insert into s_trade_condition (seller_id, product_id, discount_price, buyer_id) 
+      values (#{post.writer.userId}, #{postId}, #{tradeCondition.discountPrice}, #{tradeCondition.buyerId}) 
+   </insert>
 
 
-	<!-- public void insertShopphingCart(@Param("userId") String userId, @Param("productId") String productId); -->
-	<insert id="insertShopphingCart">
-	insert into s_shopping_bascket (user_id, product_id) 
-	   values (#{userId}, #{productId}) 
-	</insert>
+   <!-- public void insertShopphingCart(@Param("userId") String userId, @Param("productId") String productId); -->
+   <insert id="insertShopphingCart">
+   insert into s_trade (user_id, product_id) 
+      values (#{userId}, #{productId}) 
+   </insert>
 
+   <!-- public void purchaseProduct(@Param("trade") TradeVO trade); -->
+   <insert id="purchaseProduct">
+      <selectKey keyProperty="trade.tradeId" order="BEFORE" resultType="string">
+            select get_id(seq_reply_id.nextval) from dual
+      </selectKey>
+      insert into s_trade (trade_id, product_price, seller_id, buyer_id) 
+         values (#{trade.tradeId}, #{trade.productFinalPrice}, #{trade.sellerId}, #{trade.buyerId}) 
+   </insert>
 </mapper>

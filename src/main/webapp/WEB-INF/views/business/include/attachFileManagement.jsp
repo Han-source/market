@@ -94,9 +94,7 @@ function appendUploadUl(attachVOInJson) {
 		}
 	$("#uploadResult div#sliderFrame div#slider").append(liTags); 
 }
-$("#uploadResult div#ninja-slider div.slider-inner ul").on("click", function () {
-	alert('hi');
-})
+
 
 	$(document).ready(function() {
 		//업로드 파일에 대한 확장자 제한하는 정규식

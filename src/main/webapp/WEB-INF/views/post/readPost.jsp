@@ -77,3 +77,50 @@
 });
 </script>
 
+<canvas id="lookChartProduct" style="width:100vh ; height=100vw">
+
+</canvas>
+
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      makeChart();
+      new Chart();
+   });
+</script>
+
+<!--DB와 Chart 값을 연동하여 경매에 입찰할때마다 입찰자, 입찰금액이 Update 가능  -->
+<script>
+   function makeChart() {
+      var ctx = document.getElementById("lookChartProduct");
+      var buyer = new Array();
+      var price = new Array();
+      
+      <c:forEach items="${tc}" var="item" varStatus="status">
+         buyer.push("${item.buyerId}");
+         price.push("${item.auctionCurrentPrice}");
+      </c:forEach> 
+      var chart = new Chart(ctx, {
+         type : 'line',
+           data: {
+               labels:buyer,
+               datasets: [{
+                   label: "입찰 금액",
+                   borderColor: 'rgb(204, 102, 255)',
+                   data: price
+               }]
+           },
+         options : {
+            responsive: false,
+            scales : {
+               yAxes : [ {
+                  ticks : {
+                     beginAtZero : true
+                  }
+               } ]
+            }
+         }
+      });
+   }
+</script>
+
