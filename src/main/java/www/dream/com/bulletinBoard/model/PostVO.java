@@ -26,8 +26,11 @@ import www.dream.com.party.model.Party;
 public class PostVO extends ReplyVO implements IHashTagOpponent{
     public static final String DESCRIM4POST = "post";
 
+    private List<PostVO> post;
     @HashTarget
     private String title;
+    @HashTarget
+    @PrintTarget(order=300, caption="조회수")
     private int readCnt;
     private int likeCnt; // 좋아요 수
     private int dislikeCnt; // 싫어요 수
@@ -35,6 +38,8 @@ public class PostVO extends ReplyVO implements IHashTagOpponent{
     private BoardVO board;
     private String representImage;
     private List<String> listAttachInStringFormat;
+
+    @HashTarget
     private List<AttachFileVO> listAttach;
 
     public PostVO(String title, String content, Party writer) {
@@ -51,10 +56,9 @@ public class PostVO extends ReplyVO implements IHashTagOpponent{
         return title + " [" + super.replyCnt + "]"; 
     }
     
-    public String getRepersent() {
-        String ret = null;
-        ret = listAttach.stream().map(e -> e.getJson()).reduce("", String::concat);
-        
+    public List<List<String>> getPostAttachListInGson() { // 기본 Architecture을 만듬
+    	List<List<String>> ret = new ArrayList<>();
+        ret.addAll(post.stream().map(vo -> listAttach.stream().map(a -> a.getJson()).collect(Collectors.toList())).collect(Collectors.toList()));
         return ret;
     }
     

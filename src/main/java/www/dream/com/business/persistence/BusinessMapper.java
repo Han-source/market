@@ -8,6 +8,7 @@ import www.dream.com.bulletinBoard.model.BoardVO;
 import www.dream.com.bulletinBoard.model.PostVO;
 import www.dream.com.business.model.ProductVO;
 import www.dream.com.business.model.TradeConditionVO;
+import www.dream.com.business.model.TradeVO;
 
 public interface BusinessMapper {
 
@@ -20,6 +21,12 @@ public interface BusinessMapper {
 	/* 경매 참여자 목록 조회 */
 	public List<TradeConditionVO> findAuctionPartyById(@Param("productId") String id);
 
+	/* 상품 차트 보는 기능 */
+	public List<TradeConditionVO> lookChartProduct(@Param("productId") String productId);
+
+	/* 경매 가격의 최대값 비교 */
+	public int findMaxBidPrice(@Param("productId") String productId);
+	
 	/* 안전거래에서 해당 이용자가 네고한 적이 있는지를 가져오는 함수 */
 	public TradeConditionVO findNegoPriceByBuyerWithProductId(@Param("productId") String productId, @Param("tc") TradeConditionVO tc);
 	/* 해당 상품을 내가 장바구니에 이미 담았는지를 검사 */
@@ -41,4 +48,7 @@ public interface BusinessMapper {
 	
 	/* 장바구니 담기 기능 */
 	public void insertShopphingCart(@Param("userId") String userId, @Param("productId") String productId);
+	
+	/* 결제가 완료 되면 결제 테이블에 값 담기 */
+	public void purchaseProduct(@Param("trade") TradeVO trade);
 }

@@ -27,8 +27,9 @@
                <button data-oper='chat' class="btn btn-secondary">채팅하기</button>
                <button data-oper='nego' class="btn btn-secondary">가격제안</button>
     		   <button id='cart' class="btn btn-secondary">장바구니 담기</button>
-                  <c:if test="${child == 7}">
-	            <button id ="btnAuction" type="button" class="btn btn-primary">경매 참여</button>
+    		   <button id='trade_kakao' class="btn btn-secondary">카카오페이로 결제하기</button>
+                 <c:if test="${child == 7}">
+	            	<button id ="btnAuction" type="button" class="btn btn-primary">경매 참여</button>
 	            </c:if>
             </c:if>
          </sec:authorize>
@@ -139,10 +140,9 @@
                   </div>
                </div>
             </div>  
+
    </div>
 </div>
-
-
 
 <!-- /.container-fluid -->
 
@@ -151,6 +151,50 @@
 
 <script type="text/javascript"> // El에 JSP가 만들어져야 돌아감 ↓
    $(document).ready(function() {
+		makeChart();
+	   $("#charge_kakao").click(function () {
+	         var IMP = window.IMP; // 생략가능
+	         IMP.init('imp24192490');
+	         // 'iamport' 대신 부여받은 "가맹점 식별코드"를 사용
+	         // i'mport 관리자 페이지 -> 내정보 -> 가맹점식별코드
+	         IMP.request_pay({
+	         pg : 'kakaopay',         /*
+	         
+	         */
+	         merchant_uid: 'merchant_' + new Date().getTime(),
+	         
+	         name: '주문명:결제테스트',
+	         //결제창에서 보여질 이름
+	         amount: 10000,
+	         //가격
+	         buyer_email: 'iamport@siot.do',
+	         buyer_name: '구매자이름',
+	         buyer_tel: '010-1234-5678',
+	         buyer_addr: '서울특별시 강남구 삼성동',
+	         buyer_postcode: '123-456',
+	         m_redirect_url: 'http://localhost:8080/business/complete'
+	         /*
+	         모바일 결제시,
+	         결제가 끝나고 랜딩되는 URL을 지정
+	         (카카오페이, 페이코, 다날의 경우는 필요없음. PC와 마찬가지로 callback함수로 결과가 떨어짐)
+	         */
+	         }, function (rsp) {
+	         console.log(rsp);
+	         if (rsp.success) {
+	         var msg = '결제가 완료되었습니다.';
+	         msg += '고유ID : ' + rsp.imp_uid;
+	         msg += '상점 거래ID : ' + rsp.merchant_uid;
+	         msg += '결제 금액 : ' + rsp.paid_amount;
+	         msg += '카드 승인번호 : ' + rsp.apply_num;
+	         } else {
+	         var msg = '결제에 실패하였습니다.';
+	         msg += '에러내용 : ' + rsp.error_msg;
+	         }
+	         alert(msg);
+	         });
+	         });
+
+	   
       adjustCRUDAtAttach('조회');
       negoSubmitFunction();
       var i = 0;
@@ -166,9 +210,18 @@
          $("#AuctionModal").modal("show");               
       });
       
-      $("#btnPriceModal").on("click", function(e) {
-          $("#AuctionModal").modal("hide");               
-       });
+	   // 경매 입찰시 최종 입찰 가격보다 더 높은 가격으로만 입찰 가능.
+		$("#btnPriceModal").on("click", function(e) {
+			var a = $("#auctionCurrentPrice").val() 
+			if(parseInt("${maxBidPrice}") > parseInt($("#auctionCurrentPrice").val())){
+				alert("입찰에 실패하였습니다.")
+			} else {
+				alert("입찰에 성공하였습니다.");
+				$("#frmAuction").submit();
+				return;
+			}
+			$("#AuctionModal").modal("hide");
+		});
        
       
       //EL이 표현한 LIST 출력 양식, 그래서 첨부파일이 안보임, El은 Server에서 돌아감
@@ -315,3 +368,46 @@ const countDownTimer = function (id, date) {
    countDownTimer('auctionTimer', '${condition.auctionEndDate}'); // 2024년 4월 1일까지, 시간을 표시하려면 01:00 AM과 같은 형식을 사용한다.
    
    </script>
+ <canvas id="lookChartProduct" style="width:100vh ; height=100vw">
+
+</canvas>
+
+
+
+<!--DB와 Chart 값을 연동하여 경매에 입찰할때마다 입찰자, 입찰금액이 Update 가능  -->
+<script>
+	function makeChart() {
+		var ctx = document.getElementById("lookChartProduct");
+		var buyer = new Array();
+		var price = new Array();
+		
+		<c:forEach items="${tc}" var="item" varStatus="status">
+			buyer.push("${item.buyerId}");
+			price.push("${item.auctionCurrentPrice}");
+		</c:forEach> 
+		var chart = new Chart(ctx, {
+			type : 'line',
+			  data: {
+			      labels:buyer,
+			      datasets: [{
+			          label: "입찰 금액",
+			          borderColor: 'rgb(204, 102, 255)',
+			          data: price
+			      }]
+			  },
+			options : {
+				responsive: false,
+				scales : {
+					yAxes : [ {
+						ticks : {
+							beginAtZero : true
+						}
+					} ]
+				}
+			}
+		});
+	}
+</script>
+<script>
+   
+</script>

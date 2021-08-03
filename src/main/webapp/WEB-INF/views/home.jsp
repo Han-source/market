@@ -5,5 +5,4 @@
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@include file="includes/header.jsp"%>
 
-    
 <%@include file="includes/footer.jsp"%>

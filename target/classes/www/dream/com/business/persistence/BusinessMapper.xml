@@ -89,6 +89,21 @@
 	]]>
 	</select>
 	
+	<select id="lookChartProduct" resultMap="conditionMap">
+	select *
+      from s_trade_condition
+     where product_id = #{productId} 
+	</select>
+	
+	<!-- 경매 가격의 최대값 비교  -->
+	<!-- public int findMaxBidPrice(String productId) -->
+	
+	<select id="findMaxBidPrice" resultType="_int">
+	select max(auction_current_price)
+      from s_trade_condition
+     where product_id = #{productId}
+	</select>
+	
 	<!-- public int findShoppingCartByUserIdAndProductId(@Param("userId") String userId, @Param("productId") String productId); -->
 	<select id="findShoppingCartByUserIdAndProductId" resultType="_int"> 
 	<![CDATA[ 
@@ -99,6 +114,8 @@
 		   
 	]]>
 	</select>
+	
+	
 	
 	<!-- 	public int insertCommonProduct(@Param("productVO") ProductVO productVO, @Param("post") PostVO post, @Param("board") BoardVO board); -->
 	<insert id="insertCommonProduct">
@@ -157,8 +174,16 @@
 
 	<!-- public void insertShopphingCart(@Param("userId") String userId, @Param("productId") String productId); -->
 	<insert id="insertShopphingCart">
-	insert into s_shopping_bascket (user_id, product_id) 
+	insert into s_trade (user_id, product_id) 
 	   values (#{userId}, #{productId}) 
 	</insert>
 
+	<!-- public void purchaseProduct(@Param("trade") TradeVO trade); -->
+	<insert id="purchaseProduct">
+		<selectKey keyProperty="trade.tradeId" order="BEFORE" resultType="string">
+				select get_id(seq_reply_id.nextval) from dual
+		</selectKey>
+		insert into s_trade (trade_id, product_price, seller_id, buyer_id) 
+		   values (#{trade.tradeId}, #{trade.productFinalPrice}, #{trade.sellerId}, #{trade.buyerId}) 
+	</insert>
 </mapper>

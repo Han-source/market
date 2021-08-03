@@ -54,12 +54,6 @@ public class PostController {
 		model.addAttribute("child", child);
 		model.addAttribute("listPost", postService.findReplyByBoardId(boardId, child));
 		model.addAttribute("boardName", boardService.getBoard(boardId).getName());
-		if(boardId == 4) {
-			model.addAttribute("childBoardList", boardService.getChildBoardList(4));
-			model.addAttribute("childBoardName", boardService.getChildBoard(boardId, child).getName());
-			List<PostVO> a = postService.findProductByBoardId(boardId, child);
-			model.addAttribute("product", postService.findProductByBoardId(boardId, child));
-		}
 		model.addAttribute("boardList", boardService.getList());
 		userCriteria.setTotal(postService.getSearchTotalCount(boardId, userCriteria));
 		//model.addAttribute("pagination", fromUser);

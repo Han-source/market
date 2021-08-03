@@ -1,20 +1,35 @@
 package www.dream.com.business.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.IOUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import www.dream.com.bulletinBoard.model.BoardVO;
 import www.dream.com.bulletinBoard.model.PostVO;
 import www.dream.com.bulletinBoard.persistence.ReplyMapper;
+import www.dream.com.bulletinBoard.service.PostService;
 import www.dream.com.business.model.ProductVO;
 import www.dream.com.business.model.TradeConditionVO;
+import www.dream.com.business.model.TradeVO;
 import www.dream.com.business.persistence.BusinessMapper;
 import www.dream.com.common.attachFile.model.AttachFileVO;
 import www.dream.com.common.attachFile.persistence.AttachFileVOMapper;
+import www.dream.com.framework.lengPosAnalyzer.PosAnalyzer;
 
 @Service
 public class BusinessService {
@@ -39,7 +54,17 @@ public class BusinessService {
 	public List<TradeConditionVO> findAuctionPartyById(String id) {
 		return businessMapper.findAuctionPartyById(id);
 	}
+	
+	/* 상품 차트 기능 */ 
+	public List<TradeConditionVO> lookChartProduct(String postId) {
+		return businessMapper.lookChartProduct(postId);
+	}
 
+	/* 경매 가격의 최대값 비교 */
+	public int findMaxBidPrice(String productId) {
+		return businessMapper.findMaxBidPrice(productId);
+	}
+	
 	/* 안전거래에서 해당 이용자가 네고한 적이 있는지를 가져오는 함수 */
 	public TradeConditionVO findNegoPriceByBuyerWithProductId(String productId, TradeConditionVO tc) {
 		return businessMapper.findNegoPriceByBuyerWithProductId(productId, tc);
@@ -51,23 +76,61 @@ public class BusinessService {
 
 	/* 일반 상품 등록 기능 */
 	@Transactional
-	public void insertCommonProduct(ProductVO productVO, PostVO post, BoardVO board) {
+	public void insertCommonProduct(ProductVO productVO, PostVO post, BoardVO board) throws IOException {
 		int affectedRows = businessMapper.insertCommonProduct(productVO, post, board);
 		List<AttachFileVO> listAttach = post.getListAttach();
 		if (listAttach != null && !listAttach.isEmpty()) {
 			attachFileVOMapper.insertAttachFile2ProductId(post.getId(), listAttach);
+		}else {
+			// 첨부파일이 없다면 강제적으로 이미지를 넣어줍니다.
+						List<AttachFileVO> listAttachFileVO = new ArrayList<>();
+						String UPLOAD_FOLDER = "C:\\uploadedFiles";
+						File uploadPath = new File(UPLOAD_FOLDER, PostService.getFolderName());
+						if (! uploadPath.exists()) {
+							//필요한 폴더 구조가 없다면 그 전체를 만들어 준다.
+							uploadPath.mkdirs(); //필요한 경로들을 다 만들겠다는 함수 mkdirs
+						}
+						File file = new File("C:\\Users\\User\\Desktop\\no.png");
+						DiskFileItem fileItem = new DiskFileItem("file", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length() , file.getParentFile());
+						InputStream input = new FileInputStream(file);
+						OutputStream os = fileItem.getOutputStream();
+						IOUtils.copy(input, os);
+						MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+						listAttachFileVO.add(new AttachFileVO(uploadPath, multipartFile));
+						List<AttachFileVO> list = listAttachFileVO;
+						attachFileVOMapper.insertAttachFile2ProductId(post.getId(), listAttachFileVO);
 		}
 	}
 
 	/* 경매 상품 등록 가능 */
 	@Transactional
-	public void insertAuctionProduct(ProductVO productVO, PostVO post, TradeConditionVO tradeCondition, BoardVO board) {
+	public void insertAuctionProduct(ProductVO productVO, PostVO post, TradeConditionVO tradeCondition, BoardVO board) throws IOException {
 		int affectedRows = businessMapper.insertAuctionProduct(productVO, post, tradeCondition, board);
 		List<AttachFileVO> listAttach = post.getListAttach();
 		if (listAttach != null && !listAttach.isEmpty()) {
 			attachFileVOMapper.insertAttachFile2ProductId(post.getId(), listAttach);
+		}else {
+			// 첨부파일이 없다면 강제적으로 이미지를 넣어줍니다.
+			List<AttachFileVO> listAttachFileVO = new ArrayList<>();
+			String UPLOAD_FOLDER = "C:\\uploadedFiles";
+			File uploadPath = new File(UPLOAD_FOLDER, PostService.getFolderName());
+			if (! uploadPath.exists()) {
+				//필요한 폴더 구조가 없다면 그 전체를 만들어 준다.
+				uploadPath.mkdirs(); //필요한 경로들을 다 만들겠다는 함수 mkdirs
+			}
+			File file = new File("C:\\Users\\User\\Desktop\\no.png");
+			DiskFileItem fileItem = new DiskFileItem("file", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length() , file.getParentFile());
+			InputStream input = new FileInputStream(file);
+			OutputStream os = fileItem.getOutputStream();
+			IOUtils.copy(input, os);
+			MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+			listAttachFileVO.add(new AttachFileVO(uploadPath, multipartFile));
+			List<AttachFileVO> list = listAttachFileVO;
+			attachFileVOMapper.insertAttachFile2ProductId(post.getId(), listAttachFileVO);
 		}
 	}
+
+	
 
 	/* 상품 네고 기능 */
 	public void insertNegoProductPrice2Buyer(TradeConditionVO tradeCondition, String postId, PostVO post) {
@@ -82,5 +145,11 @@ public class BusinessService {
 	public int findShoppingCartByUserIdAndProductId(String userId, String productId) {
 		return businessMapper.findShoppingCartByUserIdAndProductId(userId, productId); 
 	}
+	
+	/* 결제가 완료 되면 결제 테이블에 값 담기 */
+	public void purchaseProduct(TradeVO trade) {
+		businessMapper.purchaseProduct(trade);
+	}
+
 
 }

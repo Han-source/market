@@ -123,29 +123,12 @@ public class PostService {
 		List<AttachFileVO> listAttach = post.getListAttach();
 		if(listAttach != null && !listAttach.isEmpty()) {
 			attachFileVOMapper.insertAttachFile2PostId(post.getId(), listAttach);
-		} else {
-			// 첨부파일이 없다면 강제적으로 이미지를 넣어줍니다.
-			List<AttachFileVO> listAttachFileVO = new ArrayList<>();
-			String UPLOAD_FOLDER = "C:\\uploadedFiles";
-			File uploadPath = new File(UPLOAD_FOLDER, getFolderName());
-			if (! uploadPath.exists()) {
-				//필요한 폴더 구조가 없다면 그 전체를 만들어 준다.
-				uploadPath.mkdirs(); //필요한 경로들을 다 만들겠다는 함수 mkdirs
-			}
-			File file = new File("C:\\Users\\User\\Desktop\\no.png");
-			DiskFileItem fileItem = new DiskFileItem("file", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length() , file.getParentFile());
-			InputStream input = new FileInputStream(file);
-			OutputStream os = fileItem.getOutputStream();
-			IOUtils.copy(input, os);
-			MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-			listAttachFileVO.add(new AttachFileVO(uploadPath, multipartFile));
-			List<AttachFileVO> list = listAttachFileVO;
-			attachFileVOMapper.insertAttachFile2PostId(post.getId(), listAttachFileVO);
-		}
+		} 
 		return affectedRows; 
 	}
 	
-	private String getFolderName() {
+	
+	public static String getFolderName() {
 		SimpleDateFormat simpledf = new SimpleDateFormat("yyyy-MM-dd");
 		return simpledf.format(new Date()).replace('-', File.separatorChar); // 문자의 자료형으로 replace
 	}

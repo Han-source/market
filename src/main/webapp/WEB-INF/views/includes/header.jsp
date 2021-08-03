@@ -55,7 +55,7 @@
                      <c:forEach items="${boardList}" var="board">
                         <c:choose>
                            <c:when test="${board.id == 4}">
-                              <li><a href="/post/listBySearch?boardId=${board.id}&child=5">${board.name}</a></li>
+                              <li><a href="/business/productList?boardId=${board.id}&child=5">${board.name}</a></li>
                            </c:when>
                            <c:otherwise>
                               <li><a href="/post/listBySearch?boardId=${board.id}&child=0">${board.name}</a></li>
