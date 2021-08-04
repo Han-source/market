@@ -52,10 +52,10 @@ public class PostController {
 		//model.addAttribute("listPost", postService.getListByHashTag(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("child", child);
-		model.addAttribute("listPost", postService.findReplyByBoardId(boardId, child));
+		model.addAttribute("listPost", postService.getListByHashTag(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardName", boardService.getBoard(boardId).getName());
 		model.addAttribute("boardList", boardService.getList());
-		userCriteria.setTotal(postService.getSearchTotalCount(boardId, userCriteria));
+		userCriteria.setTotal(postService.getSearchTotalCount(boardId, child, userCriteria));
 		//model.addAttribute("pagination", fromUser);
 		// return 구문은 이제 없어졌다. void 형식으로 바뀌었기에 06.07
 	}

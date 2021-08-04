@@ -69,7 +69,8 @@
            and m.opponent_type = 'Post'
            and m.opponent_id = p.id
           and p.board_id = #{boardId}
-          and descrim = 'post'
+          and p.child_board_id = #{child}
+          
           
       </sql>
 
@@ -79,6 +80,7 @@
          select count(*)
            from s_reply
           where board_id = #{boardId}
+          and child_board_id = #{child}
           and descrim = 'post'
        ]]>
       </select>
@@ -102,30 +104,26 @@
       Criteria cri); -->
    <select id="getList" resultMap="rmPost">
    <![CDATA[
-   select p.*, w.name w_name, w.descrim w_descrim    
-   from(  
-       select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
-            af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
-            af.multimedia_type af_multimedia_type
-         from (
-            select p.id, count(r.id) reply_cnt
-            from(  
-                 SELECT *
-                   FROM s_reply re
-                  where board_id = #{boardId}
-                  and child_board_id = #{child}
-                       ORDER BY id DESC
-                  OFFSET  (#{cri.pageNumber} - 1) * #{cri.amount}  rows fetch first #{cri.amount} rows only
-                ) p left outer join s_reply r 
+   select p.*,w.name w_name, w.descrim w_descrim
+     from (
+           select p.*, pc.reply_cnt
+           from
+             (select p.id, count(r.id) reply_cnt     
+                from (
+                    SELECT *
+                     FROM s_reply
+                   where board_id = #{boardId}
+                   and child_board_id = #{child}
+                   order by id desc
+                    OFFSET (#{cri.pageNumber} - 1) * #{cri.amount} ROWS FETCH FIRST #{cri.amount} ROWS ONLY
+                ) p left outer join s_reply r
                on r.id like p.id || '%'
-            and length(r.id) > length(p.id)
-            group by p.id) pc, s_reply p, sm_post_attach pa, s_attach_file af
-         where pc.id = p.id
-            and pa.post_id = p.id
-            and af.uuid = pa.uuid
-         ORDER BY p.id DESC   
-          ) p, s_party w
-   where p.writer_id = w.user_id
+                  and length(r.id) > length(p.id)
+          group by p.id) pc, s_reply p 
+       where pc.id = p.id
+        ) p, s_party w
+    where p.writer_id = w.user_id
+    order by p.id desc
    ]]>
 
       <!-- Inline View로 먼저 만들어 줄건데 ()처리 출발점이 되는 요소 : s_reply p 그리고 게시판마다의 번호가 
@@ -246,23 +244,66 @@
    </select>
    
 
-   <!-- public List<PostVO> findProductByBoardId(@Param("boardId") int boardId, @Param("child") int child); -->
-   <select id="findProductByBoardId" resultMap="rmPost"> 
+   <!-- public List<PostVO> findProductList(@Param("boardId") int boardId, @Param("child") int child); -->
+   <select id="findProductList" resultMap="rmPost"> 
    <![CDATA[ 
-            select p.*, w.user_id w_user_id, w.name w_name, w.descrim w_descrim, 
-      af.uuid af_uuid,
-      af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
-      af.multimedia_type af_multimedia_type      
-        from s_reply p, s_attach_file af,
-               (select product_id, max(uuid) as uuid
-                      from sm_product_attach  
-                      group by product_id) am, s_party w
-       where p.board_id = #{boardId}
-         and p.child_board_id = #{child}
-         and p.writer_id = w.user_id         
-         and am.uuid = af.uuid
-         and p.id = am.product_id
+		select p.*, w.name w_name, w.descrim w_descrim    
+		   from(  
+		       select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
+		            af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+		            af.multimedia_type af_multimedia_type
+		         from (
+		            select p.id, count(r.id) reply_cnt
+		            from(  
+		                 SELECT *
+		                   FROM s_reply re
+		                  where board_id = #{boardId}
+		                  and child_board_id = #{child}
+		                       ORDER BY id DESC
+                     OFFSET  (#{cri.pageNumber} - 1) * #{cri.amount}  rows fetch first #{cri.amount} rows only
+		                ) p left outer join s_reply r 
+		               on r.id like p.id || '%'
+		            and length(r.id) > length(p.id)
+		            group by p.id) pc, s_reply p,  (select product_id, max(uuid) as uuid
+		                      from sm_product_attach  
+		                      group by product_id) pa, s_attach_file af
+		         where pc.id = p.id
+		            and pa.product_id = p.id
+		            and af.uuid = pa.uuid
+		         ORDER BY p.id DESC   
+		          ) p, s_party w
+		   where p.writer_id = w.user_id
    ]]>
+   </select>
+   
+   <!-- public List<PostVO> getProductListByHashTag(@Param("boardId") int boardId, @Param("child") int child, @Param("cri") Criteria cri); -->
+   <select id="getProductListByHashTag" resultMap="rmPost">
+   select p.*, w.name w_name, w.descrim w_descrim     
+     from(  
+ 			select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
+		            af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+		            af.multimedia_type af_multimedia_type
+		         from(
+                 select p.id, count(r.id) reply_cnt       
+                from(  
+                      select p.id  
+                      from<include refid="searchCommon"></include>
+                         ORDER BY id DESC   
+                     OFFSET  (#{cri.pageNumber} - 1) * #{cri.amount}  rows fetch first #{cri.amount} rows only
+                    ) p left outer join s_reply r 
+                 on r.id like p.id || '%'
+                and length(r.id) > length(p.id)
+               group by p.id
+               )pc, s_reply p,  (select product_id, max(uuid) as uuid
+		                      from sm_product_attach  
+		                      group by product_id) pa, s_attach_file af
+		         where pc.id = p.id
+		            and pa.product_id = p.id
+		            and af.uuid = pa.uuid
+		         ORDER BY p.id DESC   
+		          ) p, s_party w
+		   where p.writer_id = w.user_id
+
    </select>
    
    <!-- public List<PostVO> findProductShoppingCart(@Param("boardId") String boardId, @Param("child") int child, @Param("userId") int userId); -->

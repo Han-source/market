@@ -1,0 +1,118 @@
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.product_wrap{
+    max-width: 1100px;
+    height: 630px;
+    margin: 2rem auto;
+}
+
+.product_imgs{
+    display: flex;
+}
+
+/* img{ */
+/*     width: 100%; */
+/*     display: block; */
+/*     overflow: hidden; */
+/* } */
+
+.product_content{
+    padding: 2rem 1rem;
+    line-height: 1.5;
+}
+.product_title{
+    font-size: 2.8rem;
+    text-transform: capitalize;
+    font-weight: 700;
+    position: relative;
+    color: #12263a;
+    margin: 1rem 0;
+}
+.product_title::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 4px;
+    width: 80px;
+    background: #12263a;
+}
+
+.product_price{
+    margin: 1rem 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.product_detail{
+    width: 100%;
+    height: 200px;
+    text-transform: capitalize;
+    color: #12263a;
+    padding-bottom: 0.6rem;
+    overflow-y: scroll;
+}
+
+.product_detail span{
+    line-height: 1.5;
+}
+
+.product_button{
+    margin: 1.5rem 0;
+}
+.product_button button{
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    text-align: center;
+    padding: 0.45rem 0.8rem;
+    outline: 0;
+    margin-right: 0.2rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    background-color: #fff;
+    color: #12263a;
+}
+
+.product_button button:hover{
+    opacity: 0.9;
+}
+
+.product_like:hover{
+    background-color: rgb(207, 35, 35);
+    color: #fff;
+}
+
+.product_chat:hover{
+    background-color: #B8E9FF;
+    color: #fff;
+}
+
+@media screen and (min-width: 992px){
+    .product_wrap{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 1.5rem;
+    }
+    .product_img{
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .product_imgs{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .product_content{
+        display: flex;
+        flex: none;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 0;
+    }
+} 

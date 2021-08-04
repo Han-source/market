@@ -51,6 +51,8 @@ public class PostVO extends ReplyVO implements IHashTagOpponent{
         return "Post";
     }
     
+
+    
     @PrintTarget(order=100, caption="제목", withAnchor=true)
     public String getTitleWithCnt() {
         return title + " [" + super.replyCnt + "]"; 

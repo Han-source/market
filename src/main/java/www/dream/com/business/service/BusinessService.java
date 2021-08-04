@@ -30,13 +30,15 @@ import www.dream.com.business.persistence.BusinessMapper;
 import www.dream.com.common.attachFile.model.AttachFileVO;
 import www.dream.com.common.attachFile.persistence.AttachFileVOMapper;
 import www.dream.com.framework.lengPosAnalyzer.PosAnalyzer;
+import www.dream.com.hashTag.service.HashTagService;
 
 @Service
 public class BusinessService {
 
 	@Autowired
 	private BusinessMapper businessMapper;
-
+	@Autowired
+	private HashTagService hashTagService;
 	@Autowired
 	private AttachFileVOMapper attachFileVOMapper;
 
@@ -78,6 +80,11 @@ public class BusinessService {
 	@Transactional
 	public void insertCommonProduct(ProductVO productVO, PostVO post, BoardVO board) throws IOException {
 		int affectedRows = businessMapper.insertCommonProduct(productVO, post, board);
+		Map<String, Integer> mapOccur = PosAnalyzer.getHashTags(post); // 06.01에 만든 PosAnalyzer FrameWork
+		//수 많은 단어가 들어왔는데, 기존의 단어와 새롭게 들어올 단어를 분리해야할것 같음
+		hashTagService.CreateHashTagAndMapping(post, mapOccur);
+
+		
 		List<AttachFileVO> listAttach = post.getListAttach();
 		if (listAttach != null && !listAttach.isEmpty()) {
 			attachFileVOMapper.insertAttachFile2ProductId(post.getId(), listAttach);
@@ -106,6 +113,9 @@ public class BusinessService {
 	@Transactional
 	public void insertAuctionProduct(ProductVO productVO, PostVO post, TradeConditionVO tradeCondition, BoardVO board) throws IOException {
 		int affectedRows = businessMapper.insertAuctionProduct(productVO, post, tradeCondition, board);
+		Map<String, Integer> mapOccur = PosAnalyzer.getHashTags(post); // 06.01에 만든 PosAnalyzer FrameWork
+		//수 많은 단어가 들어왔는데, 기존의 단어와 새롭게 들어올 단어를 분리해야할것 같음
+		hashTagService.CreateHashTagAndMapping(post, mapOccur);
 		List<AttachFileVO> listAttach = post.getListAttach();
 		if (listAttach != null && !listAttach.isEmpty()) {
 			attachFileVOMapper.insertAttachFile2ProductId(post.getId(), listAttach);

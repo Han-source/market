@@ -61,30 +61,24 @@ public class PostService {
 	// 이전 버전에 있던 getTotalCount getList 함수는 더이상 사용하지 않음 06.07
 	
 	public List<PostVO> getListByHashTag(Party curUser, int boardId, int child, Criteria cri){
-		
-		if (cri.hasSearching()){
+		if (cri.hasSearching()) {
 			String[] searchingHashtags = cri.getSearchingHashtags();
 			if (curUser != null) {
 				mngPersonalSearFavorite(curUser, searchingHashtags);
-			}	
-			return replyMapper.getListByHashTag(boardId, cri);
-		} else {
-			if (curUser == null) {
-				return replyMapper.getList(boardId, child, cri);
-			} else {
-				//개인화 서비스
-				return replyMapper.getList(boardId, child, cri);
 			}
+			return replyMapper.getListByHashTag(boardId, child, cri);
+		} else {
+			return replyMapper.getList(boardId, child, cri);
 		}
 	}
 	
-	public long getSearchTotalCount(int boardId, Criteria cri) {
+	public long getSearchTotalCount(int boardId, int child, Criteria cri) {
 		
 		if (cri.hasSearching()){
-			return replyMapper.getSearchTotalCount(boardId, cri);
+			return replyMapper.getSearchTotalCount(boardId, child, cri);
 		} else {
 			//return postMapper.getTotalCount(boardId, PostVO.DESCRIM4POST);
-			return replyMapper.getTotalCount(boardId);
+			return replyMapper.getTotalCount(boardId, child);
 		}
 	}
 
@@ -96,8 +90,16 @@ public class PostService {
 		return replyMapper.findReplyByBoardId(boardId, child);
 	}
 	
-	public List<PostVO> findProductByBoardId(int boardId, int child){
-		return replyMapper.findProductByBoardId(boardId, child);
+	public List<PostVO> findProductList(Party curUser, int boardId, int child, Criteria cri){
+		if (cri.hasSearching()) {
+			String[] searchingHashtags = cri.getSearchingHashtags();
+			if (curUser != null) {
+				mngPersonalSearFavorite(curUser, searchingHashtags);
+			}
+			return replyMapper.getProductListByHashTag(boardId, child, cri);
+		} else {
+			return replyMapper.findProductList(boardId, child, cri);
+		}
 	}
 	/**boardId, childBoardId, userId로 내가 장바구니에 담은 상품 조회 */
 	public List<PostVO> findProductShoppingCart(String userId){

@@ -19,13 +19,11 @@
 </style>
 
 <!-- 첨부파일 목록 출력 부분  -->
-	<div>
-		<label>첨부파일</label>
-	</div>
+	
 		<div class="form-group">
 			<div id="uploadDiv">
 				<label class="btn btn-primary btn-file">
-        첨부첨부<input id="inFiles" type="file" name="upLoadFile" style="display: none;" multiple>
+				첨부<input id="inFiles" type="file" name="upLoadFile" style="display: none;" multiple>
        		 </label>
 			</div>
 

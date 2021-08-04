@@ -10,9 +10,11 @@ import www.dream.com.framework.printer.ClassPrintTarget;
 @ClassPrintTarget
 public class ProductVO extends BoardVO{
 	public static final String DESCRIM4POST = "product";
-
+	
 	private String productId;
 	private String userId;
 	private int productPrice;
 	private String discrim;
+	
+	
 }

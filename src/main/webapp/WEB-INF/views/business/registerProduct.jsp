@@ -12,18 +12,18 @@
    <div class="card shadow mb-4">
       <div class="card-body">
       <c:choose>
-	 	<c:when test="${child == 5}">
-	 	<h3> 직접거래 방식입니다. </h3>
-	 	</c:when>
-	 	<c:when test="${child == 6}">
-	 	<h3> 안전거래 방식입니다. </h3>
-	 	</c:when>
-	 	<c:when test="${child == 7}">
-	 	<h3> 경매거래 방식입니다. </h3>
-	 	</c:when>
-	 </c:choose>
-	 
-	  
+       <c:when test="${child == 5}">
+       <h3> 직접거래 방식입니다. </h3>
+       </c:when>
+       <c:when test="${child == 6}">
+       <h3> 안전거래 방식입니다. </h3>
+       </c:when>
+       <c:when test="${child == 7}">
+       <h3> 경매거래 방식입니다. </h3>
+       </c:when>
+    </c:choose>
+    
+     
              <%@include file="../common/attachFileManagement.jsp"%>
             <form id="frmPost" method="post" action="/business/registerProduct">
                <%@ include file="./include/productCommon.jsp" %>

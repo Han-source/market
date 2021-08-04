@@ -15,10 +15,11 @@ import www.dream.com.party.model.Party;
 public interface ReplyMapper { // 추후 Data를 가져오기 위해서 Interface -> Mapper 생성
 	//LRCUD Data건수는 많으니까 long으로 int로 return하면 안됨
 	/**--------------------------- 게시글 처리 함수 정의 영역------------------------- */
-	/** public long  getTotalCount(@Param("boardId") int boardId, @Param("descrim") String descrim); */
-	public long  getTotalCount(@Param("boardId") int boardId);
+	/** public long  getTotalCount(@Param("boardId") int boardId, @Param("descrim") String descrim); 
+	 * @param child */
+	public long  getTotalCount(@Param("boardId") int boardId, @Param("child") int child);
 	
-	public long  getSearchTotalCount(@Param("boardId") int boardId, @Param("cri") Criteria cri);
+	public long  getSearchTotalCount(@Param("boardId") int boardId,@Param("child") int child, @Param("cri") Criteria cri);
 	
 	public String getPostIdWithUserId(@Param("userId") String userId);
 	
@@ -28,7 +29,7 @@ public interface ReplyMapper { // 추후 Data를 가져오기 위해서 Interfac
 	// xml에서 쓰이기 위해 @Param도 사용
 	
 	// 초기 화면 띄울때 활용 
-	public List<PostVO> getListByHashTag(@Param("boardId") int boardId, @Param("cri") Criteria cri);
+	public List<PostVO> getListByHashTag(@Param("boardId") int boardId , @Param("child") int child, @Param("cri") Criteria cri);
 	
 	// id 값으로 Post및 Reply, Reply of Reply 객체 조회
 	public PostVO findReplyById(@Param("id") String id, @Param("child") int child); // 조회
@@ -43,7 +44,9 @@ public interface ReplyMapper { // 추후 Data를 가져오기 위해서 Interfac
 	// boardId 값으로 Post및 Reply, Reply of Reply 객체 조회
 	public List<PostVO> findReplyByBoardId(@Param("boardId") int boardId, @Param("child") int child); // 조회
 	//상품 조회
-	public List<PostVO> findProductByBoardId(@Param("boardId") int boardId, @Param("child") int child); // 조회
+	public List<PostVO> findProductList(@Param("boardId") int boardId, @Param("child") int child, @Param("cri") Criteria cri); // 조회
+	// 상품 게시판에서 검색하는 것
+	public List<PostVO> getProductListByHashTag(@Param("boardId") int boardId, @Param("child") int child, @Param("cri") Criteria cri);
 	
 	/** 게시글 등록 */
 	public int insert(@Param("board") BoardVO board, @Param("child") int child, @Param("post") PostVO post);

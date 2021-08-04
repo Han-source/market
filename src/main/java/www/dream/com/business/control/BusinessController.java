@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
@@ -77,9 +78,10 @@ public class BusinessController {
 		model.addAttribute("boardName", boardService.getBoard(boardId).getName());
 		model.addAttribute("childBoardList", boardService.getChildBoardList(4));
 		model.addAttribute("childBoardName", boardService.getChildBoard(boardId, child).getName());
-		model.addAttribute("productList", postService.findProductByBoardId(boardId, child));
+		List<PostVO> a = postService.findProductList(curUser, boardId, child, userCriteria);
+		model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardList", boardService.getList());
-		userCriteria.setTotal(postService.getSearchTotalCount(boardId, userCriteria));
+		userCriteria.setTotal(postService.getSearchTotalCount(boardId, child, userCriteria));
 	}
 
 	@GetMapping(value = "readProduct")
