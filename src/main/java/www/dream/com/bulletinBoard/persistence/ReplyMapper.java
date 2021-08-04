@@ -48,6 +48,24 @@ public interface ReplyMapper { // 추후 Data를 가져오기 위해서 Interfac
 	// 상품 게시판에서 검색하는 것
 	public List<PostVO> getProductListByHashTag(@Param("boardId") int boardId, @Param("child") int child, @Param("cri") Criteria cri);
 	
+	/** 조회수 증가 처리 */
+	public int cntPlus(String id);
+	
+	/** ddl 좋아요 검사 테이블에 해당하는 값 넣기 */
+	public int checkLike(@Param("id") String id, @Param("userId") String userId);
+	public void upcheckLike(@Param("id") String id, @Param("userId") String userId);
+	
+	/** 좋아요 증가 처리 */
+	public void uplike(String id);
+	
+	/** 좋아요 감소 처리 */
+	public void downlike(@Param("id") String id);
+	public int deleteCheckLike(@Param("id") String id, @Param("userId") String userId);	
+	
+	/** 게시글 실시간 좋아요 처리 */
+	public int getLike(@Param("id") String id, @Param("userId") String userId);
+	
+	
 	/** 게시글 등록 */
 	public int insert(@Param("board") BoardVO board, @Param("child") int child, @Param("post") PostVO post);
 	// PostVO를 객체로 받는 insert 함수 객체 이름은 post @Param의 이름도 "post" 그리고 BoardVO에서 board id를 가져온다. 

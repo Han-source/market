@@ -6,7 +6,7 @@
 
 <!-- Begin Page Content -->
 <div class="container-fluid"></div>
-<!-- DataTales Example -->
+   		<p>
 <div class="card shadow mb-4">
 	<div class="card-body">
 		<div class="form-group">

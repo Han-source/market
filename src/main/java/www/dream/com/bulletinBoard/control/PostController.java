@@ -2,7 +2,6 @@ package www.dream.com.bulletinBoard.control;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -63,13 +63,20 @@ public class PostController {
 	@GetMapping(value = { "readPost", "modifyPost" }) // (value="readPost")가 바뀌었다. 여러개 호출하겠다고 value값을 조정
 	// 밑에는 없어도 된다. 사실상 구조는 동일하다.
 	public void findPostById(@RequestParam("boardId") int boardId, @RequestParam("child") int child, String toId,
-			@RequestParam("postId") String id, Model model,
+			@RequestParam("postId") String id, Model model, @AuthenticationPrincipal Principal principal,
 			@ModelAttribute("pagination") Criteria fromUser) { // 게시글 조회 후 다시 돌아오기 위해 Criteria fromUser 추가
+		Party curUser = null;
+		if (principal != null) {
+			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+			CustomUser cu = (CustomUser) upat.getPrincipal();
+			curUser = cu.getCurUser();
+			model.addAttribute("userId", curUser.getUserId());
+		}
 		model.addAttribute("boardList", boardService.getList());
 		model.addAttribute("child", child);
 		model.addAttribute("post", postService.findPostById(id, child));
 		model.addAttribute("boardId", boardId);// 그래서 findPostById 함수에도 boardId를 하나더 추가 시켜 주자
-		
+		model.addAttribute("checkLike", postService.checkLike(id, curUser.getUserId()));//좋아요 누른거 검사하기
 		// 그렇게 해야 remove쪽으로 던져줄 값이 하나 생긴다.
 	}
 
@@ -152,7 +159,26 @@ public class PostController {
 		return "redirect:/post/listBySearch" + builder.toUriString();
 		// 내가 어떤 정보가 필요한데, 그 정보의 출발점은 어디며, 연동계통은 어디이며 그 정보를 살려내어서 이곳(removePost)까지 받아낼 것
 	}
+	@ResponseBody
+	@GetMapping(value = "getLike")
+	public int getLike(String id, String userId) {
+		int a = postService.getLike(id, userId);
+		return postService.getLike(id, userId);
+	}
 	
+	@ResponseBody
+	@PostMapping(value = "DownlikeCnt")
+	public void downlike(String id, String userId) {
+		postService.downlike(id);
+		postService.deleteCheckLike(id, userId);
+	}
+	
+	@ResponseBody
+	@PostMapping(value = "checklikeCnt")
+	public void checkLike(String id, String userId) {
+		postService.upcheckLike(id, userId);
+		postService.uplike(id);
+	}
 }
 
 // boardId가 들어 오면 model 값에 boardId를 담고, readPost할때, 다시금 boardId로 받을 수 있다.

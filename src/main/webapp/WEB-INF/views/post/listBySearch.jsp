@@ -13,11 +13,14 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
    <!-- DataTales Example -->
+   		<p>
    <div class="card shadow mb-4">
       <div class="card-header py-3">
          <h6 class="m-0 font-weight-bold text-primary">${boardName}글목록</h6>
       </div>
       <div class="card-body">
+      	<div>
+			<div>
          <!-- Paging 이벤트에서 서버로 요청보낸 인자들을 관리합니다. -->
          <form id="frmSearching" action="/post/listBySearch" method="get">
             <!--  정렬 방식 -->
@@ -94,6 +97,8 @@
             </div>
             <!-- /.modal -->
          </div>
+         </div>
+   		</div>
       </div>
    </div>
 </div>

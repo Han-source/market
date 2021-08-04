@@ -54,6 +54,49 @@
       </resultMap>
      -->
    <!-- ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆게시글 처리 함수 정의 영역☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ -->
+      <!-- public int cntPlus(PostVO post); -->
+      <update id="cntPlus">
+      UPDATE s_reply
+      	set read_cnt = read_cnt + 1
+      	where id = #{id}
+      </update>
+      
+      <select id="checkLike" resultType="_int">
+      	select count(*)
+      	from s_likecheck
+      	where postid = #{id}
+      		and user_id = #{userId}
+      </select>
+      
+      <delete id="deleteCheckLike">
+      	DELETE from s_likecheck
+      	where postid = #{id}
+      		and user_id = #{userId}
+      </delete>
+      
+      <insert id="upcheckLike">
+      	insert into s_likecheck(postid, user_id, like_check)
+         values(#{id}, #{userId}, 1)
+      </insert>
+      
+      <update id="uplike">
+      UPDATE s_reply
+      	set like_cnt = like_cnt + 1
+      	where id = #{id}
+      </update>
+
+      <update id="downlike">
+      UPDATE s_reply
+     	set like_cnt = like_cnt - 1
+     	where id = #{id}
+      </update>
+      
+      <select id="getLike" resultType="_int">
+      select like_cnt
+      	from s_reply
+      	where id = #{id}
+      </select>
+      
       
       <sql id="searchCommon"> <!-- 분할 정복은 아주 가치있는 작업 -->
           s_hashtag h, sm_ht2StringId m, s_reply p

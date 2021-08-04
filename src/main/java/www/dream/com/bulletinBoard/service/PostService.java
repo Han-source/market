@@ -179,4 +179,33 @@ public class PostService {
 		hashTagService.CreateHashTagAndMapping(curUser, mapOccur);
 	}
 	
+	/* 게시글 조회수 증가 처리 */
+	public int cntPlus(String id) {
+		return replyMapper.cntPlus(id); 
+	}
+	
+	/** ddl 좋아요 검사 테이블에 해당하는 값 넣기*/
+	public int checkLike(String id, String userId) {
+		return replyMapper.checkLike(id, userId);
+	}
+	public void upcheckLike(String id, String userId) {
+		replyMapper.upcheckLike(id, userId);
+	}
+	
+	/*좋아요 증가 및 감소 처리*/
+	public void uplike(String id) {
+		replyMapper.uplike(id);
+	}
+	public void deleteCheckLike(String id, String userId) {
+		replyMapper.deleteCheckLike(id, userId);
+	}
+	
+	public void downlike(String id) {
+		replyMapper.downlike(id);
+	}
+	
+	/** 게시글 실시간 좋아요 처리 */
+	public int getLike(String id, String userId) {
+		return replyMapper.getLike(id, userId);
+	}
 }
