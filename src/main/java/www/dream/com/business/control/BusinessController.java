@@ -30,6 +30,7 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 
+import oracle.jdbc.proxy.annotation.Post;
 import www.dream.com.bulletinBoard.model.BoardVO;
 import www.dream.com.bulletinBoard.model.PostVO;
 import www.dream.com.bulletinBoard.service.BoardService;
@@ -178,13 +179,37 @@ public class BusinessController {
 		businessService.insertShopphingCart(curUser.getUserId(), productId);
 		return "redirect:/business/readProduct?boardId=" + boardId + "&child=" + child + "&productId=" + productId;
 	}
+	
+	
+	/* 결제창 */
+	   @GetMapping(value = "payment")
+	   @PreAuthorize("isAuthenticated()")
+	   public void paymentProduct(@RequestParam("boardId") int boardId, String productId, @RequestParam("child") int child,
+	         Model model, @AuthenticationPrincipal Principal principal, @ModelAttribute("pagination") Criteria userCriteria) {
+	      Party curUser = null;
+	      if (principal != null) {
+	         TradeConditionVO newProductCondition = new TradeConditionVO();
+	         UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+	         CustomUser cu = (CustomUser) upat.getPrincipal();
+	         curUser = cu.getCurUser();
+	         newProductCondition.setBuyerId(curUser.getUserId());
+	         model.addAttribute("negoBuyer",businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
+	         model.addAttribute("buyerId", newProductCondition.getBuyerId());
+	      }
+	      model.addAttribute("boardList", boardService.getList());
+	      model.addAttribute("post", replyService.findProductById(productId, child));
+	      model.addAttribute("product", businessService.findPriceById(productId));
+	      model.addAttribute("condition", businessService.findAuctionPriceById(productId));
+	      model.addAttribute("auctionParty", businessService.findAuctionPartyById(productId));
+	      model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
+	      model.addAttribute("boardId", boardId);
+	      model.addAttribute("child", child);
 
-	private IamportClient api;
+	   }
+	
 
-	@GetMapping("/user/mypage/charge/point") // LCRUD 에서 Update 부분
-	public @ResponseBody void purchaseKaKao(@AuthenticationPrincipal Principal principal, Long amount) {
-		this.api = new IamportClient("3452420157053319",
-				"DXI0XVlgpUwS8B3Hj9cFxozTrGn6CXmfU4fS0B8pvFhDglkzvxe3VNXnukt7hPmcUC4UddkJSCn9XIJt");
+	@GetMapping("purchase") // LCRUD 에서 Update 부분
+	public @ResponseBody void purchaseKaKao(@AuthenticationPrincipal Principal principal, String price, String Seller, String buyer) {
 		Party curUser = null;
 		if (principal != null) {
 			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
@@ -193,18 +218,7 @@ public class BusinessController {
 		}
 		TradeVO newTrade = new TradeVO();
 		newTrade.setBuyerId(curUser.getUserId());
-	}
-
-	@RequestMapping(value = "/orderCompleteMobile", produces = "application/text; charset=utf8", method = RequestMethod.GET)
-	public String orderCompleteMobile(@RequestParam(required = false) String imp_uid,
-			@RequestParam(required = false) String merchant_uid, Model model, Locale locale, HttpSession session)
-			throws IamportResponseException, IOException {
-		IamportResponse<Payment> result = api.paymentByImpUid(imp_uid);
-		// 결제 가격과 검증결과를 비교한다.
-		if (result.getResponse().getAmount().compareTo(BigDecimal.valueOf(100)) == 0) {
-			System.out.println("검증통과");
-		}
-		return "home";
+		businessService.purchaseProduct(newTrade);
 	}
 
 }

@@ -46,8 +46,8 @@
 									<i class="fas fa-heart"></i>
 									
 								</button>
-								<button id='trade_kakao' class="btn btn-secondary">
-									<span>카카오페이로 결제하기</span>
+								<button id='payment' class="btn btn-secondary">
+									<span>결제하기</span>
 								</button>
 								<c:if test="${child == 7}">
 									<button id="btnAuction" type="button" class="product_chat"">
@@ -115,6 +115,12 @@
 					value="${child}"> <input type='hidden'
 					name='${_csrf.parameterName}' value='${_csrf.token}'>
 			</form>
+			
+            <form id="frmPayment" action="/business/payment" method="get">
+	            <input type="hidden" name="boardId" value="${boardId}">
+	            <input type="hidden" name="child" value="${child}">
+	            <input type="hidden" name="productId" value="${post.id}"> 
+            </form>   
 
 		</section>
 		<div id="modalProductNego" class="modal fade" tabindex="-1"
@@ -206,160 +212,91 @@
 
 <script type="text/javascript">
 	// El에 JSP가 만들어져야 돌아감 ↓
-	$(document)
-			.ready(
-					function() {
-						if ("${child}" == "7") {
-							makeChart();
-						}
-						$("#trade_kakao")
-								.click(
-										function() {
-											var IMP = window.IMP; // 생략가능
-											IMP.init('imp24192490');
-											// 'iamport' 대신 부여받은 "가맹점 식별코드"를 사용
-											// i'mport 관리자 페이지 -> 내정보 -> 가맹점식별코드
-											IMP
-													.request_pay(
-															{
-																pg : 'kakaopay', /*
-																    
-																 */
-																merchant_uid : 'merchant_'
-																		+ new Date()
-																				.getTime(),
+	$(document).ready(function() {
+		if ("${child}" == "7") {
+			makeChart();
+		}
+			adjustCRUDAtAttach('조회');
+			negoSubmitFunction();
+			var i = 0;
+			<c:forEach var="attachVoInStr" items="${post.attachListInGson}" >
+				var img = 'img';
+				var param = img + i;
+				appendUploadUl('<c:out value="${attachVoInStr}" />',param);
+				i += 1;
+			</c:forEach>
 
-																name : '주문명:결제테스트',
-																//결제창에서 보여질 이름
-																amount : 10000,
-																//가격
-																buyer_email : 'iamport@siot.do',
-																buyer_name : '구매자이름',
-																buyer_tel : '010-1234-5678',
-																buyer_addr : '서울특별시 강남구 삼성동',
-																buyer_postcode : '123-456',
-																m_redirect_url : 'http://localhost:8080/business/complete'
-															/*
-															모바일 결제시,
-															결제가 끝나고 랜딩되는 URL을 지정
-															(카카오페이, 페이코, 다날의 경우는 필요없음. PC와 마찬가지로 callback함수로 결과가 떨어짐)
-															 */
-															},
-															function(rsp) {
-																console
-																		.log(rsp);
-																if (rsp.success) {
-																	var msg = '결제가 완료되었습니다.';
-																	msg += '고유ID : '
-																			+ rsp.imp_uid;
-																	msg += '상점 거래ID : '
-																			+ rsp.merchant_uid;
-																	msg += '결제 금액 : '
-																			+ rsp.paid_amount;
-																	msg += '카드 승인번호 : '
-																			+ rsp.apply_num;
-																} else {
-																	var msg = '결제에 실패하였습니다.';
-																	msg += '에러내용 : '
-																			+ rsp.error_msg;
-																}
-																alert(msg);
-															});
-										});
+			// 경매 버튼 클릭시 모달 활성화
+			$("#btnAuction").on("click", function(e) {
+				$("#AuctionModal").modal("show");
+			});
 
-						adjustCRUDAtAttach('조회');
-						negoSubmitFunction();
-						var i = 0;
-						<c:forEach var="attachVoInStr" items="${post.attachListInGson}" >
-						var img = 'img';
-						var param = img + i;
-						appendUploadUl('<c:out value="${attachVoInStr}" />',
-								param);
-						i += 1;
-						</c:forEach>
+			// 경매 입찰시 최종 입찰 가격보다 더 높은 가격으로만 입찰 가능.
+			$("#btnPriceModal").on("click", function(e) {
+				var a = $("#auctionCurrentPrice")
+						.val()
+				if (parseInt("${maxBidPrice}") > parseInt($("#auctionCurrentPrice").val())) {
+					alert("입찰에 실패하였습니다.")
+				} else {
+					alert("입찰에 성공하였습니다.");
+					$("#frmAuction").submit();
+					return;
+				}
+				$("#AuctionModal").modal("hide");
+			});
 
-						// 경매 버튼 클릭시 모달 활성화
-						$("#btnAuction").on("click", function(e) {
-							$("#AuctionModal").modal("show");
-						});
+			//EL이 표현한 LIST 출력 양식, 그래서 첨부파일이 안보임, El은 Server에서 돌아감
+			//postCommon에 있는 함수를 부를 것
 
-						// 경매 입찰시 최종 입찰 가격보다 더 높은 가격으로만 입찰 가능.
-						$("#btnPriceModal")
-								.on(
-										"click",
-										function(e) {
-											var a = $("#auctionCurrentPrice")
-													.val()
-											if (parseInt("${maxBidPrice}") > parseInt($(
-													"#auctionCurrentPrice")
-													.val())) {
-												alert("입찰에 실패하였습니다.")
-											} else {
-												alert("입찰에 성공하였습니다.");
-												$("#frmAuction").submit();
-												return;
-											}
-											$("#AuctionModal").modal("hide");
-										});
+			$("button[data-oper='modify']").on("click", function() {
+				$("#frmOper").submit();
+			});
 
-						//EL이 표현한 LIST 출력 양식, 그래서 첨부파일이 안보임, El은 Server에서 돌아감
-						//postCommon에 있는 함수를 부를 것
+			$("button[data-oper='list']").on( "click", function() {
+				$("#frmOper").find("#postId").remove();
+				$("#frmOper").attr("action",
+						"/post/listBySearch").submit();
+			});
 
-						$("button[data-oper='modify']").on("click", function() {
-							$("#frmOper").submit();
-						});
+			//결제하기 페이지 이동
+	        $("#payment").on("click", function() {
+	             $("#frmPayment").attr("action", "/business/payment");
+	             frmPayment.submit();
+	        });
+			
+			$("button[data-oper='chat']").on("click", function() {
+				window.open("../chat/chatting?toId=${post.writer.userId}", "_blank", "width=400,height=500,left=1200,top=10");
+			});
 
-						$("button[data-oper='list']").on(
-								"click",
-								function() {
-									$("#frmOper").find("#postId").remove();
-									$("#frmOper").attr("action",
-											"/post/listBySearch").submit();
-								});
+			//장바구니 담기
+			$("#cart").on("click", function() {
+				if ("${checkShoppingCart}" == "0") {
+					$("#frmCart")
+							.attr("action",
+									"/business/insertShoppingCart");
+					$("#frmCart").submit();
+					alert('상품이 장바구니에 담겼습니다')
+				} else {
+					alert('이미 상품이 담겨있습니다')
+					return;
+				}
+			});
 
-						$("button[data-oper='chat']")
-								.on(
-										"click",
-										function() {
-											window
-													.open(
-															"../chat/chatting?toId=${post.writer.userId}",
-															"_blank",
-															"width=400,height=500,left=1200,top=10");
-										});
+			//가격제안 버튼을 눌렀을때 모달창 보여주기.      
+			$("button[data-oper='nego']").on("click", function() {
+				$("#modalProductNego").modal("show");
+			});
 
-						//장바구니 담기
-						$("#cart")
-								.on(
-										"click",
-										function() {
-											if ("${checkShoppingCart}" == "0") {
-												$("#frmCart")
-														.attr("action",
-																"/business/insertShoppingCart");
-												$("#frmCart").submit();
-												alert('상품이 장바구니에 담겼습니다')
-											} else {
-												alert('이미 상품이 담겨있습니다')
-												return;
-											}
-										});
+			$("#btnSubmitNego").on("click", function(e) {
+				$("#modalProductNego").modal("hide");
+			});
 
-						//가격제안 버튼을 눌렀을때 모달창 보여주기.      
-						$("button[data-oper='nego']").on("click", function() {
-							$("#modalProductNego").modal("show");
-						});
+			//모달창을 닫기 버튼을 누르면 실행
+			$("#btnCloseModal").on("click", function(e) {
+				$("#modalProductNego").modal("hide");
+			});
 
-						$("#btnSubmitNego").on("click", function(e) {
-							$("#modalProductNego").modal("hide");
-						});
-
-						//모달창을 닫기 버튼을 누르면 실행
-						$("#btnCloseModal").on("click", function(e) {
-							$("#modalProductNego").modal("hide");
-						});
-
-					});
+		});
 
 	//전송 버튼 눌렀을때 실행할 함수.
 	function negoSubmitFunction() {
@@ -498,7 +435,4 @@
 			}
 		});
 	}
-</script>
-<script>
-	
 </script>
