@@ -164,7 +164,7 @@ $('#kakao_trade').click(function () {
     // getter
     var IMP = window.IMP;
     IMP.init('imp24192490');
-    var money = 200;
+    var money = "${product.productPrice}";
     var csrfHN = "${_csrf.headerName}";
 	var csrfTV = "${_csrf.token}";
     IMP.request_pay({
@@ -188,20 +188,22 @@ $('#kakao_trade').click(function () {
             msg += '결제 금액 : ' + rsp.paid_amount;
             msg += '카드 승인번호 : ' + rsp.apply_num;
             $.ajax({
-                type: "GET", 
+                type: "POST", 
                 url: "/business/purchase", //충전 금액값을 보낼 url 설정
                 data: {
                     price : money,
                     buyer : "${buyerId}",
                     seller : "${post.writer.userId}"
-                },
+                },beforeSend : function(xhr) {
+    				xhr.setRequestHeader(csrfHN, csrfTV);
+    			},
             });
         } else {
             var msg = '결제에 실패하였습니다.';
             msg += '에러내용 : ' + rsp.error_msg;
         }
         alert(msg);
-        document.location.href="/business/"; //alert창 확인 후 이동할 url 설정
+        document.location.href="/business/productList?boardId=" + ${boardId} + "&child=" + ${child}; 
     });
 });
 </script>

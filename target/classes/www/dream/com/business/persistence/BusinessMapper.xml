@@ -183,7 +183,7 @@
 		<selectKey keyProperty="trade.tradeId" order="BEFORE" resultType="string">
 				select get_id(seq_reply_id.nextval) from dual
 		</selectKey>
-		insert into s_trade (trade_id, product_price, seller_id, buyer_id) 
+		insert into s_trade (trade_id, PRODUCT_FINAL_PRICE, seller_id, buyer_id) 
 		   values (#{trade.tradeId}, #{trade.productFinalPrice}, #{trade.sellerId}, #{trade.buyerId}) 
 	</insert>
 </mapper>

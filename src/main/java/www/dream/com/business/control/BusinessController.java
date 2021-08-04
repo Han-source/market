@@ -208,8 +208,8 @@ public class BusinessController {
 	   }
 	
 
-	@GetMapping("purchase") // LCRUD 에서 Update 부분
-	public @ResponseBody void purchaseKaKao(@AuthenticationPrincipal Principal principal, String price, String Seller, String buyer) {
+	@PostMapping("purchase") // LCRUD 에서 Update 부분
+	public @ResponseBody void purchaseKaKao(@AuthenticationPrincipal Principal principal, int price, String seller, String buyer) {
 		Party curUser = null;
 		if (principal != null) {
 			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
@@ -218,6 +218,8 @@ public class BusinessController {
 		}
 		TradeVO newTrade = new TradeVO();
 		newTrade.setBuyerId(curUser.getUserId());
+		newTrade.setSellerId(seller);
+		newTrade.setProductFinalPrice(price);
 		businessService.purchaseProduct(newTrade);
 	}
 
