@@ -13,11 +13,16 @@
 		                <h2 class = "product_title">${post.title}</h2>
 		                <h3 class = "product_price">
 		                	<c:choose>
-						        <c:when test="${negoBuyer eq null}"> 
-						            ${product.productPrice}
+						        <c:when test="${negoBuyer.discountPrice eq 0}"> 
+						            ${product.productPrice}원
 						        </c:when>
+						        
+						        <c:when test="${negoBuyer.auctionCurrentPrice ne 0}"> 
+						            ${product.productPrice}원
+						        </c:when>
+						        
 						        <c:otherwise> 
-						             ${negoBuyer.discountPrice}
+						             ${negoBuyer.discountPrice}원
 						        </c:otherwise>
 						    </c:choose>	
 		                </h3>
@@ -30,6 +35,7 @@
 		                    <span>목록</span>
 		                    <i class="fas fa-comment-dots"></i>
 		                </button>
+		                <sec:authentication property="principal" var ="customUser"/>
 		                <sec:authorize access="isAuthenticated()">
 							<c:if test="${customUser.curUser.userId ne post.writer.userId}">
 								<button data-oper='chat' class="product_chat">
@@ -46,11 +52,18 @@
 									<i class="fas fa-heart"></i>
 									
 								</button>
+								<c:if test="${child != 7}">
 								<button id='payment' class="btn btn-secondary">
 									<span>결제하기</span>
 								</button>
+								</c:if>
+								
+								<button id='autionpayment' class="btn btn-secondary">
+									<span>결제하기</span>
+								</button>
+								
 								<c:if test="${child == 7}">
-									<button id="btnAuction" type="button" class="product_chat"">
+									<button id="btnAuction" type="button" class="product_chat">
 										<span>경매참여</span>
 									</button>
 								</c:if>
@@ -65,22 +78,22 @@
 		            </div>
 		        </div>
 				
+		</section>
 
 
 			<!--  경매 타이머 구역 -->
 			<c:if test="${child == 7}">
+				남은 경매 시간
 				<h2 id="auctionTimer"></h2>
-				<canvas id="lookChartProduct" style="width: 100vh;">
-			 </canvas>
-				<label>구매자 아이디 <input class="form-control"
-					value='${auctionMaxPrice.buyerId}'
-					style='width: 150px; height: 50px' readonly>
-				</label>
-				<label>경매 최고 가격 <input class="form-control"
-					value='${auctionMaxPrice.auctionCurrentPrice}'
-					style='width: 150px; height: 50px' readonly>
-				</label>
-				<br>
+					<label>최고가 입찰자 <input class="form-control"
+						value='${maxBidPrice.buyerId}'
+						style='width: 150px; height: 50px' readonly>
+					</label>
+					<label>현재 가격 <input class="form-control"
+						value='${maxBidPrice.auctionCurrentPrice}'
+						style='width: 150px; height: 50px' readonly>
+					</label>
+					<br>
 
 				<hr size="10px">
 				<c:forEach items="${auctionParty}" var="party">
@@ -88,11 +101,13 @@
 						value='${party.buyerId}' style='width: 150px; height: 50px'
 						readonly>
 					</label>
-					<label>경매 가격 <input class="form-control"
+					<label>입찰 가격 <input class="form-control"
 						value='${party.auctionCurrentPrice}원'
 						style='width: 150px; height: 50px' readonly></label>
 					<br>
 				</c:forEach>
+				<canvas id="lookChartProduct" style="width: 100vh;">
+			 </canvas>
 			</c:if>
 
 
@@ -121,8 +136,14 @@
 	            <input type="hidden" name="child" value="${child}">
 	            <input type="hidden" name="productId" value="${post.id}"> 
             </form>   
+            
+            <form id="frmAutionpayment" action="/business/autionPayment" method="get">
+	            <input type="hidden" name="boardId" value="${boardId}">
+	            <input type="hidden" name="child" value="${child}">
+	            <input type="hidden" name="productId" value="${post.id}"> 
+            </form>   
+            
 
-		</section>
 		<div id="modalProductNego" class="modal fade" tabindex="-1"
 			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
@@ -211,8 +232,10 @@
 <%@include file="../includes/footer.jsp"%>
 
 <script type="text/javascript">
-	// El에 JSP가 만들어져야 돌아감 ↓
+
 	$(document).ready(function() {
+		$('#autionpayment').hide();
+		showPurchaseWhenAutionEnd();
 		if ("${child}" == "7") {
 			makeChart();
 		}
@@ -233,9 +256,8 @@
 
 			// 경매 입찰시 최종 입찰 가격보다 더 높은 가격으로만 입찰 가능.
 			$("#btnPriceModal").on("click", function(e) {
-				var a = $("#auctionCurrentPrice")
-						.val()
-				if (parseInt("${maxBidPrice}") > parseInt($("#auctionCurrentPrice").val())) {
+				var a = $("#auctionCurrentPrice").val()
+				if (parseInt("${maxBidPrice.auctionCurrentPrice}") > parseInt($("#auctionCurrentPrice").val())) {
 					alert("입찰에 실패하였습니다.")
 				} else {
 					alert("입찰에 성공하였습니다.");
@@ -264,6 +286,13 @@
 	             frmPayment.submit();
 	        });
 			
+			//경매 결제 페이지로 이동
+	        $("#autionpayment").on("click", function() {
+	             $("#frmAutionpayment").attr("action", "/business/autionPayment");
+	             $("#frmAutionpayment").submit();
+	        });
+	        
+			
 			$("button[data-oper='chat']").on("click", function() {
 				window.open("../chat/chatting?toId=${post.writer.userId}", "_blank", "width=400,height=500,left=1200,top=10");
 			});
@@ -271,9 +300,7 @@
 			//장바구니 담기
 			$("#cart").on("click", function() {
 				if ("${checkShoppingCart}" == "0") {
-					$("#frmCart")
-							.attr("action",
-									"/business/insertShoppingCart");
+					$("#frmCart").attr("action","/business/insertShoppingCart");
 					$("#frmCart").submit();
 					alert('상품이 장바구니에 담겼습니다')
 				} else {
@@ -364,6 +391,10 @@
 		// 메시지를 보냈으니 content의 값을 비워준다.
 		$("#auctionCurrentPrice").val();
 	}
+	
+	function showPurchaseWhenAutionEnd() {
+	
+	}
 </script>
 
 <!-- 경매 카운트 기능 -->
@@ -383,6 +414,8 @@
 				clearInterval(timer);
 				document.getElementById(id).textContent = '해당 경매가 종료 되었습니다!';
 				$('#btnAuction').hide();
+				if("${child}" == "7" && "${maxBidPrice.buyerId}" == "${userId}")
+				$('#autionpayment').show();
 				return;
 			}
 			var days = Math.floor(distDt / _day);
@@ -413,6 +446,7 @@
 		buyer.push("${item.buyerId}");
 		price.push("${item.auctionCurrentPrice}");
 		</c:forEach>
+		
 		var chart = new Chart(ctx, {
 			type : 'line',
 			data : {

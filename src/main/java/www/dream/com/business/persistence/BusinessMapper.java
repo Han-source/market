@@ -25,7 +25,7 @@ public interface BusinessMapper {
 	public List<TradeConditionVO> lookChartProduct(@Param("productId") String productId);
 
 	/* 경매 가격의 최대값 비교 */
-	public int findMaxBidPrice(@Param("productId") String productId);
+	public TradeConditionVO findMaxBidPrice(@Param("productId") String productId);
 	
 	/* 안전거래에서 해당 이용자가 네고한 적이 있는지를 가져오는 함수 */
 	public TradeConditionVO findNegoPriceByBuyerWithProductId(@Param("productId") String productId, @Param("tc") TradeConditionVO tc);

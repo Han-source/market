@@ -70,6 +70,7 @@
        where p.id = #{productId}
        and p.product_id = sc.product_id
        and sc.auction_current_price > 0
+       order by sc.auction_current_price 
    ]]>
    </select>
 	
@@ -85,6 +86,12 @@
              from s_trade_condition
             where product_id = #{productId}
            )
+       and discount_price in (
+           select min(discount_price)
+             from s_trade_condition
+            where product_id = #{productId}
+            and buyer_id = #{tc.buyerId}
+       )    
        
 	]]>
 	</select>
@@ -92,16 +99,27 @@
 	<select id="lookChartProduct" resultMap="conditionMap">
 	select *
       from s_trade_condition
-     where product_id = #{productId} 
+     where product_id = #{productId}
+     order by auction_current_price
 	</select>
 	
 	<!-- 경매 가격의 최대값 비교  -->
 	<!-- public int findMaxBidPrice(String productId) -->
 	
-	<select id="findMaxBidPrice" resultType="_int">
-	select max(auction_current_price)
-      from s_trade_condition
-     where product_id = #{productId}
+	<select id="findMaxBidPrice" resultMap="conditionMap">
+	select * from s_trade_product tp, s_trade_condition tc
+     where tp.product_id = tc.product_id
+	   and tc.product_id = #{productId}
+	   and auction_current_price in(
+           select max(auction_current_price)
+             from s_trade_condition
+            where product_id = #{productId}
+           )
+       and discount_price in (
+           select min(discount_price)
+             from s_trade_condition
+            where product_id = #{productId}
+            )         
 	</select>
 	
 	<!-- public int findShoppingCartByUserIdAndProductId(@Param("userId") String userId, @Param("productId") String productId); -->
@@ -174,7 +192,7 @@
 
 	<!-- public void insertShopphingCart(@Param("userId") String userId, @Param("productId") String productId); -->
 	<insert id="insertShopphingCart">
-	insert into s_trade (user_id, product_id) 
+	insert into s_shopping_bascket (user_id, product_id) 
 	   values (#{userId}, #{productId}) 
 	</insert>
 

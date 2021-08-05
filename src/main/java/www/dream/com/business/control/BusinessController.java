@@ -84,7 +84,7 @@ public class BusinessController {
 			curUser = cu.getCurUser();
 			newProductCondition.setBuyerId(curUser.getUserId());
 			model.addAttribute("userId", curUser.getUserId());
-			TradeConditionVO  a = businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition);
+			TradeConditionVO a = businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition);
 			model.addAttribute("negoBuyer",
 					businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
 			model.addAttribute("checkShoppingCart",
@@ -98,6 +98,7 @@ public class BusinessController {
 		model.addAttribute("auctionParty", businessService.findAuctionPartyById(productId));
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("child", child);
+		List<TradeConditionVO> a = businessService.lookChartProduct(productId);
 		model.addAttribute("tc", businessService.lookChartProduct(productId));
 		model.addAttribute("maxBidPrice", businessService.findMaxBidPrice(productId));
 	}
@@ -167,37 +168,65 @@ public class BusinessController {
 		businessService.insertShopphingCart(curUser.getUserId(), productId);
 		return "redirect:/business/readProduct?boardId=" + boardId + "&child=" + child + "&productId=" + productId;
 	}
-	
-	
-	/* 결제창 */
-	   @GetMapping(value = "payment")
-	   @PreAuthorize("isAuthenticated()")
-	   public void paymentProduct(@RequestParam("boardId") int boardId, String productId, @RequestParam("child") int child,
-	         Model model, @AuthenticationPrincipal Principal principal, @ModelAttribute("pagination") Criteria userCriteria) {
-	      Party curUser = null;
-	      if (principal != null) {
-	         TradeConditionVO newProductCondition = new TradeConditionVO();
-	         UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
-	         CustomUser cu = (CustomUser) upat.getPrincipal();
-	         curUser = cu.getCurUser();
-	         newProductCondition.setBuyerId(curUser.getUserId());
-	         model.addAttribute("negoBuyer",businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
-	         model.addAttribute("buyerId", newProductCondition.getBuyerId());
-	      }
-	      model.addAttribute("boardList", boardService.getList());
-	      model.addAttribute("post", replyService.findProductById(productId, child));
-	      model.addAttribute("product", businessService.findPriceById(productId));
-	      model.addAttribute("condition", businessService.findAuctionPriceById(productId));
-	      model.addAttribute("auctionParty", businessService.findAuctionPartyById(productId));
-	      model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
-	      model.addAttribute("boardId", boardId);
-	      model.addAttribute("child", child);
 
-	   }
-	
+	/* 일반 결제창 */
+	@GetMapping(value = "payment")
+	@PreAuthorize("isAuthenticated()")
+	public void paymentProduct(@RequestParam("boardId") int boardId, String productId, @RequestParam("child") int child,
+			Model model, @AuthenticationPrincipal Principal principal,
+			@ModelAttribute("pagination") Criteria userCriteria) {
+		Party curUser = null;
+		if (principal != null) {
+			TradeConditionVO newProductCondition = new TradeConditionVO();
+			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+			CustomUser cu = (CustomUser) upat.getPrincipal();
+			curUser = cu.getCurUser();
+			newProductCondition.setBuyerId(curUser.getUserId());
+			model.addAttribute("negoBuyer",
+					businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
+			model.addAttribute("buyerId", newProductCondition.getBuyerId());
+		}
+		model.addAttribute("boardList", boardService.getList());
+		model.addAttribute("post", replyService.findProductById(productId, child));
+		model.addAttribute("product", businessService.findPriceById(productId));
+		model.addAttribute("condition", businessService.findAuctionPriceById(productId));
+		model.addAttribute("auctionParty", businessService.findAuctionPartyById(productId));
+		model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
+		model.addAttribute("boardId", boardId);
+		model.addAttribute("child", child);
+	}
 
+	/* 경매 결제창 */
+	@GetMapping(value = "autionPayment")
+	@PreAuthorize("isAuthenticated()")
+	public void autionPaymentProduct(@RequestParam("boardId") int boardId, String productId, @RequestParam("child") int child,
+			Model model, @AuthenticationPrincipal Principal principal,
+			@ModelAttribute("pagination") Criteria userCriteria) {
+		Party curUser = null;
+		if (principal != null) {
+			TradeConditionVO newProductCondition = new TradeConditionVO();
+			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+			CustomUser cu = (CustomUser) upat.getPrincipal();
+			curUser = cu.getCurUser();
+			newProductCondition.setBuyerId(curUser.getUserId());
+			model.addAttribute("negoBuyer",
+					businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
+			model.addAttribute("buyerId", newProductCondition.getBuyerId());
+		}
+		model.addAttribute("boardList", boardService.getList());
+		model.addAttribute("post", replyService.findProductById(productId, child));
+		model.addAttribute("product", businessService.findPriceById(productId));
+		model.addAttribute("condition", businessService.findAuctionPriceById(productId));
+		model.addAttribute("auctionParty", businessService.findAuctionPartyById(productId));
+		model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
+		model.addAttribute("boardId", boardId);
+		model.addAttribute("child", child);
+		model.addAttribute("maxBidPrice", businessService.findMaxBidPrice(productId));
+	}
+	
 	@PostMapping("purchase") // LCRUD 에서 Update 부분
-	public @ResponseBody void purchase(@AuthenticationPrincipal Principal principal, int price, String seller, String buyer) {
+	public @ResponseBody void purchase(@AuthenticationPrincipal Principal principal, int price, String seller,
+			String buyer) {
 		Party curUser = null;
 		if (principal != null) {
 			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;

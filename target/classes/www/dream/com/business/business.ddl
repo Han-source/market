@@ -40,7 +40,7 @@ create table s_trade_condition(
 	product_id				varchar2(4000),
 	discount_price			number(19) default 0,
 	auction_current_price	number(19) default 0,
-	auction_end_date		timestamp default sysdate
+	auction_end_date		timestamp 
 )
 
 create table s_shopping_bascket(

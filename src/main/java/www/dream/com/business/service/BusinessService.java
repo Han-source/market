@@ -63,7 +63,7 @@ public class BusinessService {
 	}
 
 	/* 경매 가격의 최대값 비교 */
-	public int findMaxBidPrice(String productId) {
+	public TradeConditionVO findMaxBidPrice(String productId) {
 		return businessMapper.findMaxBidPrice(productId);
 	}
 	

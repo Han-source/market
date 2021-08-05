@@ -108,22 +108,15 @@
                             <div class="cart-item">
                             <c:if test="${child != 7}">
                                <c:if test="${negoBuyer.discountPrice != null}">
-                                   <span>할인이 적용된 가격</span>
+                                   <span>경매 낙찰가</span>
                                    <p>${negoBuyer.discountPrice}원</p>
                                </c:if>
                             </c:if>
                             
                             </div>                       
                             <div class="cart-total">
-                                <span>최종 가격</span>
-                                <c:choose>
-						        <c:when test="${negoBuyer eq null}"> 
-						            <p id="finalPrice">${product.productPrice}"</p>
-						        </c:when>
-						        <c:otherwise> 
-						             <p id="finalPrice">${negoBuyer.discountPrice}</p>
-						        </c:otherwise>
-						    </c:choose>	
+                                <span>경매 낙찰 가격</span>
+						             <p id="finalPrice">${maxBidPrice.auctionCurrentPrice}</p>
                             </div>                        
                             
                        
