@@ -41,9 +41,9 @@
 <!-- 05.27 새로운 속성들 추가 -->
 
 <div class="form-group">
-	<p>
-		조회수 : <b>${post.readCnt}</b> 좋아요 : <i>${post.likeCnt}</i> 싫어요 : <strong>${post.dislikeCnt}</strong>
-	</p>
+   <p>
+      조회수 : <b>${post.readCnt}</b> <span id="like"> 좋아요 : <i id="likecnt">${post.likeCnt}</i> </span>
+   </p>
 </div>
 
 <div class="form-group">
@@ -92,7 +92,7 @@
 
 
 <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
-
+<input type='hidden' name='check' id="check" value='0'>
 <script type="text/javascript">
 //$(document).ready(function() { 이게 있으면 함수가 정의?가 안된다. 
 	<!-- 수정 처리시(modify) title,content에는 readonly는 없어야 한다. -->
@@ -104,5 +104,65 @@
 			 $('#txaContent').attr("readonly" , false); //title, content 부분을 readonly를 false로 바꿔주면
 		}
 	}
+	
+	
+	   $("#like").click(function () {
+	         var id = "${post.id}"
+	         var userId = "${userId}"
+	         var checkLike = checkLike123();
+	   
+	         
+	         var header = $("meta[name='_csrf_header']").attr("content");
+	         var token = $("meta[name='_csrf']").attr("content");
+	         var csrfHN = "${_csrf.headerName}";
+	         var csrfTV = "${_csrf.token}";
+	         console.log(checkLike);
+	               $.ajax({
+	                  url: "/post/UDlikeCnt",
+	                  type: "POST",
+	                  data: {
+	                     id : id,
+	                     userId : userId,
+	                     checkLike : checkLike
+	                  },
+	                  beforeSend : function(xhr) {
+	                     xhr.setRequestHeader(csrfHN, csrfTV);
+	                  },
+	                  success : function (data) {
+	                     if($('#check').val()=='1'){
+	                        $('#check').val('0');
+	                     }else{
+	                        $('#check').val('1');
+	                     }
+	                     
+	                     //alert(data);
+	                     console.log(data);
+	                     $("#likecnt").html(data); 
+	                  }
+
+	               })
+	            
+	      });
+	   
+	   
+	   
+	   function checkLike123(){
+	         var id = "${post.id}"
+	         var userId = "${userId}"
+	         var check;
+             $.ajax({
+                url: "/post/checkLike",
+                type: "GET",
+                async: false,
+                data: {
+                   id : id,
+                   userId : userId,
+                },
+                success : function (data) {
+                	check = data
+               }
+           })
+           return check;
+        }
 </script>
 

@@ -57,44 +57,44 @@
       <!-- public int cntPlus(PostVO post); -->
       <update id="cntPlus">
       UPDATE s_reply
-      	set read_cnt = read_cnt + 1
-      	where id = #{id}
+         set read_cnt = read_cnt + 1
+         where id = #{id}
       </update>
       
       <select id="checkLike" resultType="_int">
-      	select count(*)
-      	from s_likecheck
-      	where postid = #{id}
-      		and user_id = #{userId}
+         select count(*)
+         from s_likecheck
+         where postid = #{id}
+            and user_id = #{userId}
       </select>
       
       <delete id="deleteCheckLike">
-      	DELETE from s_likecheck
-      	where postid = #{id}
-      		and user_id = #{userId}
+         DELETE from s_likecheck
+         where postid = #{id}
+            and user_id = #{userId}
       </delete>
       
       <insert id="upcheckLike">
-      	insert into s_likecheck(postid, user_id, like_check)
+         insert into s_likecheck(postid, user_id, like_check)
          values(#{id}, #{userId}, 1)
       </insert>
       
       <update id="uplike">
       UPDATE s_reply
-      	set like_cnt = like_cnt + 1
-      	where id = #{id}
+         set like_cnt = like_cnt + 1
+         where id = #{id}
       </update>
 
       <update id="downlike">
       UPDATE s_reply
-     	set like_cnt = like_cnt - 1
-     	where id = #{id}
+        set like_cnt = like_cnt - 1
+        where id = #{id}
       </update>
       
       <select id="getLike" resultType="_int">
       select like_cnt
-      	from s_reply
-      	where id = #{id}
+         from s_reply
+         where id = #{id}
       </select>
       
       
@@ -147,7 +147,10 @@
       Criteria cri); -->
    <select id="getList" resultMap="rmPost">
    <![CDATA[
-   select p.*,w.name w_name, w.descrim w_descrim
+  select p.*,w.name w_name, w.descrim w_descrim,
+  af.uuid af_uuid,
+      af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+      af.multimedia_type af_multimedia_type      
      from (
            select p.*, pc.reply_cnt
            from
@@ -164,9 +167,14 @@
                   and length(r.id) > length(p.id)
           group by p.id) pc, s_reply p 
        where pc.id = p.id
-        ) p, s_party w
-    where p.writer_id = w.user_id
-    order by p.id desc
+        ) p left outer join sm_post_attach am on p.id = am.post_id
+               left outer join s_attach_file af on am.uuid = af.uuid
+               , s_party w
+       where board_id = #{boardId}
+         and child_board_id = #{child}
+         and p.writer_id = w.user_id
+       order by id desc
+         
    ]]>
 
       <!-- Inline View로 먼저 만들어 줄건데 ()처리 출발점이 되는 요소 : s_reply p 그리고 게시판마다의 번호가 
@@ -190,7 +198,10 @@
    
    <!--06.04 作 public List<PostVO> getListByHashTag(@Param("boardId") int boardId, @Param("cri") Criteria cri); -->
    <select id="getListByHashTag" resultMap="rmPost">
-   select p.*, w.name w_name, w.descrim w_descrim <!-- 작성자 정보와 병합-->    
+   select p.*, w.name w_name, w.descrim w_descrim ,
+         af.uuid af_uuid,
+           af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+           af.multimedia_type af_multimedia_type   <!-- 작성자 정보와 병합-->    
      from(  
           select p.*, pc.reply_cnt   <!-- 게시글의 기타 정보 조회-->
             from(
@@ -207,9 +218,14 @@
                ) pc, s_reply p 
             where pc.id = p.id
             ORDER BY p.id DESC   
-        ) p, s_party w
-     where p.writer_id = w.user_id
+        ) p left outer join sm_post_attach am on p.id = am.post_id
+               left outer join s_attach_file af on am.uuid = af.uuid
+               , s_party w
+       where board_id = 3
+         and child_board_id = 0
+         and p.writer_id = w.user_id
      ORDER BY p.id DESC
+
    </select>
    
    <!--public List<PostVO> getFavorite(@Param("boardId")int boardId, @Param("curUser") Party curUser);
@@ -290,32 +306,32 @@
    <!-- public List<PostVO> findProductList(@Param("boardId") int boardId, @Param("child") int child); -->
    <select id="findProductList" resultMap="rmPost"> 
    <![CDATA[ 
-		select p.*, w.name w_name, w.descrim w_descrim    
-		   from(  
-		       select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
-		            af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
-		            af.multimedia_type af_multimedia_type
-		         from (
-		            select p.id, count(r.id) reply_cnt
-		            from(  
-		                 SELECT *
-		                   FROM s_reply re
-		                  where board_id = #{boardId}
-		                  and child_board_id = #{child}
-		                       ORDER BY id DESC
+      select p.*, w.name w_name, w.descrim w_descrim    
+         from(  
+             select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
+                  af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+                  af.multimedia_type af_multimedia_type
+               from (
+                  select p.id, count(r.id) reply_cnt
+                  from(  
+                       SELECT *
+                         FROM s_reply re
+                        where board_id = #{boardId}
+                        and child_board_id = #{child}
+                             ORDER BY id DESC
                      OFFSET  (#{cri.pageNumber} - 1) * #{cri.amount}  rows fetch first #{cri.amount} rows only
-		                ) p left outer join s_reply r 
-		               on r.id like p.id || '%'
-		            and length(r.id) > length(p.id)
-		            group by p.id) pc, s_reply p,  (select product_id, max(uuid) as uuid
-		                      from sm_product_attach  
-		                      group by product_id) pa, s_attach_file af
-		         where pc.id = p.id
-		            and pa.product_id = p.id
-		            and af.uuid = pa.uuid
-		         ORDER BY p.id DESC   
-		          ) p, s_party w
-		   where p.writer_id = w.user_id
+                      ) p left outer join s_reply r 
+                     on r.id like p.id || '%'
+                  and length(r.id) > length(p.id)
+                  group by p.id) pc, s_reply p,  (select product_id, max(uuid) as uuid
+                            from sm_product_attach  
+                            group by product_id) pa, s_attach_file af
+               where pc.id = p.id
+                  and pa.product_id = p.id
+                  and af.uuid = pa.uuid
+               ORDER BY p.id DESC   
+                ) p, s_party w
+         where p.writer_id = w.user_id
    ]]>
    </select>
    
@@ -323,10 +339,10 @@
    <select id="getProductListByHashTag" resultMap="rmPost">
    select p.*, w.name w_name, w.descrim w_descrim     
      from(  
- 			select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
-		            af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
-		            af.multimedia_type af_multimedia_type
-		         from(
+          select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
+                  af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+                  af.multimedia_type af_multimedia_type
+               from(
                  select p.id, count(r.id) reply_cnt       
                 from(  
                       select p.id  
@@ -338,14 +354,14 @@
                 and length(r.id) > length(p.id)
                group by p.id
                )pc, s_reply p,  (select product_id, max(uuid) as uuid
-		                      from sm_product_attach  
-		                      group by product_id) pa, s_attach_file af
-		         where pc.id = p.id
-		            and pa.product_id = p.id
-		            and af.uuid = pa.uuid
-		         ORDER BY p.id DESC   
-		          ) p, s_party w
-		   where p.writer_id = w.user_id
+                            from sm_product_attach  
+                            group by product_id) pa, s_attach_file af
+               where pc.id = p.id
+                  and pa.product_id = p.id
+                  and af.uuid = pa.uuid
+               ORDER BY p.id DESC   
+                ) p, s_party w
+         where p.writer_id = w.user_id
 
    </select>
    

@@ -37,10 +37,9 @@ public class PostController {
 	private BoardService boardService;
 
 	@GetMapping(value = "listBySearch") // LCRUD 에서 L:list
-	public void listBySearch(@RequestParam("boardId") int boardId,
-			@RequestParam("child") int child,
-			@ModelAttribute("pagination") Criteria userCriteria,
-			@AuthenticationPrincipal Principal principal, Model model) {
+	public void listBySearch(@RequestParam("boardId") int boardId, @RequestParam("child") int child,
+			@ModelAttribute("pagination") Criteria userCriteria, @AuthenticationPrincipal Principal principal,
+			Model model) {
 		Party curUser = null;
 		if (principal != null) {
 			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
@@ -48,15 +47,16 @@ public class PostController {
 			curUser = cu.getCurUser();
 			model.addAttribute("userId", curUser.getUserId());
 		}
-		
-		//model.addAttribute("listPost", postService.getListByHashTag(curUser, boardId, child, userCriteria));
+
+		// model.addAttribute("listPost", postService.getListByHashTag(curUser, boardId,
+		// child, userCriteria));
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("child", child);
 		model.addAttribute("listPost", postService.getListByHashTag(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardName", boardService.getBoard(boardId).getName());
 		model.addAttribute("boardList", boardService.getList());
 		userCriteria.setTotal(postService.getSearchTotalCount(boardId, child, userCriteria));
-		//model.addAttribute("pagination", fromUser);
+		// model.addAttribute("pagination", fromUser);
 		// return 구문은 이제 없어졌다. void 형식으로 바뀌었기에 06.07
 	}
 
@@ -76,7 +76,7 @@ public class PostController {
 		model.addAttribute("child", child);
 		model.addAttribute("post", postService.findPostById(id, child));
 		model.addAttribute("boardId", boardId);// 그래서 findPostById 함수에도 boardId를 하나더 추가 시켜 주자
-		model.addAttribute("checkLike", postService.checkLike(id, curUser.getUserId()));//좋아요 누른거 검사하기
+		postService.cntPlus(id);//조회수 
 		// 그렇게 해야 remove쪽으로 던져줄 값이 하나 생긴다.
 	}
 
@@ -91,8 +91,7 @@ public class PostController {
 
 	@GetMapping(value = "registerPost") // LCRUD 에서 Create 부분
 	@PreAuthorize("isAuthenticated()") // 현재 사용자가 로그인 처리 했습니까?
-	public void registerPost(
-			@RequestParam("boardId") int boardId, @RequestParam("child") int child, Model model) {
+	public void registerPost(@RequestParam("boardId") int boardId, @RequestParam("child") int child, Model model) {
 		model.addAttribute("boardList", boardService.getList());
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("child", child);
@@ -100,10 +99,8 @@ public class PostController {
 
 	@PostMapping(value = "registerPost") // LCRUD 에서 Update 부분
 	@PreAuthorize("isAuthenticated()")
-	public String registerPost(
-			@AuthenticationPrincipal Principal principal,
-			@RequestParam("boardId") int boardId, @RequestParam("child") int child,
-		PostVO newPost, RedirectAttributes rttr) throws IOException {
+	public String registerPost(@AuthenticationPrincipal Principal principal, @RequestParam("boardId") int boardId,
+			@RequestParam("child") int child, PostVO newPost, RedirectAttributes rttr) throws IOException {
 		newPost.parseAttachInfo();
 
 		BoardVO board = new BoardVO(boardId, child);
@@ -116,7 +113,7 @@ public class PostController {
 		// 신규 게시글이 만들어 질때 select key를 이용하여 id가 만들어진다. PostMapper.xml에 id = "insert" 부분
 		rttr.addFlashAttribute("result", newPost.getId());
 
-        return "redirect:/post/listBySearch?boardId=" + boardId + "&child=" + child;
+		return "redirect:/post/listBySearch?boardId=" + boardId + "&child=" + child;
 
 		// 새로운 글을 등록하였을때 저장이 되게끔
 	}
@@ -124,22 +121,21 @@ public class PostController {
 	@PostMapping(value = "modifyPost") // 수정 처리 기능을 담당 0526
 	// 이부분은 removPost와 동일하다고 봐도 무방.
 	@PreAuthorize("principal.username == #writerId")
-	public String openModifyPost(
-			@RequestParam("boardId") int boardId, PostVO modifiedPost,  @RequestParam("child") int child,
-			RedirectAttributes rttr, Criteria fromUser, String writerId) {
+	public String openModifyPost(@RequestParam("boardId") int boardId, PostVO modifiedPost,
+			@RequestParam("child") int child, RedirectAttributes rttr, Criteria fromUser, String writerId) {
 		// 화면에서 정보가 들어온다고 하자 boardId는 가교 역할, 그리고 밑에 오는 객체들이 정보 덩어리이다.
 		modifiedPost.parseAttachInfo(); // 수정했을시에 파일이 삭제 되는것을 방지
 		if (postService.updatePost(modifiedPost)) {
 			rttr.addFlashAttribute("result", "수정처리가 성공");
-			}
-		//수정 버튼을 눌렀을때, 수정한 게시글이 있던 곳으로 돌아옴, 1페이지로 초기화 안됨
-		
-			UriComponentsBuilder builder = UriComponentsBuilder.fromPath("");
-			builder.queryParam("boardId", boardId);
-			builder.queryParam("child", child);
-			fromUser.appendQueryParam(builder);
-			// 게시글의 전체 내용이 바뀌기 보다는 조금의 내용이 바뀌는 것이 수정 행위의 일반적인 경향
-			return "redirect:/post/listBySearch" + builder.toUriString();
+		}
+		// 수정 버튼을 눌렀을때, 수정한 게시글이 있던 곳으로 돌아옴, 1페이지로 초기화 안됨
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromPath("");
+		builder.queryParam("boardId", boardId);
+		builder.queryParam("child", child);
+		fromUser.appendQueryParam(builder);
+		// 게시글의 전체 내용이 바뀌기 보다는 조금의 내용이 바뀌는 것이 수정 행위의 일반적인 경향
+		return "redirect:/post/listBySearch" + builder.toUriString();
 		// 목록으로 다시 돌아가게끔, redirect 하기위해서 함수의 형도 void -> String으로 바꿔줘야한다.
 		// 그리고 수정처리 하는 기능은 modify.jsp 에서 만들어줘야 한다.
 	}
@@ -151,7 +147,7 @@ public class PostController {
 			RedirectAttributes rttr, Criteria fromUser, String writerId) {
 		if (postService.deletePostById(id)) { // postService Class를 호출 해줘야 한다.
 			rttr.addFlashAttribute("result", "삭제처리가 성공");
-			//삭제 버튼을 눌렀을때, 삭제한 게시글이 있던 곳으로 돌아옴, 1페이지로 초기화 안됨
+			// 삭제 버튼을 눌렀을때, 삭제한 게시글이 있던 곳으로 돌아옴, 1페이지로 초기화 안됨
 		}
 		UriComponentsBuilder builder = UriComponentsBuilder.fromPath("");
 		builder.queryParam("boardId", boardId);
@@ -159,25 +155,35 @@ public class PostController {
 		return "redirect:/post/listBySearch" + builder.toUriString();
 		// 내가 어떤 정보가 필요한데, 그 정보의 출발점은 어디며, 연동계통은 어디이며 그 정보를 살려내어서 이곳(removePost)까지 받아낼 것
 	}
+
 	@ResponseBody
-	@GetMapping(value = "getLike")
-	public int getLike(String id, String userId) {
-		int a = postService.getLike(id, userId);
-		return postService.getLike(id, userId);
+	@PostMapping(value = "UDlikeCnt")
+	public String UDlike(String id, String userId, int checkLike) {
+		if (checkLike == 0) {
+			postService.uplike(id);
+			postService.upcheckLike(id, userId);
+		} else {
+			postService.downlike(id);
+			postService.deleteCheckLike(id, userId);
+		}
+
+		String var = String.valueOf(postService.getLike(id, userId));
+
+		return var;
 	}
-	
+
 	@ResponseBody
-	@PostMapping(value = "DownlikeCnt")
-	public void downlike(String id, String userId) {
-		postService.downlike(id);
-		postService.deleteCheckLike(id, userId);
-	}
-	
-	@ResponseBody
-	@PostMapping(value = "checklikeCnt")
-	public void checkLike(String id, String userId) {
-		postService.upcheckLike(id, userId);
-		postService.uplike(id);
+	@GetMapping(value = "checkLike")
+	public String checkLike(@AuthenticationPrincipal Principal principal, String id, String userId) {
+		Party curUser = null;
+		if (principal != null) {
+			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+			CustomUser cu = (CustomUser) upat.getPrincipal();
+			curUser = cu.getCurUser();
+		}
+		String var = String.valueOf(postService.checkLike(id, curUser.getUserId()));
+		
+		return var;
 	}
 }
 
