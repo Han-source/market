@@ -107,12 +107,22 @@
              for (var i = 0; i < result.length; i++) {
                 if (result[i][0].value == userID) {
                    result[i][0].value = result[i][1].value;
+                   
+                   if(result[i][2].value.includes('button')){
+						result[i][2].value = '거래제안을 보냈습니다';
+						addBox(result[i][0].value, result[i][1].value,
+			                      result[i][2].value, result[i][3].value);
+					}else{
+						console.log(result[i][2].value);
+						addBox(result[i][0].value, result[i][1].value,
+			                      result[i][2].value, result[i][3].value);
+					}	
                 } else {
                    result[i][1].value = result[i][0].value;
+                   addBox(result[i][0].value, result[i][1].value,
+                           result[i][2].value, result[i][3].value);
                 }
-                //addBox는 실제로 우리 화면에 각각의 메시지 목록을 출력해주는 함수
-                addBox(result[i][0].value, result[i][1].value,
-                      result[i][2].value, result[i][3].value);
+                
              }
           }
        });

@@ -118,9 +118,9 @@
 			</form>
 
 			<form id='frmOper' action="/post/modifyPost" method="get">
-				<input type="hidden" name="boardId" value="${boardId}"> <input
-					type="hidden" name="child" value="${child}"> <input
-					type="hidden" id="postId" name="postId" value="${post.id}">
+				<input type="hidden" name="boardId" value="${boardId}"> 
+				<input type="hidden" name="child" value="${child}"> 
+				<input type="hidden" id="postId" name="postId" value="${post.id}">
 			</form>
 
 			<form id='frmCart' action="/post/insertShoppingCart" method="post">
@@ -330,10 +330,15 @@
 		var fromID = "${userId}";
 		var toID = "${post.writer.userId}";
 		var chatContent = $('#negoPrice').val();
+		var boardId = "${boardId}";
+		var child = "${child}";
+		var productId = document.getElementById("postId").value;
 		if (chatContent != "") {
-			chatContent += "<button type='button' id='negoAgree' onclick='updateProductPrice("
+			chatContent += "원에 제안! <br>상품의 거래제안이 도착했어요 <br>";
+			chatContent += "<a href='/business/readProduct?boardId=" + boardId +"&child=" + child + "&productId=" + productId + "' target='_blank'>내 상품 보러가기</a>";
+			chatContent += "<div  style='float:left;' ><button type='button' id='negoAgree' style='width:80px; margin-right: 20px; margin-left: 15px; background-color: #FFFFE0' onclick='updateProductPrice("
 					+ $('#negoPrice').val() + ");'>수락</button>";
-			chatContent += "<button type='button' id='negoDisAgree' onclick='disAgree();'>거절</button>"
+			chatContent += "<button type='button' id='negoDisAgree' style='width:80px; background-color: #483D8B'' onclick='disAgree();'>거절</button></div>"
 			chatContent += "<input type='hidden' id='postId' value='${post.id}'/>";
 		}
 
@@ -399,6 +404,7 @@
 
 <!-- 경매 카운트 기능 -->
 <script>
+if("${child}" == "7"){
 	const countDownTimer = function(id, date) {
 		var _vDate = new Date(date); // 전달 받은 일자
 		var _second = 1000;
@@ -433,6 +439,7 @@
 	var dateObj = new Date();
 	dateObj.setDate(dateObj.getDate() + 1);
 	countDownTimer('auctionTimer', '${condition.auctionEndDate}'); // 2024년 4월 1일까지, 시간을 표시하려면 01:00 AM과 같은 형식을 사용한다.
+}
 </script>
 
 <!--DB와 Chart 값을 연동하여 경매에 입찰할때마다 입찰자, 입찰금액이 Update 가능  -->

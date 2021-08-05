@@ -89,6 +89,8 @@ button:hover {
     overflow-y: scroll;
 }
 
+
+
 .message_row {
     display: grid;
     grid-template-columns: auto;
