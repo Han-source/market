@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import www.dream.com.bulletinBoard.model.BoardVO;
 import www.dream.com.bulletinBoard.model.PostVO;
 import www.dream.com.business.model.ProductVO;
+import www.dream.com.business.model.ShippingInfoVO;
 import www.dream.com.business.model.TradeConditionVO;
 import www.dream.com.business.model.TradeVO;
 
@@ -50,5 +51,5 @@ public interface BusinessMapper {
 	public void insertShopphingCart(@Param("userId") String userId, @Param("productId") String productId);
 	
 	/* 결제가 완료 되면 결제 테이블에 값 담기 */
-	public void purchaseProduct(@Param("trade") TradeVO trade);
+	public void purchaseProduct(@Param("shippingInfo") ShippingInfoVO shippingInfo);
 }

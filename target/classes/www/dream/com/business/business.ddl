@@ -29,7 +29,7 @@ create table s_trade(
 	product_final_price		number(19),
 	seller_id				varchar2(10),
 	buyer_id				varchar2(10),
-	trade_date				timestamp
+	trade_date				timestamp default sysdate not null
 )
 
 --거래 방식 테이블
@@ -47,4 +47,15 @@ create table s_shopping_bascket(
 	user_id			varchar2(10),
 	product_id		varchar2(4000),
 	primary key(user_id, product_id)
+)
+
+
+-- trade_id, buyer_name, address, phone_num, reserve_num, absent_message
+create table shipping_info(
+   trade_id       	references s_trade(trade_id),
+   buyer_name     	varchar2(19),
+   address		  	varchar2(1000),
+   phone_num		number(19),
+   reserve_num		number(19),
+   absent_message	varchar2(4000)
 )

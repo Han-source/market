@@ -6,6 +6,7 @@
 <%@include file="../includes/header.jsp"%>
 <!-- Begin Page Content -->
 <div class="container-fluid">
+    <p>
  
 	<!-- DataTales Example -->
 	<div class="card shadow mb-4">

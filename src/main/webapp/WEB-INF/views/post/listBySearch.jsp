@@ -13,26 +13,33 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
    <!-- DataTales Example -->
-   		<p>
+   <p>
    <div class="card shadow mb-4">
       <div class="card-header py-3">
          <h6 class="m-0 font-weight-bold text-primary">${boardName}글목록</h6>
       </div>
       <div class="card-body">
-      	<div>
-			<div>
          <!-- Paging 이벤트에서 서버로 요청보낸 인자들을 관리합니다. -->
          <form id="frmSearching" action="/post/listBySearch" method="get">
             <!--  정렬 방식 -->
       
             <input type="text" name="searching" value="${pagination.searching}" />
             <button id="btnSearch" class="btn btn-default">검색</button>
-         <button id="btnRegisterPost" class="btn btn-primary">글쓰기</button>
-         
+            <!-- c: if 조건문으로, descrim이 관리자인지, 공지사항, faq 의 boardId(1,2) => 이 두조건이 해당할때만 열어줌 -->
+           <c:choose>    
+               <c:when test="${descrim eq 'User' and boardId eq 3}">
+                   <button id="btnRegisterPost" class="btn btn-primary">글쓰기</button>
+               </c:when>
+               <c:when test="${descrim eq 'Admin'}">
+                   <button id="btnRegisterPost" class="btn btn-primary">글쓰기</button>
+                   <button id="btnBatchDeletePost">일괄삭제</button>
+               </c:when>
+           </c:choose>
             <input type="hidden" name="boardId" value="${boardId}">
             <input type="hidden" name="child" value="${child}">
             <input type="hidden" name="pageNumber" value="${pagination.pageNumber}">
             <input type="hidden" name="amount" value="${pagination.amount}">
+            <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
          </form>
 
    
@@ -42,15 +49,22 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                <thead>
                   <tr>
+                     <td>선택</td>
                   <%= tablePrinter.printHeader(PostVO.class) %>
                   </tr>
                </thead>
+               
                <tbody>
                   <c:forEach items="${listPost}" var="post">
-                  
                      <tr>
+                        
                      <c:choose>
                         <c:when test="${empty post.listAttach}" >
+                           <td>
+                             <c:if test="${descrim eq 'Admin'}">
+                                 <input type="checkbox" name="chkpost" value="${post.id}">
+                           </c:if>
+                        </td>
                            <td><a class="anchor4post" href="${post.id}"><img src="\resources\img\noimg.png" style="width: 25px; height: 25px;">${post.title}</a>
                            </td>
                            <td>${post.writer.name}</td> 
@@ -58,6 +72,11 @@
                            <td><fmt:formatDate pattern="yyyy년 MM월 dd일" value="${post.updateDate}" /></td>
                        </c:when>
                        <c:otherwise>
+                             <td>
+                             <c:if test="${descrim eq 'Admin'}">
+                                 <input type="checkbox" name="chkpost" value="${post.id}">
+                           </c:if>
+                        </td>
                            <td><a class="anchor4post" href="${post.id}"><img src="\resources\img\attachimg.png" style="width: 25px; height: 25px;">${post.title}</a>
                            </td>
                            <td>${post.writer.name}</td>
@@ -84,11 +103,13 @@
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"
                            aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="myModalLabel">게시글 등록 완료</h4>
+                        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
                      </div>
                      <div class="modal-body">처리가 완료 되었습니다.</div>
                      <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+                        <button type="button" class="btn btn-default"
+                           data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
                      </div>
                   </div>
                   <!-- /.modal-content -->
@@ -97,8 +118,6 @@
             </div>
             <!-- /.modal -->
          </div>
-         </div>
-   		</div>
       </div>
    </div>
 </div>
@@ -113,10 +132,17 @@ $(document).ready(function(){
       var frmSearching = $('#frmSearching');
       
       $("#btnRegisterPost").on("click", function(){
+//          if(${boardId} === 1 || ${boardId} === 2 ){
+//            alert('관리자만 작성 가능합니다.');
+//            preventDefault();
+//            return;
+           
+//         } else {
            frmSearching.attr('action', '/post/registerPost');
-         frmSearching.submit();
-         
-      });
+           frmSearching.submit();   
+//        }
+        
+     });
          var result = '<c:out value="${result}" />';
          
          checkModal(result); // 함수를 불러주는 역할
@@ -166,6 +192,21 @@ $(document).ready(function(){
             frmSearching.attr('method', 'get');
             frmSearching.submit();
          });
+         
+         /* 관리자 Mode 여러 게시물을 선택하여 일괄적으로 삭제 */
+
+        $('#btnBatchDeletePost').on('click', function(e) {
+           e.preventDefault();
+           //선택된 항목에 대한 정보 추출 JS형식, jquery 형식으로도 써도 괜찮다.
+           document.querySelectorAll("input[name='chkpost']:checked").forEach((cel)=> {
+              frmSearching.append("<input name='postIds' type='hidden' value='" + cel.value + "'>");
+           });
+           
+           //form에 해당 항복 정보를 삽입
+           frmSearching.attr('action', '/post/batchDeletePost');
+           frmSearching.attr('method', 'post');
+           frmSearching.submit();
+        });
 
 });
 

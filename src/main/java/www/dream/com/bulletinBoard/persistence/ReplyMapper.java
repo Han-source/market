@@ -1,5 +1,6 @@
 package www.dream.com.bulletinBoard.persistence;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -7,7 +8,6 @@ import org.apache.ibatis.annotations.Param;
 import www.dream.com.bulletinBoard.model.BoardVO;
 import www.dream.com.bulletinBoard.model.PostVO;
 import www.dream.com.bulletinBoard.model.ReplyVO;
-import www.dream.com.business.model.ProductVO;
 import www.dream.com.common.dto.Criteria;
 import www.dream.com.party.model.Party;
 
@@ -77,6 +77,9 @@ public interface ReplyMapper { // 추후 Data를 가져오기 위해서 Interfac
 	
 	/** id 값으로 Post 객체 삭제*/
 	public int deleteReplyById(String id);
+	
+	// Manager Mode 일괄 삭제
+	public void batchDeletePost(@Param("postIds") ArrayList<String> postIds);
 	
 	/**--------------------------- 댓글 처리 함수 정의 영역 06.10------------------------- */
 	

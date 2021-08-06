@@ -24,6 +24,7 @@ import www.dream.com.bulletinBoard.model.PostVO;
 import www.dream.com.bulletinBoard.persistence.ReplyMapper;
 import www.dream.com.bulletinBoard.service.PostService;
 import www.dream.com.business.model.ProductVO;
+import www.dream.com.business.model.ShippingInfoVO;
 import www.dream.com.business.model.TradeConditionVO;
 import www.dream.com.business.model.TradeVO;
 import www.dream.com.business.persistence.BusinessMapper;
@@ -157,8 +158,8 @@ public class BusinessService {
 	}
 	
 	/* 결제가 완료 되면 결제 테이블에 값 담기 */
-	public void purchaseProduct(TradeVO trade) {
-		businessMapper.purchaseProduct(trade);
+	public void purchaseProduct(ShippingInfoVO shippingInfo) {
+		businessMapper.purchaseProduct(shippingInfo);
 	}
 
 

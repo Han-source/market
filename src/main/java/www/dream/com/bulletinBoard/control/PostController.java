@@ -2,6 +2,7 @@ package www.dream.com.bulletinBoard.control;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,6 +47,7 @@ public class PostController {
 			CustomUser cu = (CustomUser) upat.getPrincipal();
 			curUser = cu.getCurUser();
 			model.addAttribute("userId", curUser.getUserId());
+			model.addAttribute("descrim", curUser.getDescrim());
 		}
 
 		// model.addAttribute("listPost", postService.getListByHashTag(curUser, boardId,
@@ -76,7 +78,7 @@ public class PostController {
 		model.addAttribute("child", child);
 		model.addAttribute("post", postService.findPostById(id, child));
 		model.addAttribute("boardId", boardId);// 그래서 findPostById 함수에도 boardId를 하나더 추가 시켜 주자
-		postService.cntPlus(id);//조회수 
+		postService.cntPlus(id);// 조회수
 		// 그렇게 해야 remove쪽으로 던져줄 값이 하나 생긴다.
 	}
 
@@ -182,8 +184,22 @@ public class PostController {
 			curUser = cu.getCurUser();
 		}
 		String var = String.valueOf(postService.checkLike(id, curUser.getUserId()));
-		
+
 		return var;
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping(value = "batchDeletePost") // 재요청을 할때 다시 속성을 주는 것 LCRUD : Delete
+	public String batchDeletePost(@RequestParam("boardId") int boardId,@RequestParam("child") int child,
+			@RequestParam("postIds") ArrayList<String> postIds, RedirectAttributes rttr, Criteria fromUser,
+			String writerId) {
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromPath("");
+		builder.queryParam("boardId", boardId);
+		builder.queryParam("child", child);
+		fromUser.appendQueryParam(builder);
+		postService.batchDeletePost(postIds);
+		return "redirect:/post/listBySearch" + builder.toUriString();
 	}
 }
 

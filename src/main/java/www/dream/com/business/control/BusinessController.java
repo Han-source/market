@@ -14,7 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -25,12 +27,14 @@ import www.dream.com.bulletinBoard.service.BoardService;
 import www.dream.com.bulletinBoard.service.PostService;
 import www.dream.com.bulletinBoard.service.ReplyService;
 import www.dream.com.business.model.ProductVO;
+import www.dream.com.business.model.ShippingInfoVO;
 import www.dream.com.business.model.TradeConditionVO;
 import www.dream.com.business.model.TradeVO;
 import www.dream.com.business.service.BusinessService;
 import www.dream.com.common.dto.Criteria;
 import www.dream.com.framework.springSecurityAdapter.CustomUser;
 import www.dream.com.party.model.Party;
+import www.dream.com.party.service.PartyService;
 
 @Controller
 @RequestMapping("/business/*")
@@ -38,16 +42,15 @@ public class BusinessController {
 
 	@Autowired
 	private BusinessService businessService;
-
 	@Autowired
 	private ReplyService replyService;
-
 	@Autowired
 	private BoardService boardService;
-
 	@Autowired
 	private PostService postService;
-
+	@Autowired
+	private PartyService partyService;
+	
 	@GetMapping(value = "productList") // LCRUD 에서 L:list
 	public void listBySearch(@RequestParam("boardId") int boardId, @RequestParam("child") int child,
 			@ModelAttribute("pagination") Criteria userCriteria, @AuthenticationPrincipal Principal principal,
@@ -194,6 +197,8 @@ public class BusinessController {
 		model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("child", child);
+		List<Party> a = partyService.getList(curUser);
+		model.addAttribute("loginPersonInfo", partyService.getList(curUser));
 	}
 
 	/* 경매 결제창 */
@@ -224,20 +229,19 @@ public class BusinessController {
 		model.addAttribute("maxBidPrice", businessService.findMaxBidPrice(productId));
 	}
 	
-	@PostMapping("purchase") // LCRUD 에서 Update 부분
-	public @ResponseBody void purchase(@AuthenticationPrincipal Principal principal, int price, String seller,
-			String buyer) {
+	
+	
+	
+	
+	@RequestMapping(value="/purchase", method=RequestMethod.POST, produces={"application/json"})
+	public @ResponseBody void purchase(@AuthenticationPrincipal Principal principal, @RequestBody ShippingInfoVO shippingInfoVO) {
 		Party curUser = null;
 		if (principal != null) {
 			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
 			CustomUser cu = (CustomUser) upat.getPrincipal();
 			curUser = cu.getCurUser();
 		}
-		TradeVO newTrade = new TradeVO();
-		newTrade.setBuyerId(curUser.getUserId());
-		newTrade.setSellerId(seller);
-		newTrade.setProductFinalPrice(price);
-		businessService.purchaseProduct(newTrade);
+		businessService.purchaseProduct(shippingInfoVO);
 	}
 
 }

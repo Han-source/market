@@ -60,13 +60,13 @@
                     <div class="col-lg-12">
                         <h3>주문 정보</h3>
                     </div>
-                    <div class="col-lg-9">
+                     <div class="col-lg-9">
                         <div class="row">
                             <div class="col-lg-2">
                                 <p class="in-name">수령인*</p>
                             </div>
                             <div class="col-lg-3">
-                                <input type="text" name="" placeholder="이름">
+                                <input type="text" id="recipient" name="buyerName" placeholder="이름">
                             </div>
                         </div>
                         <div class="row">
@@ -74,7 +74,7 @@
                                 <p class="in-name">배송지 주소*</p>
                             </div>
                             <div class="col-lg-10">
-                                <input type="text" name="" placeholder="배송지를 입력하세요.">
+                                <input type="text" id="buyerForAddress" name="address" placeholder="배송지를 입력하세요.">
                             </div>
                         </div>
                         <div class="row">
@@ -82,7 +82,15 @@
                                 <p class="in-name">휴대폰 번호*</p>
                             </div>
                             <div class="col-lg-10">
-                                <input type="text" name="" placeholder="휴대폰 번호를 입력해주세요.">
+                                <input type="number" id="buyerForphonNum" name="phonNum" placeholder="휴대폰 번호를 입력해주세요.">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <p class="in-name">예비 연락처*</p>
+                            </div>
+                            <div class="col-lg-10">
+                                <input type="number" id="buyerForReserveNum" name="reserveNum" placeholder="예비 연락처를 입력해주세요.">
                             </div>
                         </div>
                          <div class="row">
@@ -90,7 +98,7 @@
                                 <p class="in-name">배송 메모 *</p>
                             </div>
                             <div class="col-lg-10">
-                                <input type="text" name="" placeholder="배송 메모를 입력하세요.">
+                                <input type="text" id="buyerForAbsentMsg" name="absentMsg" placeholder="배송 메모를 입력하세요.">
                             </div>
                         </div>                       
                     </div>
@@ -174,21 +182,39 @@ $('#kakao_trade').click(function () {
     var money = document.getElementById('finalPrice').innerHTML;
     var csrfHN = "${_csrf.headerName}";
 	var csrfTV = "${_csrf.token}";
-	
-	
-	
+	// 로그인한 사용자 정보
+	var address;
+	var phoneNum;
+	var mobileNum;
+	<c:forEach items="${loginPersonInfo}" var="listContactPoint" varStatus="status">
+		<c:forEach items="listContactPoint" var="info" varStatus="sta">
+			address = "${loginPersonInfo[status.index].listContactPoint[0].info}" ;
+			phoneNum = "${loginPersonInfo[status.index].listContactPoint[1].info}";
+			mobileNum = "${loginPersonInfo[status.index].listContactPoint[2].info}";
+		</c:forEach>
+	</c:forEach>
+	//구매하면 보낼 곳의 정보, 주소, 폰번호, 예비번호, 부재시 메시지를 받아야함.
+	var buyerForAddress = $('#buyerForAddress').val();
+	var buyerForphonNum = $('#buyerForphonNum').val();
+	var buyerForReserveNum = $('#buyerForReserveNum').val();
+	var buyerForAbsentMsg = $('#buyerForAbsentMsg').val();
+	var param = {"address":buyerForAddress, "phonNum":buyerForphonNum, 
+			"reserveNum":buyerForReserveNum, "absentMsg":buyerForAbsentMsg,
+			"productFinalPrice":parseInt(money), "buyerId":"${buyerId}" , "sellerId":"${post.writer.userId}"
+			};
+	var shippingInfoVO = JSON.stringify(param);
     IMP.request_pay({
         pg: 'kakao',
         merchant_uid: 'merchant_' + new Date().getTime(),
-        amount: money,
+        amount: parseInt(money),
         buyer_name: "${buyerId}",
         seller_id: "${post.writer.userId}",
    	 	name: '주문명 : 주문명 설정',
         buyer_email: 'iamport@siot.do',
-        buyer_tel: '010-1234-5678',
-        buyer_addr: '인천광역시 부평구',
-        buyer_postcode: '123-456'
-        
+        buyer_tel: phoneNum,
+        buyer_mobile:mobileNum,
+        buyer_addr: address,
+      
     }, function (rsp) {
         console.log(rsp);
         if (rsp.success) {
@@ -199,12 +225,13 @@ $('#kakao_trade').click(function () {
             msg += '카드 승인번호 : ' + rsp.apply_num;
             $.ajax({
                 type: "POST", 
-                url: "/business/purchase", //충전 금액값을 보낼 url 설정
-                data: {
-                    price : money,
-                    buyer : "${buyerId}",
-                    seller : "${post.writer.userId}"
-                },beforeSend : function(xhr) {
+                dataType: 'json',
+                url: "/business/purchase",
+                headers: {
+                	'Content-Type' : 'application/json'
+                },
+                data: JSON.stringify(param),
+                beforeSend : function(xhr) {
     				xhr.setRequestHeader(csrfHN, csrfTV);
     			},
             });

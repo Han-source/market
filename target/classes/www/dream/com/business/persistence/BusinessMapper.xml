@@ -40,6 +40,14 @@
    </resultMap>
 
 
+
+	<resultMap type="www.dream.com.business.model.ShippingInfoVO" id="shippingMap" extends="tradeMap">   
+      <result property="address" column="address"></result>
+      <result property="phonNum" column="phone_num"></result>
+      <result property="reserveNum" column="reserve_num"></result>
+      <result property="absentMsg" column="absent_message"></result>
+   </resultMap>
+
 	<!-- public ProductVO findPriceById(@Param("productId") String id, @Param("child") int child); // id와 childId를 통해 조회  -->
 	<select id="findPriceById" resultMap="productMap"> 
 	<![CDATA[ 
@@ -196,12 +204,16 @@
 	   values (#{userId}, #{productId}) 
 	</insert>
 
-	<!-- public void purchaseProduct(@Param("trade") TradeVO trade); -->
+<!-- 	public void purchaseProduct(@Param("shippingInfo") ShippingInfoVO shippingInfo); -->
 	<insert id="purchaseProduct">
-		<selectKey keyProperty="trade.tradeId" order="BEFORE" resultType="string">
+		<selectKey keyProperty="shippingInfo.tradeId" order="BEFORE" resultType="string">
 				select get_id(seq_reply_id.nextval) from dual
 		</selectKey>
-		insert into s_trade (trade_id, PRODUCT_FINAL_PRICE, seller_id, buyer_id, trade_date) 
-		   values (#{trade.tradeId}, #{trade.productFinalPrice}, #{trade.sellerId}, #{trade.buyerId}, sysdate) 
+		insert all
+		 into s_trade (trade_id, PRODUCT_FINAL_PRICE, seller_id, buyer_id) 
+		   values (#{shippingInfo.tradeId}, #{shippingInfo.productFinalPrice}, #{shippingInfo.sellerId}, #{shippingInfo.buyerId}) 
+		 into shipping_info(trade_id, buyer_name, address, phone_num, reserve_num, absent_message)
+		   values (#{shippingInfo.tradeId}, #{shippingInfo.buyerId}, #{shippingInfo.address}, #{shippingInfo.phonNum}, #{shippingInfo.reserveNum}, #{shippingInfo.absentMsg})
+		 select * from dual
 	</insert>
 </mapper>
