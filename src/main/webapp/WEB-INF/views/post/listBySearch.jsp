@@ -48,7 +48,7 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                <thead>
                   <tr>
-                     <td>선택</td>
+                     <td id="noneAdmin" >선택</td>
                   <%= tablePrinter.printHeader(PostVO.class) %>  
                   </tr>
                </thead>
@@ -56,23 +56,22 @@
                <tbody>
                   <c:forEach items="${listPost}" var="post">
                      <tr>
-                        
                      <c:choose>
-                        <c:when test="${empty post.listAttach}" >
-                           <td>
-                             <c:if test="${descrim eq 'Admin'}">
-                                 <input type="checkbox" name="chkpost" value="${post.id}">
-                             </c:if>
-                           </td>
-                           <td><a class="anchor4post" href="${post.id}">
-                              <img src="\resources\img\noimg.png" style="width: 25px; height: 25px;">${post.title}</a>
-                           </td>
-                           <td>${post.writer.name}</td> 
-                           <td>${post.readCnt}</td>
-                           <td><fmt:formatDate pattern="yyyy년 MM월 dd일" value="${post.updateDate}" /></td>
-                       </c:when>
+                           <c:when test="${empty post.listAttach}" >
+                              <td id="noneAdmin1">
+                                <c:if test="${descrim eq 'Admin'}">
+                                    <input type="checkbox" name="chkpost"  id="chkposts" value="${post.id}">
+                              </c:if>
+                              </td>
+                              <td ><a class="anchor4post" href="${post.id}" >
+                                 <img src="\resources\img\noimg.png" style="width: 25px; height: 25px;">${post.title}</a>
+                              </td>
+                              <td>${post.writer.name}</td> 
+                              <td>${post.readCnt}</td>
+                              <td><fmt:formatDate pattern="yyyy년 MM월 dd일" value="${post.updateDate}" /></td>
+                          </c:when>
                           <c:otherwise>
-                            <td>
+                            <td id="noneAdmin1">
                               <c:if test="${descrim eq 'Admin'}">
                                     <input type="checkbox" name="chkpost" id="chkposts" value="${post.id}">
                               </c:if>
@@ -128,7 +127,27 @@
 <%@ include file="../includes/footer.jsp"%>
 <script type="text/javascript">
 $(document).ready(function(){
+   
+   // descrim 이 비 로그인 상황일때
+if (${descrim != 'User' and descrim != 'Admin'}){
+      $('#noneAdmin').remove();
+      var nA1 = $('#noneAdmin1');
+      for (nA1 = 0; nA1 < 10; nA1++) {
+         $('#noneAdmin1').remove();
+         
+      } // 이쪽 부분이 반복이 안돌아감.
+      
+   // descrim이 User일때 , Admin일때는 따로 만들어줄 필요가 없다.
+   } else if(${descrim == 'User'}){
+      $('#noneAdmin').remove();
+      var nA1 = $('#noneAdmin1');
+      for (nA1 = 0; nA1 < 10; nA1++) {
+         $('#noneAdmin1').remove(); // 이쪽 부분이 반복이 안돌아감.
+      }
+   }
+   
       var frmSearching = $('#frmSearching');
+      
       $("#btnRegisterPost").on("click", function(){
 //          if(${boardId} === 1 || ${boardId} === 2 ){
 //            alert('관리자만 작성 가능합니다.');

@@ -52,16 +52,8 @@
 <header class="header-section">
 	<sec:authorize access="isAnonymous()">
 		<ul class="sub-menu">
-			<style>
-li {
-	float: right;
-	color: #1e1e1e;
-	display: block;
-}
-</style>
-			<li style="visible: hidden;"><a href="/party/joinMember">JOIN</a></li>
-
-			<li style="visible: hidden;"><a href="/party/customLogin">LOGIN </a></li>
+			<li style="visible: hidden; float: right; color: #1e1e1e;display: block;"><a href="/party/joinMember">JOIN</a></li>
+			<li style="visible: hidden; float: right; color: #1e1e1e;display: block;"><a href="/party/customLogin">LOGIN </a></li>
 		</ul>
 	</sec:authorize>
 	<div class="inner-header">

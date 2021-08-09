@@ -13,7 +13,7 @@
       <input type="radio" name="slide" id="slide02">
       <input type="radio" name="slide" id="slide03">
       <div class="slidewrap">
-         <ul class="slidelist" >
+         <ul class="slidelistt" >
             <!-- 슬라이드 영역 -->
             <li class="slideitem">
                <a>
@@ -54,6 +54,8 @@
          </ul>
       </div>
    </div>
+   
+   
 </div>
 
 <%@include file="includes/footer.jsp"%>

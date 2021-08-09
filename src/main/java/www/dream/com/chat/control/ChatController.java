@@ -90,7 +90,9 @@ public class ChatController extends HttpServlet {
 	public String sendChat(@RequestParam(value = "toId", required = false) String toId, ChatVO chat, Model model,
 			@AuthenticationPrincipal Principal principal){
 		Party curUser = getPrincipal(principal);
-		chat.setFromID(curUser.getUserId());
+		if(curUser != null) {
+			chat.setFromID(curUser.getUserId());
+		}
 		if(chat.getFromID() == null || chat.getFromID().equals("") || chat.getToID() == null || chat.getToID().equals("")
 				|| chat.getChatContent() == null || chat.getChatContent().equals("")) {
 			return "0";
