@@ -33,6 +33,7 @@ import www.dream.com.business.model.TradeVO;
 import www.dream.com.business.service.BusinessService;
 import www.dream.com.common.dto.Criteria;
 import www.dream.com.framework.springSecurityAdapter.CustomUser;
+import www.dream.com.party.model.ContactPoint;
 import www.dream.com.party.model.Party;
 import www.dream.com.party.service.PartyService;
 
@@ -197,7 +198,8 @@ public class BusinessController {
 		model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("child", child);
-		model.addAttribute("loginPersonInfo", partyService.getList(curUser));
+		List<ContactPoint> a = partyService.getContactListByUserId(curUser.getUserId());
+		model.addAttribute("loginPersonInfo", partyService.getContactListByUserId(curUser.getUserId()));
 	}
 
 	/* 경매 결제창 */

@@ -30,7 +30,9 @@ public class PartyService implements UserDetailsService { // 1. 순서가 의미
 	public List<Party> getList(Party member) { // 6. Party List를 끌고와도 괜찮다. 왜? List를 불러오는 함수를 만들거라서
 		return partyMapper.getList(member); // 7. public으로 만들었으니, 그에대한 반환값必 partyMapper 변수의 getList 함수 선언
 	}
-
+	public List<ContactPoint> getContactListByUserId(String userId){
+		return partyMapper.getContactListByUserId(userId);
+	}
 	// 해당 사용자 정보 가져오기
 	public Party findPartyByUserId(String userId) {
 		return partyMapper.findPartyByUserId(userId);

@@ -20,7 +20,7 @@ public interface PartyMapper { // 13. persistence package에 PartyMapper interfa
 	// 목록 조회
 	//@Select("select * from s_party") // 15. @Select를 사용하여, sql에 만들어놓은 s_party Table을 불러내볼것
 	public List<Party> getList(@Param("party") Party member); //14. List Type으로 Return 받는 목록조회 함수 getList 생성 , Table에 있는 User 정보를 읽어보자.
-	
+	public List<ContactPoint> getContactListByUserId(@Param("userId") String userId);
 	// public List<Admin> getList(); // 22. Admin에다가 변수 넣어서 Test 해보는 것, 
 	// 개별 객체 조회
 	// Insert

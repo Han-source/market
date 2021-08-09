@@ -64,6 +64,17 @@
 	]]>
 	</select>
 	
+	<!-- public List<ContactPoint> getContactListByUserId(@Param("userId") String userId); -->
+	<select id="getContactListByUserId" resultMap="contactPointMap"> 
+	<![CDATA[
+		select * 
+		  from s_contact_point
+	   	 where user_id = #{userId}
+	]]>
+	</select>
+	
+	
+	
 	<!-- public Party findPartyByUserId(String userId); -->
 	<select id="findPartyByUserId" resultMap="partyMap"> 
 	<![CDATA[

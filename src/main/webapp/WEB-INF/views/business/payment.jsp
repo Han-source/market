@@ -82,14 +82,6 @@
                             </div>
                             <div class="col-lg-10">
                                 <input type="text" id="buyerForAddress" name="address" placeholder="배송지를 입력하세요.">
-                                	<select id="addrSelection" name="addrSelection">
-										<option value="1" selected="selected">직접입력</option>
-										<c:forEach items="${loginPersonInfo}" var="listContactPoint" varStatus="status">
-											<c:forEach items="listContactPoint" var="info" varStatus="sta">
-												<option id="loginAddr" value=${loginPersonInfo[status.index].listContactPoint[0].info}>${loginPersonInfo[status.index].listContactPoint[0].info}</option>
-											</c:forEach>
-										</c:forEach>
-									</select>
                             </div>
                         </div>
                         <div class="row">
@@ -98,14 +90,6 @@
                             </div>
                             <div class="col-lg-10">
                                 <input type="number" id="buyerForphonNum" name="phonNum" placeholder="휴대폰 번호를 입력해주세요.">
-                                	<select id="phoneNumSelection" name="phoneNumSelection">
-										<option value="1" selected="selected">직접입력</option>
-										<c:forEach items="${loginPersonInfo}" var="listContactPoint" varStatus="status">
-											<c:forEach items="listContactPoint" var="info" varStatus="sta">
-												<option id="loginMobileNum" value=${loginPersonInfo[status.index].listContactPoint[1].info}>${loginPersonInfo[status.index].listContactPoint[1].info}</option>
-											</c:forEach>
-										</c:forEach>
-									</select>
                             </div>
                         </div>
                         <div class="row">
@@ -114,14 +98,6 @@
                             </div>
                             <div class="col-lg-10">
                                 <input type="number" id="buyerForReserveNum" name="reserveNum" placeholder="예비 연락처를 입력해주세요.">
-                                	<select id="reserveNumSelection" name="reserveNumSelection">
-										<option value="1" selected="selected">직접입력</option>
-										<c:forEach items="${loginPersonInfo}" var="listContactPoint" varStatus="status">
-											<c:forEach items="listContactPoint" var="info" varStatus="sta">
-												<option id="loginReserveNumSelectionNum" value=${loginPersonInfo[status.index].listContactPoint[2].info}>${loginPersonInfo[status.index].listContactPoint[2].info}</option>
-											</c:forEach>
-										</c:forEach>
-									</select>
                             </div>
                         </div>
                          <div class="row">
@@ -206,45 +182,38 @@
 <script type="text/javascript">
 
 $('#userNameSelection').change(function() {
+	var addr;
+	var phoneNum;
+	var homeNum;
+	var recipient = $('#recipient');
+	var buyerForAddress = $('#buyerForAddress');
+	var buyerForphonNum = $('#buyerForphonNum');
+	var buyerForReserveNum = $('#buyerForReserveNum');
+
+   	addr = "${loginPersonInfo[0].info}";
+	phoneNum = "${loginPersonInfo[1].info}";
+	homeNum = "${loginPersonInfo[2].info}";
+ 	
+	
+ 	
 	if($(this).val()=="1"){
-		$('#recipient').val("");
-		$("#recipient").attr("readonly", false);
+		recipient.val("");
+		buyerForAddress.val("");
+		buyerForphonNum.val("");
+		buyerForReserveNum.val("");
+		
+		recipient.attr("readonly", false);
+		buyerForAddress.attr("readonly", false);
+		buyerForphonNum.attr("readonly", false);
+		buyerForReserveNum.attr("readonly", false);
 	} else {
-		$('#recipient').val(document.getElementById('loginUser').innerHTML);
-		$("#recipient").attr("readonly", true);
+		recipient.val(document.getElementById('loginUser').innerHTML);
+		buyerForAddress.val(addr);
+		buyerForphonNum.val(phoneNum);
+		buyerForReserveNum.val(homeNum);
 	}
 });
 
-$('select[name=addrSelection]').change(function() {
-	if($(this).val()=="1"){
-		$('#buyerForAddress').val("");
-		$("#buyerForAddress").attr("readonly", false);
-	} else {
-		$('#buyerForAddress').val(document.getElementById('loginAddr').innerHTML);
-		$("#buyerForAddress").attr("readonly", true);
-	}
-});
-
-
-$('select[name=phoneNumSelection]').change(function() {
-	if($(this).val()=="1"){
-		$('#buyerForphonNum').val("");
-		$("#buyerForphonNum").attr("readonly", false);
-	} else {
-		$('#buyerForphonNum').val(document.getElementById('loginMobileNum').innerHTML);
-		$("#buyerForphonNum").attr("readonly", true);
-	}
-});
-
-$('select[name=reserveNumSelection]').change(function() {
-	if($(this).val()=="1"){
-		$('#buyerForReserveNum').val("");
-		$("#buyerForReserveNum").attr("readonly", false);
-	} else {
-		$('#buyerForReserveNum').val(document.getElementById('loginReserveNumSelectionNum').innerHTML);
-		$("#buyerForReserveNum").attr("readonly", true);
-	}
-});
 
 $('select[name=absentMsgSelection]').change(function() {
 	if($(this).val()=="1"){
