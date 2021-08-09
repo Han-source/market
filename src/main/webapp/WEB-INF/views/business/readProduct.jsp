@@ -232,7 +232,6 @@
 <%@include file="../includes/footer.jsp"%>
 
 <script type="text/javascript">
-
 	$(document).ready(function() {
 		$('#autionpayment').hide();
 		showPurchaseWhenAutionEnd();
@@ -248,12 +247,10 @@
 				appendUploadUl('<c:out value="${attachVoInStr}" />',param);
 				i += 1;
 			</c:forEach>
-
 			// 경매 버튼 클릭시 모달 활성화
 			$("#btnAuction").on("click", function(e) {
 				$("#AuctionModal").modal("show");
 			});
-
 			// 경매 입찰시 최종 입찰 가격보다 더 높은 가격으로만 입찰 가능.
 			$("#btnPriceModal").on("click", function(e) {
 				var a = $("#auctionCurrentPrice").val()
@@ -266,20 +263,16 @@
 				}
 				$("#AuctionModal").modal("hide");
 			});
-
 			//EL이 표현한 LIST 출력 양식, 그래서 첨부파일이 안보임, El은 Server에서 돌아감
 			//postCommon에 있는 함수를 부를 것
-
 			$("button[data-oper='modify']").on("click", function() {
 				$("#frmOper").submit();
 			});
-
 			$("button[data-oper='list']").on( "click", function() {
 				$("#frmOper").find("#postId").remove();
 				$("#frmOper").attr("action",
 						"/post/listBySearch").submit();
 			});
-
 			//결제하기 페이지 이동
 	        $("#payment").on("click", function() {
 	             $("#frmPayment").attr("action", "/business/payment");
@@ -296,7 +289,6 @@
 			$("button[data-oper='chat']").on("click", function() {
 				window.open("../chat/chatting?toId=${post.writer.userId}", "_blank", "width=400,height=500,left=1200,top=10");
 			});
-
 			//장바구니 담기
 			$("#cart").on("click", function() {
 				if ("${checkShoppingCart}" == "0") {
@@ -308,23 +300,18 @@
 					return;
 				}
 			});
-
 			//가격제안 버튼을 눌렀을때 모달창 보여주기.      
 			$("button[data-oper='nego']").on("click", function() {
 				$("#modalProductNego").modal("show");
 			});
-
 			$("#btnSubmitNego").on("click", function(e) {
 				$("#modalProductNego").modal("hide");
 			});
-
 			//모달창을 닫기 버튼을 누르면 실행
 			$("#btnCloseModal").on("click", function(e) {
 				$("#modalProductNego").modal("hide");
 			});
-
 		});
-
 	//전송 버튼 눌렀을때 실행할 함수.
 	function negoSubmitFunction() {
 		var fromID = "${userId}";
@@ -336,12 +323,11 @@
 		if (chatContent != "") {
 			chatContent += "원에 제안! <br>상품의 거래제안이 도착했어요 <br>";
 			chatContent += "<a href='/business/readProduct?boardId=" + boardId +"&child=" + child + "&productId=" + productId + "' target='_blank'>내 상품 보러가기</a>";
-			chatContent += "<div  style='float:left;' ><button type='button' id='negoAgree' style='width:80px; margin-right: 20px; margin-left: 15px; background-color: #FFFFE0' onclick='updateProductPrice("
+			chatContent += "<div  style='float:left;' ><button type='button' id='negoAgree' style='width:80px; margin-right: 20px; margin-left: 15px; background-color: #E0F8F1' onclick='updateProductPrice("
 					+ $('#negoPrice').val() + ");'>수락</button>";
-			chatContent += "<button type='button' id='negoDisAgree' style='width:80px; background-color: #483D8B'' onclick='disAgree();'>거절</button></div>"
+			chatContent += "<button type='button' id='negoDisAgree' style='width:80px; background-color: #F6CEEC'' onclick='disAgree();'>거절</button></div>"
 			chatContent += "<input type='hidden' id='postId' value='${post.id}'/>";
 		}
-
 		var header = $("meta[name='_csrf_header']").attr("content");
 		var token = $("meta[name='_csrf']").attr("content");
 		var csrfHN = "${_csrf.headerName}";
@@ -353,7 +339,6 @@
 				fromID : fromID,
 				toID : toID,
 				chatContent : chatContent,
-
 			},
 			beforeSend : function(xhr) {
 				xhr.setRequestHeader(csrfHN, csrfTV);
@@ -364,7 +349,6 @@
 		// 메시지를 보냈으니 content의 값을 비워준다.
 		$('#negoPrice').val('');
 	}
-
 	function autionBid() {
 		var userID = "${userId}";
 		var auctionCurrentPrice = $("#auctionCurrentPrice").val();
@@ -412,7 +396,6 @@ if("${child}" == "7"){
 		var _hour = _minute * 60;
 		var _day = _hour * 24;
 		var timer;
-
 		function showRemaining() {
 			var now = new Date();
 			var distDt = _vDate - now;
@@ -428,7 +411,6 @@ if("${child}" == "7"){
 			var hours = Math.floor((distDt % _day) / _hour);
 			var minutes = Math.floor((distDt % _hour) / _minute);
 			var seconds = Math.floor((distDt % _minute) / _second);
-
 			document.getElementById(id).textContent = days + '일 ';
 			document.getElementById(id).textContent += hours + '시간 ';
 			document.getElementById(id).textContent += minutes + '분 ';
@@ -448,7 +430,6 @@ if("${child}" == "7"){
 		var ctx = document.getElementById("lookChartProduct");
 		var buyer = new Array();
 		var price = new Array();
-
 		<c:forEach items="${tc}" var="item" varStatus="status">
 		buyer.push("${item.buyerId}");
 		price.push("${item.auctionCurrentPrice}");

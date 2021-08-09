@@ -51,8 +51,8 @@ create table s_shopping_bascket(
 
 
 -- trade_id, buyer_name, address, phone_num, reserve_num, absent_message
-create table shipping_info(
-   trade_id       	references s_trade(trade_id),
+create table s_shipping_info(
+   trade_id       	trade_id,
    buyer_name     	varchar2(19),
    address		  	varchar2(1000),
    phone_num		number(19),

@@ -32,7 +32,7 @@
                </c:when>
                <c:when test="${descrim eq 'Admin'}">
                    <button id="btnRegisterPost" class="btn btn-primary">글쓰기</button>
-                   <button id="btnBatchDeletePost">일괄삭제</button>
+                   <button id="btnBatchDeletePost" class="btn btn-info">일괄삭제</button>
                </c:when>
            </c:choose>
             <input type="hidden" name="boardId" value="${boardId}">
@@ -41,7 +41,6 @@
             <input type="hidden" name="amount" value="${pagination.amount}">
             <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
          </form>
-
    
          <br> <a href="/">메인으로</a>
 
@@ -50,7 +49,7 @@
                <thead>
                   <tr>
                      <td>선택</td>
-                  <%= tablePrinter.printHeader(PostVO.class) %>
+                  <%= tablePrinter.printHeader(PostVO.class) %>  
                   </tr>
                </thead>
                
@@ -63,29 +62,29 @@
                            <td>
                              <c:if test="${descrim eq 'Admin'}">
                                  <input type="checkbox" name="chkpost" value="${post.id}">
-                           </c:if>
-                        </td>
-                           <td><a class="anchor4post" href="${post.id}"><img src="\resources\img\noimg.png" style="width: 25px; height: 25px;">${post.title}</a>
+                             </c:if>
+                           </td>
+                           <td><a class="anchor4post" href="${post.id}">
+                              <img src="\resources\img\noimg.png" style="width: 25px; height: 25px;">${post.title}</a>
                            </td>
                            <td>${post.writer.name}</td> 
                            <td>${post.readCnt}</td>
                            <td><fmt:formatDate pattern="yyyy년 MM월 dd일" value="${post.updateDate}" /></td>
                        </c:when>
-                       <c:otherwise>
-                             <td>
-                             <c:if test="${descrim eq 'Admin'}">
-                                 <input type="checkbox" name="chkpost" value="${post.id}">
-                           </c:if>
-                        </td>
-                           <td><a class="anchor4post" href="${post.id}"><img src="\resources\img\attachimg.png" style="width: 25px; height: 25px;">${post.title}</a>
+                          <c:otherwise>
+                            <td>
+                              <c:if test="${descrim eq 'Admin'}">
+                                    <input type="checkbox" name="chkpost" id="chkposts" value="${post.id}">
+                              </c:if>
                            </td>
-                           <td>${post.writer.name}</td>
-                           <td>${post.readCnt}</td>
-                           <td><fmt:formatDate pattern="yyyy년 MM월 dd일" value="${post.updateDate}" /></td>
-                       </c:otherwise>
+                              <td><a class="anchor4post" href="${post.id}"><img src="\resources\img\attachimg.png" style="width: 25px; height: 25px;">${post.title}</a>
+                              </td>
+                              <td>${post.writer.name}</td>
+                              <td>${post.readCnt}</td>
+                              <td><fmt:formatDate pattern="yyyy년 MM월 dd일" value="${post.updateDate}" /></td>
+                          </c:otherwise>
                       </c:choose>
                      </tr>
-                     
                   </c:forEach>
                </tbody>
             </table>
@@ -130,7 +129,6 @@
 <script type="text/javascript">
 $(document).ready(function(){
       var frmSearching = $('#frmSearching');
-      
       $("#btnRegisterPost").on("click", function(){
 //          if(${boardId} === 1 || ${boardId} === 2 ){
 //            alert('관리자만 작성 가능합니다.');
@@ -193,21 +191,26 @@ $(document).ready(function(){
             frmSearching.submit();
          });
          
-         /* 관리자 Mode 여러 게시물을 선택하여 일괄적으로 삭제 */
+         /* 관리자 Mode 여러 게시물을 선택하여 일괄적으로 삭제, 선택이 안되어있으면 삭제 불가능 */
 
         $('#btnBatchDeletePost').on('click', function(e) {
-           e.preventDefault();
-           //선택된 항목에 대한 정보 추출 JS형식, jquery 형식으로도 써도 괜찮다.
-           document.querySelectorAll("input[name='chkpost']:checked").forEach((cel)=> {
-              frmSearching.append("<input name='postIds' type='hidden' value='" + cel.value + "'>");
-           });
+           var a = document.querySelectorAll('input[name="chkpost"]:checked');
            
-           //form에 해당 항복 정보를 삽입
-           frmSearching.attr('action', '/post/batchDeletePost');
-           frmSearching.attr('method', 'post');
-           frmSearching.submit();
-        });
-
-});
+           if(document.querySelectorAll('input[name="chkpost"]:checked').length == 0) {
+            alert('삭제할 게시글을 선택해주세요.');
+            
+              } else {
+              document.querySelectorAll('input[name="chkpost"]:checked').forEach((cel)=> {
+                    frmSearching.append("<input name='postIds' type='hidden' value='" + cel.value + "'>");
+                 });
+                 
+                 //form에 해당 항복 정보를 삽입
+                 frmSearching.attr('action', '/post/batchDeletePost');
+                 frmSearching.attr('method', 'post');
+                 frmSearching.submit();
+                 }
+              });
+           //선택된 항목에 대한 정보 추출 JS형식, jquery 형식으로도 써도 괜찮다.
+   });
 
 </script>

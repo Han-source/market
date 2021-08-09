@@ -18,9 +18,11 @@
 				<c:if test="${customUser.curUser.userId eq post.writer.userId}">
 					<button data-oper='modify' class="btn btn-primary">수정</button>
 				</c:if>
+				<c:if test="${customUser.curUser.userId ne post.writer.userId}">
+					<button data-oper='chat' class="btn btn-secondary">채팅하기</button>
+				</c:if>	
 			</sec:authorize>
 			
-			<button data-oper='chat' class="btn btn-secondary">채팅하기</button>
 			<button data-oper='list' class="btn btn-secondary">목록</button>
 			
 			<form id="frmChat" action="/chat/chatting" method="get">

@@ -55,14 +55,10 @@ public class BusinessController {
 	public void listBySearch(@RequestParam("boardId") int boardId, @RequestParam("child") int child,
 			@ModelAttribute("pagination") Criteria userCriteria, @AuthenticationPrincipal Principal principal,
 			Model model) {
-		Party curUser = null;
-		if (principal != null) {
-			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
-			CustomUser cu = (CustomUser) upat.getPrincipal();
-			curUser = cu.getCurUser();
+		Party curUser = getPricipalUser(principal);
+		if(curUser != null) {
 			model.addAttribute("userId", curUser.getUserId());
 		}
-
 		// model.addAttribute("listPost", postService.getListByHashTag(curUser, boardId,
 		// child, userCriteria));
 		model.addAttribute("boardId", boardId);
@@ -74,6 +70,16 @@ public class BusinessController {
 		model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardList", boardService.getList());
 		userCriteria.setTotal(postService.getSearchTotalCount(boardId, child, userCriteria));
+	}
+
+	private Party getPricipalUser(Principal principal) {
+		Party curUser = null;
+		if (principal != null) {
+			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
+			CustomUser cu = (CustomUser) upat.getPrincipal();
+			curUser = cu.getCurUser();
+		}
+		return curUser;
 	}
 
 	@GetMapping(value = "readProduct")
@@ -161,12 +167,7 @@ public class BusinessController {
 	@PreAuthorize("isAuthenticated()")
 	public String insertShoppingCart(String productId, @AuthenticationPrincipal Principal principal,
 			@RequestParam("boardId") int boardId, @RequestParam("child") int child) {
-		Party curUser = null;
-		if (principal != null) {
-			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
-			CustomUser cu = (CustomUser) upat.getPrincipal();
-			curUser = cu.getCurUser();
-		}
+		Party curUser = getPricipalUser(principal);
 
 		businessService.insertShopphingCart(curUser.getUserId(), productId);
 		return "redirect:/business/readProduct?boardId=" + boardId + "&child=" + child + "&productId=" + productId;
@@ -185,11 +186,10 @@ public class BusinessController {
 			CustomUser cu = (CustomUser) upat.getPrincipal();
 			curUser = cu.getCurUser();
 			newProductCondition.setBuyerId(curUser.getUserId());
-			model.addAttribute("negoBuyer",
-					businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
+			model.addAttribute("userName",curUser.getName());
+			model.addAttribute("negoBuyer",businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
 			model.addAttribute("buyerId", newProductCondition.getBuyerId());
 		}
-		model.addAttribute("boardList", boardService.getList());
 		model.addAttribute("post", replyService.findProductById(productId, child));
 		model.addAttribute("product", businessService.findPriceById(productId));
 		model.addAttribute("condition", businessService.findAuctionPriceById(productId));
@@ -197,7 +197,6 @@ public class BusinessController {
 		model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("child", child);
-		List<Party> a = partyService.getList(curUser);
 		model.addAttribute("loginPersonInfo", partyService.getList(curUser));
 	}
 
@@ -229,18 +228,8 @@ public class BusinessController {
 		model.addAttribute("maxBidPrice", businessService.findMaxBidPrice(productId));
 	}
 	
-	
-	
-	
-	
 	@RequestMapping(value="/purchase", method=RequestMethod.POST, produces={"application/json"})
 	public @ResponseBody void purchase(@AuthenticationPrincipal Principal principal, @RequestBody ShippingInfoVO shippingInfoVO) {
-		Party curUser = null;
-		if (principal != null) {
-			UsernamePasswordAuthenticationToken upat = (UsernamePasswordAuthenticationToken) principal;
-			CustomUser cu = (CustomUser) upat.getPrincipal();
-			curUser = cu.getCurUser();
-		}
 		businessService.purchaseProduct(shippingInfoVO);
 	}
 

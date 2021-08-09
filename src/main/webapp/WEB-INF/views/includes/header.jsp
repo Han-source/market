@@ -81,39 +81,32 @@ li {
 		</div>
 		<!-- Menu Bar -->
 		<nav class="main-menu">
-
 			<ul class="sub-menu">
 				<!-- ul tag에서 공지사항bd=1, FAQbd=2, 자유게시판bd=3, 중고거래bd=4 -->
 				<sec:authorize access="permitAll()">
 					<c:forEach items="${boardList}" var="board">
-						<c:choose>
-							<c:when test="${board.id == 4}">
 								<li>
-									<a href="/business/productList?boardId=${board.id}&child=5">
-										<img src="/resources/img/icons/tradeIcon.png" style="float: bottom; width: 24px; height: 25px; margin: 0px, 8px;">${board.name}
-									</a>
-								</li>
-							</c:when>
-							<c:otherwise>
-								<li>
-										<c:if test="${board.id == 1}">
-											<a href="/post/listBySearch?boardId=${board.id}&child=0">
-												<img src="/resources/img/icons/notice.png" style="float: bottom; width: 24px; height: 25px; margin: 0px, 8px;">${board.name}
-											</a>												
-										</c:if>
-										<c:if test="${board.id == 2}">
-											<a href="/post/listBySearch?boardId=${board.id}&child=0">
-												<img src="/resources/img/icons/faqIcon.png" style="float: bottom; width: 24px; height: 25px; margin: 0px, 8px;">${board.name}
-											</a>
-										</c:if>
-										<c:if test="${board.id == 3}">
-											<a href="/post/listBySearch?boardId=${board.id}&child=0">
-												<img src="/resources/img/icons/board.png" style="float: bottom; width: 24px; height: 25px; margin: 0px, 8px;">${board.name}
-											</a>
-										</c:if>
-								</li>
-							</c:otherwise>
-						</c:choose>
+									<c:if test="${board.id == 1}">
+										<a href="/post/listBySearch?boardId=${board.id}&child=0">
+											<img src="/resources/img/icons/notice.png" style="float: bottom; width: 24px; height: 25px; margin: 0px, 8px;">${board.name}
+										</a>												
+									</c:if>
+									<c:if test="${board.id == 2}">
+										<a href="/post/listBySearch?boardId=${board.id}&child=0">
+											<img src="/resources/img/icons/faqIcon.png" style="float: bottom; width: 24px; height: 25px; margin: 0px, 8px;">${board.name}
+										</a>
+									</c:if>
+									<c:if test="${board.id == 3}">
+										<a href="/post/listBySearch?boardId=${board.id}&child=0">
+											<img src="/resources/img/icons/board.png" style="float: bottom; width: 24px; height: 25px; margin: 0px, 8px;">${board.name}
+										</a>
+									</c:if>
+									<c:if test="${board.id == 4}">
+										<a href="/business/productList?boardId=${board.id}&child=5">
+											<img src="/resources/img/icons/tradeIcon.png" style="float: bottom; width: 24px; height: 25px; margin: 0px, 8px;">${board.name}
+										</a>
+									</c:if>
+								</li>	
 					</c:forEach>
 				</sec:authorize>
 

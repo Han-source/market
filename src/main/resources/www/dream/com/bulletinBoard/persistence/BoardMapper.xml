@@ -19,7 +19,9 @@
 	<!-- public List<BoardVO> getList(); -->
 	<select id="getList" resultMap="boardMapper"> 
 	<![CDATA[
-	select * from s_board where parent_id = 0
+	select * from s_board 
+	 where parent_id = 0
+	 order by id 
 	]]>
 	</select>
 	<!-- public BoardVO getBoard(int id); -->

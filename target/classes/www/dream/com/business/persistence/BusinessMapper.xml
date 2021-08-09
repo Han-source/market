@@ -210,9 +210,9 @@
 				select get_id(seq_reply_id.nextval) from dual
 		</selectKey>
 		insert all
-		 into s_trade (trade_id, PRODUCT_FINAL_PRICE, seller_id, buyer_id) 
-		   values (#{shippingInfo.tradeId}, #{shippingInfo.productFinalPrice}, #{shippingInfo.sellerId}, #{shippingInfo.buyerId}) 
-		 into shipping_info(trade_id, buyer_name, address, phone_num, reserve_num, absent_message)
+		 into s_trade (trade_id, PRODUCT_FINAL_PRICE, seller_id, buyer_id, trade_date) 
+		   values (#{shippingInfo.tradeId}, #{shippingInfo.productFinalPrice}, #{shippingInfo.sellerId}, #{shippingInfo.buyerId}, sysdate) 
+		 into s_shipping_info(trade_id, buyer_name, address, phone_num, reserve_num, absent_message)
 		   values (#{shippingInfo.tradeId}, #{shippingInfo.buyerId}, #{shippingInfo.address}, #{shippingInfo.phonNum}, #{shippingInfo.reserveNum}, #{shippingInfo.absentMsg})
 		 select * from dual
 	</insert>

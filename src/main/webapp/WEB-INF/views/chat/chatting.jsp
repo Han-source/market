@@ -29,9 +29,8 @@
         </div>
         <div class="chat_form" id="frmMember" action="/chat/chatting" method="post">
             <form>
-                <input type="text" placeholder="메시지를 입력하세요." id="chatContent" name="chatContent"
-                maxlength="100">
-                <button type="button" class="btn btn-default pull-right" onclick="submitFunction();">
+                <input type="text" placeholder="메시지를 입력하세요." id="chatContent" name="chatContent" maxlength="100">
+                <button type="button" class="btn btn-default pull-right" onclick="chatSubmit();">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </form>
@@ -61,7 +60,7 @@
  -->
 
 <!-- End of Main Content -->
-
+<script src="\resources\js\chat\chat.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		getUnread();
@@ -72,138 +71,37 @@
 </script>
 
 	<script type="text/javascript">
-		function updateProductPrice(negoPrice) {
-			var fromID = "${userId}";
-			var toID = "${toId}";
-			var chatContent = negoPrice;
-			var postId = $('#postId').val();
-			var agree = "수락"
-
-			var header = $("meta[name='_csrf_header']").attr("content");
-			var token = $("meta[name='_csrf']").attr("content");
-			var csrfHN = "${_csrf.headerName}";
-			var csrfTV = "${_csrf.token}";
-			$.ajax({
-				type : "POST",
-				url : "/chat/agreeNegoSug",
-				data : {
-					fromID : fromID,
-					toID : toID,
-					chatContent : chatContent,
-					postId : postId,
-					agree : agree,
-				},
-				beforeSend : function(xhr) {
-					xhr.setRequestHeader(csrfHN, csrfTV);
-				},
-				success : function() {
-					alert('가격제안이 수락되었습니다')
-					Agree();
-				}
-			});
-			// 메시지를 보냈으니 content의 값을 비워준다.
-			$('#negoPrice').val('');
+	var fromID = "${userId}";
+	var toID = "${toId}";
+	var postId;
+	var chatContent;
+	var csrfHN = "${_csrf.headerName}";
+	var csrfTV = "${_csrf.token}";
+	$(document).ajaxSend(
+		function(e, xhr){
+			xhr.setRequestHeader(csrfHN, csrfTV);
 		}
-
-		function Agree() {
-			var fromID = "${userId}";
-			var toID = "${toId}";
-			var chatContent = "가격 제안이 수락되었습니다";
-			var postId = $('#postId').val();
-			
-
-			var header = $("meta[name='_csrf_header']").attr("content");
-			var token = $("meta[name='_csrf']").attr("content");
-			var csrfHN = "${_csrf.headerName}";
-			var csrfTV = "${_csrf.token}";
-			$.ajax({
-				type : "POST",
-				url : "/chat/chatting",
-				data : {
-					fromID : fromID,
-					toID : toID,
-					chatContent : chatContent,
-					postId : postId,
-				},
-				beforeSend : function(xhr) {
-					xhr.setRequestHeader(csrfHN, csrfTV);
-				},
-				success : function(result) {
-				}
-			});
-			// 메시지를 보냈으니 content의 값을 비워준다.
-			$('#negoPrice').val('');
-		}
-
-		
-		function disAgree() {
-			var fromID = "${userId}";
-			var toID = "${toId}";
-			var chatContent = "가격 제안이 거절 되었습니다";
-			var postId = $('#postId').val();
-			
-
-			var header = $("meta[name='_csrf_header']").attr("content");
-			var token = $("meta[name='_csrf']").attr("content");
-			var csrfHN = "${_csrf.headerName}";
-			var csrfTV = "${_csrf.token}";
-			$.ajax({
-				type : "POST",
-				url : "/chat/chatting",
-				data : {
-					fromID : fromID,
-					toID : toID,
-					chatContent : chatContent,
-					postId : postId,
-				},
-				beforeSend : function(xhr) {
-					xhr.setRequestHeader(csrfHN, csrfTV);
-				},
-				success : function(result) {
-				}
-			});
-			// 메시지를 보냈으니 content의 값을 비워준다.
-			$('#negoPrice').val('');
-		}
-
-	function submitFunction() {
-		var fromID = "${userId}";
-		var toID = "${toId}";
-		var chatContent = $('#chatContent').val();
-		var header = $("meta[name='_csrf_header']").attr("content");
-		var token = $("meta[name='_csrf']").attr("content");
-		var csrfHN = "${_csrf.headerName}";
-		var csrfTV = "${_csrf.token}";
-
-		$.ajax({
-			type : "POST",
-			url : "/chat/chatting",
-			data : {
-				fromID : fromID,
-				toID : toID,
-				chatContent : chatContent,
-
-			},
-			beforeSend : function(xhr) {
-				xhr.setRequestHeader(csrfHN, csrfTV);
-			},
-			success : function(result) {
-				//전송 성공 시 성공alert
-				if (result == 1) {
-					autoClosingAlert('#successMessage', 2000);
-				} else if (result == 0) {
-					//전송 오류 시 오류 alert
-					autoClosingAlert('#dangerMessage', 2000);
-				} else {
-					//전송 실패 시 실패 alert
-					autoClosingAlert('#warningMessage', 2000);
-				}
-			}
-		});
-		// 메시지를 보냈으니 content의 값을 비워준다.
-		$('#chatContent').val('');
+	);
+	
+	//네고 버튼을 수락했을 때
+	function updateProductPrice(negoPrice) {
+		postId = $('#postId').val();
+		chatService.negoProductPrice(fromID, toID, negoPrice, postId, '수락')
+		chatContent = '가격제안이 수락되었습니다.';
+		chatService.agreeFunction(fromID, toID, chatContent , postId);
 	}
-
+	//네고버튼을 거절했을 때
+	function disAgree() {
+		chatContent = '가격제안이 거절되었습니다.';
+		postId = $('#postId').val();
+		chatService.disAgreeFunction(fromID, toID, chatContent , postId);
+	}
+	//사용자가 메세지 전송 버튼을 누르면 실행되는 함수
+	function chatSubmit(){
+		chatService.chatSubmit(fromID, toID, $('#chatContent').val());
+	}
+	
+	
 	function autoClosingAlert(selector, delay) {
 		var alert = $(selector).alert();
 		alert.show();
@@ -213,57 +111,11 @@
 	}
 
 	var lastID = 0;
+	//채팅방 내용 띄워주기
 	function chatListFunction() {
-		var fromID = "${userId}";
-		var toID = "${toId}";
-		var csrfHN = "${_csrf.headerName}";
-		var csrfTV = "${_csrf.token}";
-		$.ajax({
-			type : "POST",
-			url : "/chat/chatList",
-			data : {
-				fromID : fromID,
-				toID : toID
-			},
-			beforeSend : function(xhr) {
-				xhr.setRequestHeader(csrfHN, csrfTV);
-			},
-			
-			success : function(data) {
-				if (data == "")
-					return;
-				$('#chatList').html('');
-				var parsed = JSON.parse(data);
-				var result = parsed.result;
-				for (var i = 0; i < result.length; i++) {
-					if (result[i][0].value == fromID) {
-						result[i][0].value = '나';
-						if(result[i][2].value.includes('button')){
-							result[i][2].value = '거래제안을 보냈습니다';
-							addChat(result[i][0].value, result[i][2].value,
-									result[i][3].value);
-						}else{
-							console.log(result[i][2].value);
-							addChat(result[i][0].value, result[i][2].value,
-									result[i][3].value);
-						}						
-					}else{
-						addChat(result[i][0].value, result[i][2].value,
-								result[i][3].value);
-					}
-				}
-				// 가장 마지막으로 전달 받은 ID가 저장이 된다.
-				lastID = Number(parsed.last);
-
-			}
-		});
-
+		chatService.chatList(fromID, toID)
 	}
-	
-	img = new Image();
-	img.onload; 
-	img.src = "/resources/img/icon.png";
-	
+
 	// 채팅을 보낸사람, 내용, 시간 
 	// 채팅 메시지 형태
 	function addChat(chatName, chatContent, chatTime) {
@@ -306,32 +158,11 @@
 	});
 	
 	function getUnread() {
-		var csrfHN = "${_csrf.headerName}";
-		var csrfTV = "${_csrf.token}";
-		$.ajax({
-			type : "POST",
-			url : "/chat/unread",
-			data : {
-			userID : "${userId}",
-
-			},beforeSend : function(xhr) {
-				xhr.setRequestHeader(csrfHN, csrfTV);
-			},
-			success : function(result) {
-				//  0을 받으면 에러, 1이상을 받으면 정상처리
-				if (result >= 1) {
-					showUnread(result);
-				} else {
-					// 0이 입력받을 때 공백 처리
-					showUnread('');
-				}
-			}
-		});
+		chatService.chatUnread(fromID)
 	}
-	// 몇 초 간격으로 새로운 메시지가 온지 가져오는 것
+
 	function getInfiniteChat() {
 		setInterval(function() {
-//			$('#chatList').empty();
 			chatListFunction();
 		}, 3000);
 	}

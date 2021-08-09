@@ -65,8 +65,15 @@
                             <div class="col-lg-2">
                                 <p class="in-name">수령인*</p>
                             </div>
-                            <div class="col-lg-3">
-                                <input type="text" id="recipient" name="buyerName" placeholder="이름">
+                            <div class="col-lg-10">
+								<div>
+	                                <input type="text" id="recipient" name="buyerName" placeholder="이름">
+		                                <select id="userNameSelection" name="userNameSelection">
+											<option value="1" selected="selected">직접입력</option>
+											<option id="loginUser" value='${userName}'>${userName}</option>
+										</select>
+								</div>
+
                             </div>
                         </div>
                         <div class="row">
@@ -75,6 +82,14 @@
                             </div>
                             <div class="col-lg-10">
                                 <input type="text" id="buyerForAddress" name="address" placeholder="배송지를 입력하세요.">
+                                	<select id="addrSelection" name="addrSelection">
+										<option value="1" selected="selected">직접입력</option>
+										<c:forEach items="${loginPersonInfo}" var="listContactPoint" varStatus="status">
+											<c:forEach items="listContactPoint" var="info" varStatus="sta">
+												<option id="loginAddr" value=${loginPersonInfo[status.index].listContactPoint[0].info}>${loginPersonInfo[status.index].listContactPoint[0].info}</option>
+											</c:forEach>
+										</c:forEach>
+									</select>
                             </div>
                         </div>
                         <div class="row">
@@ -83,14 +98,30 @@
                             </div>
                             <div class="col-lg-10">
                                 <input type="number" id="buyerForphonNum" name="phonNum" placeholder="휴대폰 번호를 입력해주세요.">
+                                	<select id="phoneNumSelection" name="phoneNumSelection">
+										<option value="1" selected="selected">직접입력</option>
+										<c:forEach items="${loginPersonInfo}" var="listContactPoint" varStatus="status">
+											<c:forEach items="listContactPoint" var="info" varStatus="sta">
+												<option id="loginMobileNum" value=${loginPersonInfo[status.index].listContactPoint[1].info}>${loginPersonInfo[status.index].listContactPoint[1].info}</option>
+											</c:forEach>
+										</c:forEach>
+									</select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-2">
-                                <p class="in-name">예비 연락처*</p>
+                                <p class="in-name">집 전화번호*</p>
                             </div>
                             <div class="col-lg-10">
                                 <input type="number" id="buyerForReserveNum" name="reserveNum" placeholder="예비 연락처를 입력해주세요.">
+                                	<select id="reserveNumSelection" name="reserveNumSelection">
+										<option value="1" selected="selected">직접입력</option>
+										<c:forEach items="${loginPersonInfo}" var="listContactPoint" varStatus="status">
+											<c:forEach items="listContactPoint" var="info" varStatus="sta">
+												<option id="loginReserveNumSelectionNum" value=${loginPersonInfo[status.index].listContactPoint[2].info}>${loginPersonInfo[status.index].listContactPoint[2].info}</option>
+											</c:forEach>
+										</c:forEach>
+									</select>
                             </div>
                         </div>
                          <div class="row">
@@ -99,6 +130,11 @@
                             </div>
                             <div class="col-lg-10">
                                 <input type="text" id="buyerForAbsentMsg" name="absentMsg" placeholder="배송 메모를 입력하세요.">
+                                	<select id="absentMsgSelection" name="absentMsgSelection">
+										<option value="1" selected="selected">직접입력</option>
+										<option id="absentMsg" value="안전하게 와주세요">안전하게 와주세요</option>
+										<option id="absentMsg" value="빠르게 와주세요">빠르게 와주세요</option>
+									</select>
                             </div>
                         </div>                       
                     </div>
@@ -120,22 +156,18 @@
                                    <p>${negoBuyer.discountPrice}원</p>
                                </c:if>
                             </c:if>
-                            
                             </div>                       
                             <div class="cart-total">
                                 <span>최종 가격</span>
                                 <c:choose>
 						        <c:when test="${negoBuyer eq null}"> 
-						            <p id="finalPrice">${product.productPrice}"</p>
+						            <p id="finalPrice">${product.productPrice}</p>
 						        </c:when>
 						        <c:otherwise> 
 						             <p id="finalPrice">${negoBuyer.discountPrice}</p>
 						        </c:otherwise>
 						    </c:choose>	
                             </div>                        
-                            
-                       
-                            
                         </div>
                     </div>
                 </div>
@@ -170,11 +202,61 @@
     </section>
  </body>
 
-
-
-
 <%@ include file="../includes/footer.jsp"%>
 <script type="text/javascript">
+
+$('#userNameSelection').change(function() {
+	if($(this).val()=="1"){
+		$('#recipient').val("");
+		$("#recipient").attr("readonly", false);
+	} else {
+		$('#recipient').val(document.getElementById('loginUser').innerHTML);
+		$("#recipient").attr("readonly", true);
+	}
+});
+
+$('select[name=addrSelection]').change(function() {
+	if($(this).val()=="1"){
+		$('#buyerForAddress').val("");
+		$("#buyerForAddress").attr("readonly", false);
+	} else {
+		$('#buyerForAddress').val(document.getElementById('loginAddr').innerHTML);
+		$("#buyerForAddress").attr("readonly", true);
+	}
+});
+
+
+$('select[name=phoneNumSelection]').change(function() {
+	if($(this).val()=="1"){
+		$('#buyerForphonNum').val("");
+		$("#buyerForphonNum").attr("readonly", false);
+	} else {
+		$('#buyerForphonNum').val(document.getElementById('loginMobileNum').innerHTML);
+		$("#buyerForphonNum").attr("readonly", true);
+	}
+});
+
+$('select[name=reserveNumSelection]').change(function() {
+	if($(this).val()=="1"){
+		$('#buyerForReserveNum').val("");
+		$("#buyerForReserveNum").attr("readonly", false);
+	} else {
+		$('#buyerForReserveNum').val(document.getElementById('loginReserveNumSelectionNum').innerHTML);
+		$("#buyerForReserveNum").attr("readonly", true);
+	}
+});
+
+$('select[name=absentMsgSelection]').change(function() {
+	if($(this).val()=="1"){
+		$('#buyerForAbsentMsg').val("");
+		$("#buyerForAbsentMsg").attr("readonly", false);
+	} else {
+		$('#buyerForAbsentMsg').val($(this).val());
+		$("#buyerForAbsentMsg").attr("readonly", true);
+	}
+});
+
+
 $('#kakao_trade').click(function () {
     // getter
     var IMP = window.IMP;
@@ -186,18 +268,17 @@ $('#kakao_trade').click(function () {
 	var address;
 	var phoneNum;
 	var mobileNum;
-	<c:forEach items="${loginPersonInfo}" var="listContactPoint" varStatus="status">
-		<c:forEach items="listContactPoint" var="info" varStatus="sta">
-			address = "${loginPersonInfo[status.index].listContactPoint[0].info}" ;
-			phoneNum = "${loginPersonInfo[status.index].listContactPoint[1].info}";
-			mobileNum = "${loginPersonInfo[status.index].listContactPoint[2].info}";
-		</c:forEach>
-	</c:forEach>
+	
 	//구매하면 보낼 곳의 정보, 주소, 폰번호, 예비번호, 부재시 메시지를 받아야함.
+	//결재시 받을 주소
 	var buyerForAddress = $('#buyerForAddress').val();
+	//결제시 받을 연락 받을 번호
 	var buyerForphonNum = $('#buyerForphonNum').val();
+	//집 전화번호
 	var buyerForReserveNum = $('#buyerForReserveNum').val();
+	//부재시 메세지
 	var buyerForAbsentMsg = $('#buyerForAbsentMsg').val();
+	
 	var param = {"address":buyerForAddress, "phonNum":buyerForphonNum, 
 			"reserveNum":buyerForReserveNum, "absentMsg":buyerForAbsentMsg,
 			"productFinalPrice":parseInt(money), "buyerId":"${buyerId}" , "sellerId":"${post.writer.userId}"
