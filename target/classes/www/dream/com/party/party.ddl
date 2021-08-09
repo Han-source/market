@@ -119,4 +119,9 @@ create table s_pick_list(
 )	
 	
 	
-	
+CREATE table s_likecheck(
+    postid                  varchar2(4000)        REFERENCES s_reply(id),
+    user_id                 varchar2(10)        REFERENCES s_party(user_id),
+    like_check              NUMBER(9)            default 0, 
+    primary key (postid, user_id)
+);	
