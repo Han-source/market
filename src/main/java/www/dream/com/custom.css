@@ -352,7 +352,7 @@ height:40px;
 }
 
 #slider, #slider div.sliderInner {
-    width:400px;height:400px;/* Must be the same size as the slider images */
+    width:600px;height:700px;/* Must be the same size as the slider images */
 }
 
 #slider {
@@ -361,7 +361,7 @@ height:40px;
 	margin:0 auto; /*center-aligned*/
     transform: translate3d(0,0,0);
     box-shadow: 0px 1px 5px #999999;
-    width:400px;height:400px;
+    width:600px;height:700px;
 }
 
 /* image wrapper */
@@ -449,7 +449,7 @@ height:40px;
 }
 
 #slider img, #slider>b, #slider a>b {
-	position:absolute; border:none; display:none; width: 600px; height: 400px
+	position:absolute; border:none; display:none; width: 1600px; height: 900px
 }
 
 #slider div.sliderInner {

@@ -6,8 +6,7 @@
 <!-- id 값으로 content를 그냥 사용하는건 위험하다. 왜냐하면 content값이 예약을 처리하는 기능이 있기에  -->
 <!-- 실 내용만 담을 postCommon.jsp -->
 <div class="form-group">
-	<label>아이디</label>
-	<input name="id" value="${post.id}" class="form-control" readonly>
+	<input name="id" type="hidden" value="${post.id}" class="form-control" readonly>
 <!-- 여긴 중요한게, 객체를 만들어주는 부분이다. 제목을 넣는 부분 -->
 </div>
 
@@ -40,16 +39,16 @@
 
 <!-- 05.27 새로운 속성들 추가 -->
 
-<div class="form-group">
+<div class="form-group" id = "likeDivId">
    <p>
       조회수 : <b>${post.readCnt}</b> <span id="like"> 좋아요 : <i id="likecnt">${post.likeCnt}</i> </span>
    </p>
 </div>
 
-<div class="form-group">
-	<label>등록일 : </label>
+<div class="form-group" id = "dateDivId">
+	<label >등록일 : </label>
 	<fmt:formatDate pattern="yyyy-MM-dd" value="${post.registrationDate}" />
-	<label>, 수정일 : </label>
+	<label >, 수정일 : </label>
 	<fmt:formatDate pattern="yyyy-MM-dd" value="${post.updateDate}" />
 </div>
  <c:choose>
@@ -102,6 +101,9 @@
 			$('#title').attr("readonly" , false);
 			//document.getElementById("txaContent").readonly =  false;
 			 $('#txaContent').attr("readonly" , false); //title, content 부분을 readonly를 false로 바꿔주면
+			 $('#dateDivId').remove();
+			 $('#likeDivId').remove();
+
 		}
 	}
 	

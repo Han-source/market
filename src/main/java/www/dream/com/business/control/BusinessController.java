@@ -108,7 +108,6 @@ public class BusinessController {
 		model.addAttribute("auctionParty", businessService.findAuctionPartyById(productId));
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("child", child);
-		List<TradeConditionVO> a = businessService.lookChartProduct(productId);
 		model.addAttribute("tc", businessService.lookChartProduct(productId));
 		model.addAttribute("maxBidPrice", businessService.findMaxBidPrice(productId));
 	}
@@ -132,6 +131,7 @@ public class BusinessController {
 		if (tradeCondition.getAuctionEndDate() == null) {
 			tradeCondition.setAuctionEndDate(LocalDateTime.now());
 		}
+		model.addAttribute("boardList", boardService.getList());
 		model.addAttribute("child", child);
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("childBoardList", boardService.getChildBoardList(4));
@@ -191,6 +191,7 @@ public class BusinessController {
 			model.addAttribute("negoBuyer",businessService.findNegoPriceByBuyerWithProductId(productId, newProductCondition));
 			model.addAttribute("buyerId", newProductCondition.getBuyerId());
 		}
+		model.addAttribute("boardList", boardService.getList());
 		model.addAttribute("post", replyService.findProductById(productId, child));
 		model.addAttribute("product", businessService.findPriceById(productId));
 		model.addAttribute("condition", businessService.findAuctionPriceById(productId));

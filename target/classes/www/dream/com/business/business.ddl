@@ -52,9 +52,9 @@ create table s_shopping_bascket(
 
 -- trade_id, buyer_name, address, phone_num, reserve_num, absent_message
 create table s_shipping_info(
-   trade_id       	trade_id,
+   trade_id       	varchar2(4000),
    buyer_name     	varchar2(19),
-   address		  	varchar2(1000),
+   address		  	varchar2(4000),
    phone_num		number(19),
    reserve_num		number(19),
    absent_message	varchar2(4000)

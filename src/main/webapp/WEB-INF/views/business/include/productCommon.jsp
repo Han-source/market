@@ -6,8 +6,7 @@
 
 
 <div class="form-group">
-   <label>아이디</label>
-   <input name="postId" value="${post.id}" class="form-control" readonly>
+   <input name="postId" type="hidden" value="${post.id}" class="form-control" readonly>
 <!-- 여긴 중요한게, 객체를 만들어주는 부분이다. 제목을 넣는 부분 -->
 </div>
 

@@ -8,16 +8,6 @@
 
 <!-- End of 첨부 파일 목록-->
 
-<style type>
-	.bigWrapper { position: absolute; display: none; justify-content: center; align-items: center; top: 0%; width: 100%; height: 100%;
-				z-index: 100;}
-	.bigNested { position: relative; display:flex; justify-content: center; align-items:center;}
-	.bigNested img {width: 600px;}
-	.bigNested video {width: 600px;}
-
-
-</style>
-
 <!-- 첨부파일 목록 출력 부분  -->
 	
 		<div class="form-group">
@@ -28,7 +18,7 @@
 			</div>
 
 			
-			<div id="uploadResult" style="width:300px; height:auto;">
+			<div id="uploadResult">
 				<div id="sliderFrame">
 		        <div id="slider">
 		        </div>
@@ -79,22 +69,16 @@ function appendUploadUl(attachVOInJson) {
 					liTags += "</li>";
 					
 		} else if (attachVO.multimediaType === "image" || attachVO.multimediaType === "video") {
-			liTags += "<li>"
-					+ "<a>"
-					+ "<img class='ns-img' src='/uploadFiles/display?fileName=" 
-					+ encodeURIComponent(attachVO.fileProductCallPath) + "'style = 'float: left;  width: 400px; height: 400px; object-fit: cover;  font-size: 0;'/>"
-					+ "</a>"; 
+			liTags += "<img class='ns-img' src='/uploadFiles/display?fileName=" 
+					+ encodeURIComponent(attachVO.fileProductCallPath) + "'style = 'float: left;  width: 600px; height: 700px; object-fit: cover;  font-size: 0;'/>"
 					if(updateMode) {
 						liTags += "<span>X</span>";
 					}
-					liTags += "</li>";
+					
 			} 	  
 		}
 	$("#uploadResult div#sliderFrame div#slider").append(liTags); 
 }
-$("#uploadResult div#ninja-slider div.slider-inner ul").on("click", function () {
-	alert('hi');
-})
 
 	$(document).ready(function() {
 		//업로드 파일에 대한 확장자 제한하는 정규식

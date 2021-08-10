@@ -30,18 +30,12 @@
 
 <!-- <link href="/resources/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
 <!-- Css Styles -->
-<link rel="stylesheet" href="/resources/css/bootstrap.min.css"
-	type="text/css">
-<link rel="stylesheet" href="/resources/css/font-awesome.min.css"
-	type="text/css">
-<link rel="stylesheet" href="/resources/css/nice-select.css"
-	type="text/css">
-<link rel="stylesheet" href="/resources/css/owl.carousel.min.css"
-	type="text/css">
-<link rel="stylesheet" href="/resources/css/magnific-popup.css"
-	type="text/css">
-<link rel="stylesheet" href="/resources/css/slicknav.min.css"
-	type="text/css">
+<link rel="stylesheet" href="/resources/css/bootstrap.min.css" type="text/css">
+<link rel="stylesheet" href="/resources/css/font-awesome.min.css" type="text/css">
+<link rel="stylesheet" href="/resources/css/nice-select.css" type="text/css">
+<link rel="stylesheet" href="/resources/css/owl.carousel.min.css" type="text/css">
+<link rel="stylesheet" href="/resources/css/magnific-popup.css" type="text/css">
+<link rel="stylesheet" href="/resources/css/slicknav.min.css" type="text/css">
 <link rel="stylesheet" href="/resources/css/style.css" type="text/css">
 <!--     <link rel="stylesheet" href="/resources/css/dropdw.css" type="text/css"> -->
 <link rel="stylesheet" href="/resources/css/custom.css">

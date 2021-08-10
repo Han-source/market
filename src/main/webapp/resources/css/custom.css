@@ -352,17 +352,29 @@ height:40px;
 }
 
 #slider, #slider div.sliderInner {
-    width:400px;height:400px;/* Must be the same size as the slider images */
+    width:600px;height:600px;/* Must be the same size as the slider images */
 }
 
+
+/* 사진크기 변경 기억하자 2021 */
 #slider {
 	background:#fff url(loading.gif) no-repeat 50% 50%;
 	position:relative;
 	margin:0 auto; /*center-aligned*/
     transform: translate3d(0,0,0);
     box-shadow: 0px 1px 5px #999999;
-    width:400px;height:400px;
+    width:600px;height:600px;
 }
+
+#slider2 {
+	background:#fff url(loading.gif) no-repeat 50% 50%;
+	position:relative;
+	margin:0 auto; /*center-aligned*/
+    transform: translate3d(0,0,0);
+    box-shadow: 0px 1px 5px #999999;
+    width:200px;height:200px;
+}
+
 
 /* image wrapper */
 #slider a.imgLink, #slider div.video {
@@ -413,7 +425,7 @@ height:40px;
 /* ------ built-in navigation bullets wrapper ------*/
 /* Note: check themes\2\js-image-slider.css to see how to hide nav bullets */
 #slider div.navBulletsWrapper  {
-    top:320px;/* Its position is relative to the #slider */
+    top:550px;/* Its position is relative to the #slider */
 	text-align:center;
 	background:none;
 	position:relative;
@@ -421,6 +433,7 @@ height:40px;
 }
 
 /* each bullet */
+/* 상품 밑에 이동하는 슬라이드 버튼 조절 */
 #slider div.navBulletsWrapper div 
 {
     width:11px; height:11px;

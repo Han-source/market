@@ -60,7 +60,7 @@
 									 <c:forEach var="attachVoInStr" items="${product.attachListInGson}" varStatus="sta">
 										<script>
 											$(document).ready(function() {
-												imageList('<c:out value="${productList[status.index].attachListInGson[sta.index]}" />', '<c:out value="${productList[status.index].listAttach[sta.index].uuid}" />', '<c:out value="${productList[status.index].id}" />');
+												productImgListFunction('<c:out value="${productList[status.index].attachListInGson[sta.index]}" />', '<c:out value="${productList[status.index].listAttach[sta.index].uuid}" />', '<c:out value="${productList[status.index].id}" />');
 											});
 										</script>							
 									</c:forEach>
@@ -129,6 +129,7 @@
 
 <%@include file="../includes/footer.jsp"%>
 <script src="\resources\js\util\utf8.js"></script>
+<script src="\resources\js\imgList\imgList.js"></script>
 <!-- End of Main Content -->
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -197,16 +198,9 @@
 });
 	
 	
-	function imageList(attachVOInJson, uuid, id){
-		var liTags = "";
-		var attachVo = JSON.parse(decodeURL(attachVOInJson));
-				if(attachVo.uuid === uuid){
-					liTags+= "<li>"
-						+ "<img src='/uploadFiles/display?fileName=" 
-						+ encodeURIComponent(attachVo.fileCallPath) + "' style = 'float: left;  width: 100px; height: 100px; object-fit: cover; display: inline-block; font-size: 0;'>"
-						+ "</li>";
-						$("#"+ id +" ul.slider__images" ).append(liTags);
-				}
-	}	
+	function productImgListFunction(attachVOInJson, uuid, id){
+		imgService.productImgList(attachVOInJson, uuid, id);
+	}
+
 	
 </script>

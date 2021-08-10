@@ -9,8 +9,18 @@
 #sliderBody{float: left; width:20%; height: 100px; padding:0px; margin-right:1%; } 
 #header1{ height: 100px; border-bottom: 1px solid dimgrey; box-sizing: border-box; text-align: center; line-height: 100px; font-size: 1.5rem; }
 .slider {
-   float: left; width:50%; padding:10px; height: 100%; overflow: hidden; 
-}
+   float: left; width:50%; padding:10px; height: 100%; overflow: hidden;}
+
+
+table {
+    width: 100%;
+    border: 1px solid #444444;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #444444;
+    padding: 10px;
+  }
 </style>
 <body>
        <!-- Header Info Begin -->
@@ -39,16 +49,112 @@
         </div>
     </div>
     <!--상품 결제 header -->
-    <section class="page-add">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="page-breadcrumb">
-                        <h2>상품 결제</h2>
+    <section class="payment_wrap">
+        <div class="payment_box">
+            <h3>택배거래, 번개페이로 결제합니다</h3>
+            	<div class="payment_list">
+            	<!-- 이미지  -->
+            		<div class="payment_img" id="aa">
+							
+									 <c:forEach var="attachVoInStr" items="${post.attachListInGson}" varStatus="sta">
+										<script>
+											$(document).ready(function() {
+												appendFunction('<c:out value="${attachVoInStr}" />', "${product.id}");
+											});
+										</script>							
+									</c:forEach>
+							
+	                </div>
+							
+							<div class="payment_details">
+                		<c:choose>
+					        <c:when test="${negoBuyer eq null}"> 
+					            <h5 id="finalPrice">${product.productPrice}원</h5>
+					        </c:when>
+					        <c:otherwise> 
+					             <h5 id="finalPrice">${negoBuyer.discountPrice}원</h5>
+					        </c:otherwise>
+					   	 </c:choose>
+	                    <p>${post.content}</p>
+	                </div>
+						                </div>
+					
+				
+              
+                <!--  배송지  -->
+                <div class="shipping_address">
+                <h3>배송지</h3>
+                <div class="shipping_registration">
+                    <input type="text" id="buyerForAddress" name="address"  placeholder="배송지 등록">
+                    
+                </div>
+                <div class="shipping_req">
+                    <select id="absentMsgSelection" name="absentMsgSelection">
+                        <option value="none">배송 요청사항(선택)</option>
+                        <option value="korean">배송전에 미리 연락주세요</option>
+                        <option value="english">부재시 문앞에 놓아주세요</option>
+                        <option value="chinese">부재시 경비실에 맡겨주세요</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="points_wrap">
+                <h3>포인트</h3>
+                <div class="remaining_points">
+                    <span>0</span>
+                    <button>전액사용</button>
+                </div>
+                <p class="points_available">
+                    <span>사용 가능한 번개 포인트</span>
+                    <span>0</span>
+                </p>
+            </div>
+            <div class="payment_amountt">
+                <h3>결제금액</h3>
+                <div class="payment_amount_box">
+                    <div class="total_paymentt">
+                        <p class="product_aamount">
+                            <span class="lefttt">상품금액</span>
+                            <span class="righttt">${product.productPrice}원</span>
+                        </p>
+                        <p class="commissionn">
+                            <span class="lefttt">할인된 금액</span>
+                            <span class="righttt">
+                            	<c:choose>
+							        <c:when test="${negoBuyer eq null}"> 
+							            <p>0원</p>
+							        </c:when>
+							        <c:otherwise> 
+							             <p>${product.productPrice - negoBuyer.discountPrice}원</p>
+							        </c:otherwise>
+								 </c:choose>                            
+                            </span>
+                        </p>
+                        <p class="shipping_feeee">
+                            <span class="lefttt">배송비</span>
+                            <span class="righttt">무료배송</span>
+                        </p>
+                        <p class="total_payment_amountt">
+                            <span class="lefttt total_left">총 결제금액</span>
+                            <span class="righttt total_right">
+                            	<c:choose>
+							        <c:when test="${negoBuyer eq null}"> 
+							            <p id="finalPrice">${product.productPrice}원</p>
+							        </c:when>
+							        <c:otherwise> 
+							             <p id="finalPrice">${negoBuyer.discountPrice}원</p>
+							        </c:otherwise>
+							    </c:choose>
+                            
+                            </span>
+                        </p>
                     </div>
                 </div>
             </div>
-        </div>
+
+
+          </div>
+       </div>
     </section>
 
     <!-- 상품 결제 정보 section  -->
@@ -114,48 +220,83 @@
                             </div>
                         </div>                       
                     </div>
-                    <div class="col-lg-3">
-                        <div class="order-table">
-                            <div class="cart-item">
-                                <span>판매자 ID</span>
-                                 <p>${post.writer.userId}</p>
-<!--                                 <p class="product-name" value=""></p> -->
-                            </div>
-                            <div class="cart-item">
-                                <span>원 가격</span>
-                                <p>${product.productPrice}원</p>
-                            </div>
-                            <div class="cart-item">
-                            <c:if test="${child != 7}">
-                               <c:if test="${negoBuyer.discountPrice != null}">
-                                   <span>할인이 적용된 가격</span>
-                                   <p>${negoBuyer.discountPrice}원</p>
-                               </c:if>
-                            </c:if>
-                            </div>                       
-                            <div class="cart-total">
-                                <span>최종 가격</span>
-                                <c:choose>
-						        <c:when test="${negoBuyer eq null}"> 
-						            <p id="finalPrice">${product.productPrice}</p>
-						        </c:when>
-						        <c:otherwise> 
-						             <p id="finalPrice">${negoBuyer.discountPrice}</p>
-						        </c:otherwise>
-						    </c:choose>	
-                            </div>                        
-                        </div>
-                    </div>
+                   
                 </div>
                <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" >
                         <div class="payment-method">
-                            <h3>상품 정보</h3>
+                            <h3>상품 정보</h3>   
+                            
+                            <table>
+							  <thead>
+							    <tr>
+							      <th style="width: 40%">상품</th>
+							      <th style="width: 10%">원가격</th>
+							      <th style="width: 10%">할인된 가격</th>									      
+								  <th style="width: 10%">최종가격</th>						   
+							    </tr>
+							  </thead>
+							  <tbody>
+							    <tr>
+							     	 <td>
+										<div  id="sliderBody">
+											 	<ul class="slider__images" style="list-style:none;">
+												 <c:forEach var="attachVoInStr" items="${post.attachListInGson}" varStatus="sta">
+													<script>
+														$(document).ready(function() {
+															//appendFunction('<c:out value="${attachVoInStr}" />', "${product.id}");
+														});
+													</script>							
+												</c:forEach>
+												</ul>
+										</div>	
+										<div class="card-body" style="float: left; width: 60%; padding:10px; text-align: center;">
+											
+											<b>[판 매 자]</b>  ${post.writer.userId}
+											<br>
+											<b>[상품 제목]</b>	${post.title}											
+											<br>										
+											<b>[상품 내용]</b>	${post.content}
+											
+										</div> 
+										 
+			 																					
+									</td>
+									
+									<td><p>${product.productPrice}원</p></td>	
+									
+									<td>
+									<c:choose>
+								        <c:when test="${negoBuyer eq null}"> 
+								            <p>0원</p>
+								        </c:when>
+								        <c:otherwise> 
+								             <p>${product.productPrice - negoBuyer.discountPrice}원</p>
+								        </c:otherwise>
+								    </c:choose>
+											
+									
+									 </td>
+														
+									<td>
+									<c:choose>
+								        <c:when test="${negoBuyer eq null}"> 
+								            <p id="finalPrice">${product.productPrice}원</p>
+								        </c:when>
+								        <c:otherwise> 
+								             <p id="finalPrice">${negoBuyer.discountPrice}원</p>
+								        </c:otherwise>
+								    </c:choose>
+											
+									
+									 </td>
+																      
+							    </tr>
+							  </tbody>
+							</table>                                    							                        																		
                         </div>
-                 
                     </div>
                 </div>
-                
                 
                 <div class="row">
                     <div class="col-lg-12">
@@ -179,7 +320,15 @@
  </body>
 
 <%@ include file="../includes/footer.jsp"%>
+<script src="\resources\js\util\utf8.js"></script>
+<script src="\resources\js\imgList\imgList.js"></script>
 <script type="text/javascript">
+
+function appendFunction(attachVOInJson, postId){
+	imgService.append(attachVOInJson, false, postId);
+}
+
+
 
 $('#userNameSelection').change(function() {
 	var addr;

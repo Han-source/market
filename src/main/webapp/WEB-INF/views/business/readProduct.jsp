@@ -3,15 +3,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ include file="../includes/header.jsp"%>
-		<section class="product_wrap">
-			<div class="product_img">
-				<div class="product_imgs">
+		<section class="auctionn_wrap">
+			<div class="auctionn_img">
+				<div class="auctionn_imgs">
 					<%@include file="./include/attachFileManagement.jsp"%>
 				</div>
 			</div>
-					<div class="product_content">
-		                <h2 class = "product_title">${post.title}</h2>
-		                <h3 class = "product_price">
+					<div class="autionn_content">
+		                <h2 class = "autionn_title">${post.title}</h2>
+		                <h3 class = "autionn_price">
 		                	<c:choose>
 						        <c:when test="${negoBuyer.discountPrice eq 0}"> 
 						            ${product.productPrice}원
@@ -26,19 +26,28 @@
 						        </c:otherwise>
 						    </c:choose>	
 		                </h3>
-		                <div class = "product_detail">
+		                <div class = "autionn_detail">
 		                    <span>상품설명<br>
 		                    ${post.content}</span>
-		                </div>    
-		            <div class="product_button">
-		                <button type="button" data-oper='list' class="product_chat">
+		                </div>   
+		             
+		             <div class="registration_date">
+                    	<span>등록일</span>
+                    	<span>2021-08-09</span>
+                	</div>		             		            
+		             <div class="aution_time_remaining">
+                    	<span id="auctionTimer"></span>
+                	 </div>    
+		             
+		            <div class="auctionn_button">
+		                <button type="button" data-oper='list'>
 		                    <span>목록</span>
 		                    <i class="fas fa-comment-dots"></i>
 		                </button>
 		                <sec:authentication property="principal" var ="customUser"/>
 		                <sec:authorize access="isAuthenticated()">
 							<c:if test="${customUser.curUser.userId ne post.writer.userId}">
-								<button data-oper='chat' class="product_chat">
+								<button data-oper='chat' class="autionn_chat">
 									<span>채팅하기</span>
 									<i class="fas fa-comment-dots"></i>
 								</button>
@@ -73,45 +82,50 @@
 								<button data-oper='modify' class="product_chat">
 									<span>수정</span>
 								</button>
-							</c:if>			
+							</c:if>	
+							</div>	
 						</sec:authorize>
+						<c:if test="${child == 7}">						
+						<div class = "best_auction_price">
+			                <h5>최고경매가</h5> 
+			                <button type="button" class="autionn_list">
+            	        		<span>더보기</span>
+			                </button>
+			                <div class = "best_auction_list">
+			                    <span>${maxBidPrice.buyerId}</span>
+			                    <span>${maxBidPrice.auctionCurrentPrice}</span>
+			                </div>
+            			</div>
+            			
+            			<div class="bid_amount_graph_box">
+			                <h5>경매 그래프</h5>			               
+			                <canvas id="lookChartProduct" class="bid_amount_graph"></canvas>			                
+			            </div>			            		            			
+						</c:if>
 		            </div>
-		        </div>
 				
 		</section>
 
-
-			<!--  경매 타이머 구역 -->
-			<c:if test="${child == 7}">
-				남은 경매 시간
-				<h2 id="auctionTimer"></h2>
-					<label>최고가 입찰자 <input class="form-control"
-						value='${maxBidPrice.buyerId}'
-						style='width: 150px; height: 50px' readonly>
-					</label>
-					<label>현재 가격 <input class="form-control"
-						value='${maxBidPrice.auctionCurrentPrice}'
-						style='width: 150px; height: 50px' readonly>
-					</label>
-					<br>
-
-				<hr size="10px">
-				<c:forEach items="${auctionParty}" var="party">
-					<label>구매자 아이디 <input class="form-control"
-						value='${party.buyerId}' style='width: 150px; height: 50px'
-						readonly>
-					</label>
-					<label>입찰 가격 <input class="form-control"
-						value='${party.auctionCurrentPrice}원'
-						style='width: 150px; height: 50px' readonly></label>
-					<br>
-				</c:forEach>
-				<canvas id="lookChartProduct" style="width: 100vh;">
-			 </canvas>
-			</c:if>
-
-
-
+		<div class="auction_modal_wrapper"> 
+	        <div class="auction_modal">
+	            <div class="auctionn_top">
+	                <h5>입찰자</h5>
+	                <div class="auctionn_close">
+	                    <i class="fas fa-times"></i>
+	                </div>
+	            </div>
+	            <div class="auction_divider"></div>
+	            <ul>
+	            	<c:forEach items="${auctionParty}" var="party">
+		                <li>
+		                    <span>${party.buyerId}</span>
+		                    <span>${party.auctionCurrentPrice}</span>
+		                </li>
+	                </c:forEach>
+	            </ul>
+	        </div>
+  	  </div>
+		
 			<form id="frmChat" action="/chat/chatting" method="get">
 				<input type="hidden" id="toId" name="toId"
 					value="${post.writer.userId}">
@@ -180,10 +194,9 @@
 					<form id="frmAuction" action="/business/readProduct" method="post">
 						<div class="modal-body" id="modalAuctionBody"
 							style="text-align: center;">
-							<label>아이디</label> <input class="form-control" name='buyerId'
-								id="buyerId" value='${userId}'> <label>경매가격</label> <input
-								class="form-control" name='auctionCurrentPrice'
-								id="auctionCurrentPrice">
+							<input class="form-control" type="hidden" name='buyerId' id="buyerId" value='${userId}'> 
+							<label>경매가격</label> 
+							<input class="form-control" name='auctionCurrentPrice' id="auctionCurrentPrice">
 						</div>
 						<div class="modal-footer">
 
@@ -240,12 +253,8 @@
 		}
 			adjustCRUDAtAttach('조회');
 			negoSubmitFunction();
-			var i = 0;
-			<c:forEach var="attachVoInStr" items="${post.attachListInGson}" >
-				var img = 'img';
-				var param = img + i;
-				appendUploadUl('<c:out value="${attachVoInStr}" />',param);
-				i += 1;
+			<c:forEach var="attachVoInStr" items="${post.attachListInGson}" >		
+				appendUploadUl('<c:out value="${attachVoInStr}" />');
 			</c:forEach>
 			// 경매 버튼 클릭시 모달 활성화
 			$("#btnAuction").on("click", function(e) {
@@ -254,7 +263,9 @@
 			// 경매 입찰시 최종 입찰 가격보다 더 높은 가격으로만 입찰 가능.
 			$("#btnPriceModal").on("click", function(e) {
 				var a = $("#auctionCurrentPrice").val()
-				if (parseInt("${maxBidPrice.auctionCurrentPrice}") > parseInt($("#auctionCurrentPrice").val()) || parseInt("${product.productPrice}") > parseInt($("#auctionCurrentPrice").val())) {
+				if (parseInt("${maxBidPrice.auctionCurrentPrice}") > parseInt($("#auctionCurrentPrice").val()) 
+						|| parseInt("${product.productPrice}") > parseInt($("#auctionCurrentPrice").val())
+						|| $("#auctionCurrentPrice").val() == '') {
 					alert("입찰에 실패하였습니다.")
 				} else {
 					alert("입찰에 성공하였습니다.");
@@ -270,8 +281,7 @@
 			});
 			$("button[data-oper='list']").on( "click", function() {
 				$("#frmOper").find("#postId").remove();
-				$("#frmOper").attr("action",
-						"/post/listBySearch").submit();
+				$("#frmOper").attr("action","/business/productList").submit();
 			});
 			//결제하기 페이지 이동
 	        $("#payment").on("click", function() {
@@ -457,4 +467,26 @@ if("${child}" == "7"){
 			}
 		});
 	}
+	
+const auctionList = document.querySelector('.autionn_list');
+const modal = document.querySelector('.auction_modal_wrapper');
+const modalClose = document.querySelector('.fa-times');
+
+
+auctionList.addEventListener("click", ()=>{
+    modal.style.display = "flex"
+    document.body.style.overflow= 'hidden';
+})
+
+modalClose.addEventListener("click", () => {
+    modal.style.display = "none"
+    document.body.style.overflow= 'scroll';
+})
+
+window.addEventListener("keyup", (e) => {
+    if(modal.style.display === "flex" && e.key === "Escape"){
+        modal.style.display = "none"
+        document.body.style.overflow= 'scroll';
+    }
+})
 </script>
