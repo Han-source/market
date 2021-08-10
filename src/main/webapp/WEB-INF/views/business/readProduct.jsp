@@ -254,7 +254,7 @@
 			// 경매 입찰시 최종 입찰 가격보다 더 높은 가격으로만 입찰 가능.
 			$("#btnPriceModal").on("click", function(e) {
 				var a = $("#auctionCurrentPrice").val()
-				if (parseInt("${maxBidPrice.auctionCurrentPrice}") > parseInt($("#auctionCurrentPrice").val())) {
+				if (parseInt("${maxBidPrice.auctionCurrentPrice}") > parseInt($("#auctionCurrentPrice").val()) || parseInt("${product.productPrice}") > parseInt($("#auctionCurrentPrice").val())) {
 					alert("입찰에 실패하였습니다.")
 				} else {
 					alert("입찰에 성공하였습니다.");
