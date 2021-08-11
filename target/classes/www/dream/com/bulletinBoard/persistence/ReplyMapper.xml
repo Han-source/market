@@ -302,6 +302,26 @@
    ]]>
    </select>
    
+   <!-- public PostVO findProductPurchaseRepresentById(@Param("productId") String id, @Param("child") int child); -->
+	<select id="findProductPurchaseRepresentById" resultMap="rmPost"> 
+   <![CDATA[ 
+   select p.*, w.user_id w_user_id, w.name w_name, w.descrim w_descrim, 
+      af.uuid af_uuid, sp.product_price sp_product_price,
+      af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+      af.multimedia_type af_multimedia_type      
+        from s_reply p,  
+        (select product_id, max(uuid) as uuid
+           from sm_product_attach  
+          group by product_id) am, s_attach_file af, s_party w, s_trade_product sp
+       where p.id = #{productId}
+          and p.child_board_id = #{child}
+         and p.writer_id = w.user_id
+         and p.product_id = sp.product_id
+         and p.id = am.product_id
+         and am.uuid = af.uuid
+   ]]>
+   </select>
+
 
    <!-- public List<PostVO> findProductList(@Param("boardId") int boardId, @Param("child") int child); -->
    <select id="findProductList" resultMap="rmPost"> 

@@ -2,6 +2,7 @@ package www.dream.com.bulletinBoard.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,11 @@ public class ReplyService {
 	/*상품 상세 조회 기능*/
 	public PostVO findProductById( String id,  int child) {
 		return replyMapper.findProductById(id, child);
+	}
+	
+	/*결제 시 상품 조회 기능*/
+	public PostVO findProductPurchaseRepresentById(String id, int child) {
+		return replyMapper.findProductPurchaseRepresentById(id, child);
 	}
 	
 	/* 댓글 목록 조회 */ // Criteria: 전체 개수 정보 , List<ReplyVO> : 해당 Page의 댓글 목록 정보 

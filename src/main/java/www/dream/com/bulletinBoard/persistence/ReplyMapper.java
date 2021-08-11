@@ -36,6 +36,7 @@ public interface ReplyMapper { // 추후 Data를 가져오기 위해서 Interfac
 	
 	public PostVO findProductById(@Param("productId") String id, @Param("child") int child);
 	
+	public PostVO findProductPurchaseRepresentById(@Param("productId") String id, @Param("child") int child);
 
 	/**boardId, childBoardId, userId로 내가 장바구니에 담은 상품 조회 */
 	public List<PostVO> findProductShoppingCart(@Param("userId") String userId);

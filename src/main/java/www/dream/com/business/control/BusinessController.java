@@ -192,14 +192,12 @@ public class BusinessController {
 			model.addAttribute("buyerId", newProductCondition.getBuyerId());
 		}
 		model.addAttribute("boardList", boardService.getList());
-		model.addAttribute("post", replyService.findProductById(productId, child));
+		model.addAttribute("post", replyService.findProductPurchaseRepresentById(productId, child));
 		model.addAttribute("product", businessService.findPriceById(productId));
 		model.addAttribute("condition", businessService.findAuctionPriceById(productId));
 		model.addAttribute("auctionParty", businessService.findAuctionPartyById(productId));
-		model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("child", child);
-		List<ContactPoint> a = partyService.getContactListByUserId(curUser.getUserId());
 		model.addAttribute("loginPersonInfo", partyService.getContactListByUserId(curUser.getUserId()));
 	}
 

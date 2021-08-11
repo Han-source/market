@@ -54,16 +54,14 @@ table {
             <h3>택배거래, 번개페이로 결제합니다</h3>
             	<div class="payment_list">
             	<!-- 이미지  -->
-            		<div class="payment_img" id="aa">
-							
-									 <c:forEach var="attachVoInStr" items="${post.attachListInGson}" varStatus="sta">
-										<script>
-											$(document).ready(function() {
-												appendFunction('<c:out value="${attachVoInStr}" />', "${product.id}");
-											});
-										</script>							
-									</c:forEach>
-							
+            		<div class="payment_img" id="imageeDiv">
+						 <c:forEach var="attachVoInStr" items="${post.attachListInGson}" varStatus="sta">
+							<script>
+								$(document).ready(function() {
+									appendFunction('<c:out value="${attachVoInStr}" />', "${product.id}");
+								});
+							</script>							
+						</c:forEach>
 	                </div>
 							
 							<div class="payment_details">
@@ -82,18 +80,39 @@ table {
 				
               
                 <!--  배송지  -->
-                <div class="shipping_address">
-                <h3>배송지</h3>
-                <div class="shipping_registration">
-                    <input type="text" id="buyerForAddress" name="address"  placeholder="배송지 등록">
-                    
-                </div>
+            <div class="shipping_address">
+            	<h3>수령인</h3>
+           			<div>
+                        <select id="userNameSelection" name="userNameSelection">
+							<option value="1" selected="selected">직접입력</option>
+							<option id="loginUser" value='${userName}'>${userName}</option>
+						</select>
+					</div>
+	                <div class="shipping_registration">
+	                    <input type="text" id="recipient" name="buyerName" placeholder="이름">
+	                </div>
+	            
+	            <h3>휴대폰 번호</h3>
+	                <div class="shipping_registration">
+	                    <input type="number" id="buyerForphonNum" name="phonNum" placeholder="휴대폰 번호를 입력해주세요.">
+	                </div>
+	                
+	            <h3>집 전화 번호</h3>
+	                <div class="shipping_registration">
+                         <input type="number" id="buyerForReserveNum" name="reserveNum" placeholder="예비 연락처를 입력해주세요.">
+	                </div>
+	                
+                <h3>배송지 주소</h3>
+	                <div class="shipping_registration">
+	                    <input type="text" id="buyerForAddress" name="address"  placeholder="배송지 등록">
+	                </div>
                 <div class="shipping_req">
+                	<input type="hidden" id="buyerForAbsentMsg" name="absentMsg" placeholder="배송 메모를 입력하세요.">
                     <select id="absentMsgSelection" name="absentMsgSelection">
-                        <option value="none">배송 요청사항(선택)</option>
-                        <option value="korean">배송전에 미리 연락주세요</option>
-                        <option value="english">부재시 문앞에 놓아주세요</option>
-                        <option value="chinese">부재시 경비실에 맡겨주세요</option>
+                        <option id="absentMsg" value="1">배송 요청사항(선택)</option>
+                        <option id="absentMsg" value="배송전에 미리 연락주세요">배송전에 미리 연락주세요</option>
+                        <option id="absentMsg" value="부재시 문앞에 놓아주세요">부재시 문앞에 놓아주세요</option>
+                        <option id="absentMsg" value="부재시 경비실에 맡겨주세요">부재시 경비실에 맡겨주세요</option>
                     </select>
                 </div>
             </div>
@@ -119,16 +138,14 @@ table {
                         </p>
                         <p class="commissionn">
                             <span class="lefttt">할인된 금액</span>
-                            <span class="righttt">
                             	<c:choose>
 							        <c:when test="${negoBuyer eq null}"> 
-							            <p>0원</p>
+							            <span class="righttt">0원</span>
 							        </c:when>
 							        <c:otherwise> 
-							             <p>${product.productPrice - negoBuyer.discountPrice}원</p>
+							             <span class="righttt">${product.productPrice - negoBuyer.discountPrice}원</span>
 							        </c:otherwise>
 								 </c:choose>                            
-                            </span>
                         </p>
                         <p class="shipping_feeee">
                             <span class="lefttt">배송비</span>
@@ -136,186 +153,31 @@ table {
                         </p>
                         <p class="total_payment_amountt">
                             <span class="lefttt total_left">총 결제금액</span>
-                            <span class="righttt total_right">
                             	<c:choose>
-							        <c:when test="${negoBuyer eq null}"> 
-							            <p id="finalPrice">${product.productPrice}원</p>
+							        <c:when test="${negoBuyer eq null}">
+							            <span class="righttt total_right" id="finalPrice">${product.productPrice}원</span>
 							        </c:when>
 							        <c:otherwise> 
-							             <p id="finalPrice">${negoBuyer.discountPrice}원</p>
+							             <span class="righttt total_right" id="finalPrice">${negoBuyer.discountPrice}원</span>
 							        </c:otherwise>
 							    </c:choose>
-                            
-                            </span>
                         </p>
                     </div>
                 </div>
             </div>
-
-
+            <form id="frmPayment" method="post" action="/business/payment">
+               <div class="make_paymentt">
+			       <button  type="button" id="kakao_trade">결제하기</button>
+			   </div>      
+               <input type="hidden" name="productFinalPrice" value="${product.productPrice}">
+               <input type="hidden" name="sellerId" value="${post.writer.userId}">
+               <input type="hidden" name="buyerId" value="${buyerId}">
+               <input type="hidden" name="boardId" value="${boardId}">
+       	       <input type="hidden" name="child" value="${child}">
+               <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
+            </form>
+            
           </div>
-       </div>
-    </section>
-
-    <!-- 상품 결제 정보 section  -->
-    <section class="cart-total-page spad">
-        <div class="container">
-        <!--  테스트를 위한 주석 처리 -->
-<!--             <form action="#" class="checkout-form"> -->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h3>주문 정보</h3>
-                    </div>
-                     <div class="col-lg-9">
-                        <div class="row">
-                            <div class="col-lg-2">
-                                <p class="in-name">수령인*</p>
-                            </div>
-                            <div class="col-lg-10">
-								<div>
-	                                <input type="text" id="recipient" name="buyerName" placeholder="이름">
-		                                <select id="userNameSelection" name="userNameSelection">
-											<option value="1" selected="selected">직접입력</option>
-											<option id="loginUser" value='${userName}'>${userName}</option>
-										</select>
-								</div>
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-2">
-                                <p class="in-name">배송지 주소*</p>
-                            </div>
-                            <div class="col-lg-10">
-                                <input type="text" id="buyerForAddress" name="address" placeholder="배송지를 입력하세요.">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-2">
-                                <p class="in-name">휴대폰 번호*</p>
-                            </div>
-                            <div class="col-lg-10">
-                                <input type="number" id="buyerForphonNum" name="phonNum" placeholder="휴대폰 번호를 입력해주세요.">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-2">
-                                <p class="in-name">집 전화번호*</p>
-                            </div>
-                            <div class="col-lg-10">
-                                <input type="number" id="buyerForReserveNum" name="reserveNum" placeholder="예비 연락처를 입력해주세요.">
-                            </div>
-                        </div>
-                         <div class="row">
-                            <div class="col-lg-2">
-                                <p class="in-name">배송 메모 *</p>
-                            </div>
-                            <div class="col-lg-10">
-                                <input type="text" id="buyerForAbsentMsg" name="absentMsg" placeholder="배송 메모를 입력하세요.">
-                                	<select id="absentMsgSelection" name="absentMsgSelection">
-										<option value="1" selected="selected">직접입력</option>
-										<option id="absentMsg" value="안전하게 와주세요">안전하게 와주세요</option>
-										<option id="absentMsg" value="빠르게 와주세요">빠르게 와주세요</option>
-									</select>
-                            </div>
-                        </div>                       
-                    </div>
-                   
-                </div>
-               <div class="row">
-                    <div class="col-lg-12" >
-                        <div class="payment-method">
-                            <h3>상품 정보</h3>   
-                            
-                            <table>
-							  <thead>
-							    <tr>
-							      <th style="width: 40%">상품</th>
-							      <th style="width: 10%">원가격</th>
-							      <th style="width: 10%">할인된 가격</th>									      
-								  <th style="width: 10%">최종가격</th>						   
-							    </tr>
-							  </thead>
-							  <tbody>
-							    <tr>
-							     	 <td>
-										<div  id="sliderBody">
-											 	<ul class="slider__images" style="list-style:none;">
-												 <c:forEach var="attachVoInStr" items="${post.attachListInGson}" varStatus="sta">
-													<script>
-														$(document).ready(function() {
-															//appendFunction('<c:out value="${attachVoInStr}" />', "${product.id}");
-														});
-													</script>							
-												</c:forEach>
-												</ul>
-										</div>	
-										<div class="card-body" style="float: left; width: 60%; padding:10px; text-align: center;">
-											
-											<b>[판 매 자]</b>  ${post.writer.userId}
-											<br>
-											<b>[상품 제목]</b>	${post.title}											
-											<br>										
-											<b>[상품 내용]</b>	${post.content}
-											
-										</div> 
-										 
-			 																					
-									</td>
-									
-									<td><p>${product.productPrice}원</p></td>	
-									
-									<td>
-									<c:choose>
-								        <c:when test="${negoBuyer eq null}"> 
-								            <p>0원</p>
-								        </c:when>
-								        <c:otherwise> 
-								             <p>${product.productPrice - negoBuyer.discountPrice}원</p>
-								        </c:otherwise>
-								    </c:choose>
-											
-									
-									 </td>
-														
-									<td>
-									<c:choose>
-								        <c:when test="${negoBuyer eq null}"> 
-								            <p id="finalPrice">${product.productPrice}원</p>
-								        </c:when>
-								        <c:otherwise> 
-								             <p id="finalPrice">${negoBuyer.discountPrice}원</p>
-								        </c:otherwise>
-								    </c:choose>
-											
-									
-									 </td>
-																      
-							    </tr>
-							  </tbody>
-							</table>                                    							                        																		
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="payment-method">
-                            <h3>결제 방식</h3>
-                             <form id="frmPayment" method="post" action="/business/payment">       
-	                            <button type="button" id="kakao_trade">결제 하기</button>
-	                            <input type="hidden" name="productFinalPrice" value="${product.productPrice}">
-	                            <input type="hidden" name="sellerId" value="${post.writer.userId}">
-	                            <input type="hidden" name="buyerId" value="${buyerId}">
-	                            <input type="hidden" name="boardId" value="${boardId}">
-	                    	    <input type="hidden" name="child" value="${child}">
-	                            <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-<!--             </form> -->
-        </div>
     </section>
  </body>
 

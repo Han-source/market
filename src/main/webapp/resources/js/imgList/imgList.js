@@ -52,7 +52,7 @@ var imgService = (function() {
 					liTags += "</li>";
 			} 	  
 		}
-        $("#aa").append(liTags); 
+        $("#imageeDiv").append(liTags); 
 }			
 	//채팅 처리용 함수들
 	//앞이 chatting.jsp 뒤가 실행될 함수
