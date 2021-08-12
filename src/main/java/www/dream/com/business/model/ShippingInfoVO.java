@@ -10,4 +10,5 @@ public class ShippingInfoVO extends TradeVO {
 	private int phonNum;
 	private int reserveNum;
 	private String absentMsg;
+	
 }

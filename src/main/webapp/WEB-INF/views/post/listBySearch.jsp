@@ -40,9 +40,20 @@
             <input type="hidden" name="pageNumber" value="${pagination.pageNumber}">
             <input type="hidden" name="amount" value="${pagination.amount}">
             <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
+            <input type="hidden" name="ListFromLike" value="1">
          </form>
-   
+   	   	 <form id="frmLikeRank" action="/post/listBySearch" method="get">
+         <input type="hidden" name="boardId" value="${boardId}">
+            <input type="hidden" name="child" value="${child}">
+            <input type="hidden" name="pageNumber" value="${pagination.pageNumber}">
+            <input type="hidden" name="amount" value="${pagination.amount}">
+            <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
+            <input type="hidden" name="ListFromLike" value="1">
+         </form>	
+   			
          <br> <a href="/">메인으로</a>
+         <a href="/post/listBySearch?boardId=3&child=0"> 전체글</a>
+         <a><button id="btnRankingLike" class="btn btn-default">개념글</button></a>
 
          <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -178,10 +189,10 @@ if (${descrim != 'User' and descrim != 'Admin'}){
             }
             $("#myModal").modal("show");
          }
-         
-      
+               
          $('#btnSearch').on('click', function(eInfo) {
             eInfo.preventDefault();
+            
 
             if ($('input[name="searching"]').val() === '') {
                alert('검색어를 입력하세요');
@@ -192,6 +203,15 @@ if (${descrim != 'User' and descrim != 'Admin'}){
 
             frmSearching.submit();
          });
+         
+         // 버튼 누를 시 좋아요 제일 높은거 출력
+         $('#btnRankingLike').on('click', function(eInfo) {
+             eInfo.preventDefault();
+
+             //신규 조회이므로 1쪽을 보여줘야합니다
+             $("input[name='pageNumber']").val("1");
+             frmLikeRank.submit();
+          });
 
          /* 페이징 처리에서 특정 쪽 번호를 클릭하였을 때 해당 페이지의 정보를 조회하여 목록을 재 출력해 줍니다. */
          $('.page-item a').on('click', function(eInfo) {

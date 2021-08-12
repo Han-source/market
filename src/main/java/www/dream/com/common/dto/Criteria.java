@@ -32,6 +32,10 @@ public class Criteria implements Comparable<Criteria>{
 	private boolean next; // Page를 앞,뒤로 가기 활성화
 	@JsonIgnoreProperties
 	private long total; // 전체 Data건 수
+	//거래완료글
+	private int findSelledProdutList;
+	private int ListFromLike;   //좋아요
+	
 	
 	public Criteria() { // Default 생성자도 만들어 줄 것
 		this.pageNumber = 1; // page 1쪽에 10개씩 , Total Page는 2100개로줄것, 내 Data건수가 22529개.

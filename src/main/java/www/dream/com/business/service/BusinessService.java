@@ -76,6 +76,13 @@ public class BusinessService {
 	public void insertAuctionPrice(PostVO post,TradeConditionVO tradeCondition, BoardVO board) {
 		businessMapper.insertAuctionPrice(post, tradeCondition, board);
 	}
+	
+	/* 결제가 완료 되면 selled에 +1 하는 기능 */
+	   public int selledProdut(String productId) {
+	       return businessMapper.selledProdut(productId);
+	   }
+	   
+	   
 
 	/* 일반 상품 등록 기능 */
 	@Transactional

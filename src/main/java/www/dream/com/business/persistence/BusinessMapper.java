@@ -52,4 +52,7 @@ public interface BusinessMapper {
 	
 	/* 결제가 완료 되면 결제 테이블에 값 담기 */
 	public void purchaseProduct(@Param("shippingInfo") ShippingInfoVO shippingInfo);
+	
+	/* 결제가 완료 되면 selled에 +1 하는 기능 */
+	   public int selledProdut(@Param("productId") String productId);
 }

@@ -261,8 +261,7 @@ $('#kakao_trade').click(function () {
 	
 	var param = {"address":buyerForAddress, "phonNum":buyerForphonNum, 
 			"reserveNum":buyerForReserveNum, "absentMsg":buyerForAbsentMsg,
-			"productFinalPrice":parseInt(money), "buyerId":"${buyerId}" , "sellerId":"${post.writer.userId}"
-			};
+			"productFinalPrice":parseInt(money), "buyerId":"${buyerId}" , "sellerId":"${post.writer.userId}" ,productId:"${post.id}" };
 	var shippingInfoVO = JSON.stringify(param);
     IMP.request_pay({
         pg: 'kakao',
@@ -275,7 +274,7 @@ $('#kakao_trade').click(function () {
         buyer_tel: phoneNum,
         buyer_mobile:mobileNum,
         buyer_addr: address,
-      
+        
     }, function (rsp) {
         console.log(rsp);
         if (rsp.success) {

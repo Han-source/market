@@ -70,7 +70,8 @@ public class BusinessController {
 		List<PostVO> a = postService.findProductList(curUser, boardId, child, userCriteria);
 		model.addAttribute("productList", postService.findProductList(curUser, boardId, child, userCriteria));
 		model.addAttribute("boardList", boardService.getList());
-		userCriteria.setTotal(postService.getSearchTotalCount(boardId, child, userCriteria));
+		model.addAttribute("page", userCriteria);
+		userCriteria.setTotal(postService.getProductSearchTotalCount(boardId, child, userCriteria));
 	}
 
 	private Party getPricipalUser(Principal principal) {
@@ -232,6 +233,7 @@ public class BusinessController {
 	@RequestMapping(value="/purchase", method=RequestMethod.POST, produces={"application/json"})
 	public @ResponseBody void purchase(@AuthenticationPrincipal Principal principal, @RequestBody ShippingInfoVO shippingInfoVO) {
 		businessService.purchaseProduct(shippingInfoVO);
+		businessService.selledProdut(shippingInfoVO.getProductId());
 	}
 
 }

@@ -49,6 +49,17 @@ public interface ReplyMapper { // 추후 Data를 가져오기 위해서 Interfac
 	// 상품 게시판에서 검색하는 것
 	public List<PostVO> getProductListByHashTag(@Param("boardId") int boardId, @Param("child") int child, @Param("cri") Criteria cri);
 	
+	//거래완료된 상품 조회
+	public List<PostVO> getfindSelledProdutList(@Param("boardId") int boardId, @Param("cri") Criteria cri); 
+	
+	 //좋아요 순에 따른 개념글 만들기
+	public List<PostVO> getListFromLike(@Param("boardId") int boardId, @Param("child") int child, @Param("cri") Criteria cri);
+	
+	
+	//상품 페이지 처리
+	   public long  getProductTotalCount(@Param("boardId") int boardId, @Param("child") int child);
+	
+	   
 	/** 조회수 증가 처리 */
 	public int cntPlus(String id);
 	

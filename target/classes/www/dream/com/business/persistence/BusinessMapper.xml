@@ -22,9 +22,11 @@
 		id="tradeMap">
 		<id property="tradeId" column="trade_id"></id>
 		<result property="productFinalPrice" column="product_final_price"></result>
+		<result property="productId" column="product_id"></result>
 		<result property="sellerId" column="seller_id"></result>
 		<result property="buyerId" column="buyer_id"></result>
 		<result property="tradeDate" column="trade_date"></result>
+		
 	</resultMap>
 
 
@@ -140,9 +142,7 @@
 		   
 	]]>
 	</select>
-	
-	
-	
+
 	<!-- 	public int insertCommonProduct(@Param("productVO") ProductVO productVO, @Param("post") PostVO post, @Param("board") BoardVO board); -->
 	<insert id="insertCommonProduct">
 		insert all
@@ -204,16 +204,29 @@
 	   values (#{userId}, #{productId}) 
 	</insert>
 
-<!-- 	public void purchaseProduct(@Param("shippingInfo") ShippingInfoVO shippingInfo); -->
-	<insert id="purchaseProduct">
-		<selectKey keyProperty="shippingInfo.tradeId" order="BEFORE" resultType="string">
-				select get_id(seq_reply_id.nextval) from dual
-		</selectKey>
-		insert all
-		 into s_trade (trade_id, PRODUCT_FINAL_PRICE, seller_id, buyer_id, trade_date) 
-		   values (#{shippingInfo.tradeId}, #{shippingInfo.productFinalPrice}, #{shippingInfo.sellerId}, #{shippingInfo.buyerId}, sysdate) 
-		 into s_shipping_info(trade_id, buyer_name, address, phone_num, reserve_num, absent_message)
-		   values (#{shippingInfo.tradeId}, #{shippingInfo.buyerId}, #{shippingInfo.address}, #{shippingInfo.phonNum}, #{shippingInfo.reserveNum}, #{shippingInfo.absentMsg})
-		 select * from dual
-	</insert>
+	<!-- 상품 구매 -->
+   <!-- public void purchaseProduct(@Param("shippingInfo") ShippingInfoVO shippingInfo); -->
+   <insert id="purchaseProduct">
+      <selectKey keyProperty="shippingInfo.tradeId" order="BEFORE" resultType="string">
+            select get_id(seq_reply_id.nextval) from dual
+      </selectKey>
+      insert all
+       into s_trade (trade_id, PRODUCT_FINAL_PRICE, seller_id, buyer_id, trade_date, product_id) 
+         values (#{shippingInfo.tradeId}, #{shippingInfo.productFinalPrice}, #{shippingInfo.sellerId}, #{shippingInfo.buyerId}, sysdate, #{shippingInfo.productId}) 
+         
+       into s_shipping_info(trade_id, buyer_name, address, phone_num, reserve_num, absent_message)
+         values (#{shippingInfo.tradeId}, #{shippingInfo.buyerId}, #{shippingInfo.address}, #{shippingInfo.phonNum}, #{shippingInfo.reserveNum}, #{shippingInfo.absentMsg})
+       select * from dual
+   </insert>
+	
+	
+	<!-- 결제하기 버튼을 눌렀을 시 +1을 시켜준다. -->
+    <!-- public int selledProdut(@Param("productId") String productId); -->
+    <update id="selledProdut">
+    UPDATE s_trade_product
+         set selled = selled + 1
+         where product_id = #{productId}
+   </update>
+	
+	
 </mapper>

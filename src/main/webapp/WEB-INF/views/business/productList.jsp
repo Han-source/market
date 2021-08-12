@@ -21,6 +21,8 @@
     <c:forEach items="${childBoardList}" var="child">
    		<a href="/business/productList?boardId=4&child=${child.id}">${child.name}</a>
    	</c:forEach>
+	
+	<a><button id="btnSelledproductList" class="btn btn-default">거래완료글</button></a>
 
 	<!-- DataTales Example -->
 	<div class="card shadow mb-4">
@@ -41,16 +43,25 @@
 			</c:if>
 		</div>
 		<div class="card-body">
+			<!--  거래가 완료 안된 상품 리스트 -->
 			<form id="frmSearching" action="/business/productList" method="get">
-				<input type="text" name='searching' value="${pagination.searching}">
+				<input type="text" name='searching' value="${page.searching}">
 				<button id="btnSearch" class='btn btn-default'>검색</button>
                 <button type="button" id="btnRegisterProduct">상품등록</button> 
 				<input type="hidden" name="boardId" value="${boardId}">
 				<input type="hidden" name="child" value="${child}">
 				<input type="hidden" name="parentBoardName" value="${parentBoardName}">
-				<input type="hidden" name="pageNumber" value="${pagination.pageNumber}">
-				<input type="hidden" name="amount" value="${pagination.amount}">
+				<input type="hidden" name="pageNumber" value="${page.pageNumber}">
+				<input type="hidden" name="amount" value="${page.amount}">
+				<input type="hidden" name="findSelledProdutList" value="0">
 			</form>
+			
+			<!--  거래 완료된 상품리스트  -->			
+			<form id="frmSelledproductList" action="/business/productList" method="get">
+            <input type="hidden" name="boardId" value="${boardId}">
+               <input type="hidden" name="child" value="${child}">
+               <input type="hidden" name="findSelledProdutList" value="1">
+            </form>
 			<div >
 				<div>
 					<c:forEach items="${productList}" var="product" varStatus="status">
@@ -79,10 +90,9 @@
 						</div>									
 					</c:forEach>
 				</div>
-
 				<!-- Paging 처리 05.27 -->
 				<!-- EL로 처리, Criteria.java에 있음  -->
-				<div class='fa-pull-right'>${pagination.pagingDiv}</div>
+				<div class='fa-pull-right'>${page.pagingDiv}</div>
 				<!-- Modal -->
 				<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
 					aria-labelledby="myModalLabel" aria-hidden="true">
@@ -177,7 +187,16 @@
 		
 		frmSearching.submit();
 	});
-	
+		//거래완료 글 페이징처리
+	   var frmSelledproductList = $('#frmSelledproductList');
+	   $('#btnSelledproductList').on('click', function(eInfo) {
+	        eInfo.preventDefault();
+
+	        //신규 조회이므로 1쪽을 보여줘야합니다
+	        $("input[name='pageNumber']").val("1");
+
+	        frmSelledproductList.submit();
+	     });	   
 	/*Paging 처리에서 특정 쪽 번호를 클릭하였을때 해당 page의 정보를 조회하여 목록을 재출력 해줍니다. */
 	var frmPaging = $('#frmPaging');
 	$('.page-item a').on('click', function(eInfo) {
@@ -202,5 +221,5 @@
 		imgService.productImgList(attachVOInJson, uuid, id);
 	}
 
-	
+
 </script>

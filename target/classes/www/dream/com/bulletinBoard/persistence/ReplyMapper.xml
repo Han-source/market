@@ -127,6 +127,17 @@
           and descrim = 'post'
        ]]>
       </select>
+      
+      <!-- public long  getProductTotalCount(@Param("boardId") int boardId, @Param("child") int child); -->
+      <select id="getProductTotalCount" resultType="_long">
+      <![CDATA[
+         select count(*)
+           from s_reply
+          where board_id = #{boardId}
+          and child_board_id = #{child}
+          and descrim = 'product'
+       ]]>
+      </select>
    
    <!-- public String getPostIdWithUserId(@Param("userId") String userId); -->
    <select id="getPostIdWithUserId" resultType="string">
@@ -142,6 +153,9 @@
        <include refid="searchCommon"> </include>
    </select>
 
+
+
+	
 
    <!-- public List<PostVO> getList(@Param("boardId") int boardId, @Param("cri") 
       Criteria cri); -->
@@ -175,25 +189,40 @@
          and p.writer_id = w.user_id
        order by id desc
          
+   ]]>      
+   </select>
+ 
+   <!-- public List<PostVO> getListFromLike(@Param("boardId") int boardId, @Param("child") int child, @Param("cri") Criteria cri); -->
+   <select id="getListFromLike" resultMap="rmPost">
+   <![CDATA[
+  select p.*,w.name w_name, w.descrim w_descrim,
+  af.uuid af_uuid,
+      af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+      af.multimedia_type af_multimedia_type      
+     from (
+           select p.*, pc.reply_cnt
+           from
+             (select p.id, count(r.id) reply_cnt     
+                from (
+                    SELECT *
+                     FROM s_reply
+                   where board_id = #{boardId}
+                   and child_board_id = #{child}
+                   order by id desc
+                    OFFSET (#{cri.pageNumber} - 1) * #{cri.amount} ROWS FETCH FIRST #{cri.amount} ROWS ONLY
+                ) p left outer join s_reply r
+               on r.id like p.id || '%'
+                  and length(r.id) > length(p.id)
+          group by p.id) pc, s_reply p 
+       where pc.id = p.id
+        ) p left outer join sm_post_attach am on p.id = am.post_id
+               left outer join s_attach_file af on am.uuid = af.uuid
+               , s_party w
+       where board_id = #{boardId}
+         and child_board_id = #{child}
+         and p.writer_id = w.user_id
+       order by like_cnt desc
    ]]>
-
-      <!-- Inline View로 먼저 만들어 줄건데 ()처리 출발점이 되는 요소 : s_reply p 그리고 게시판마다의 번호가 
-         와야 하고 : where board_id = #{boardId} 1페이지당 10개의 게시글을 불러올 것이다. : #{cri.pageNumber}* 
-         #{cri.amount} 미리 sql에서 미리 만들어져있는, numberring 기능을 하는 rownum을 사용, DTO Class에서 
-         만든 요소를 가지고 올건데 private pageNumber와 amount Criteria Class에서 만든 객체명 fromUser. 
-         게시글 같은거는 최신으로 작성한것은 번호가 상대적으로 뒷 번호가 오기때문에 역순을 취해주는 : order by desc id가 게시글 
-         수를 판단할 수 있는 우리가 저장한 요소. : order by id desc 그리고 이제는 전체적인 부분에서부터 추출해야 하기에 :select 
-         p.*, rownum은 rn으로 받아주고 rownum rn 그리고 우리가 특정해서 보고싶은 부분이 있다. 예를들면 20~30번째 글이보고 
-         싶다면 앞서 만든 기준은 30번째 글, 그리고 만들어줘야 하는 부분은 20번째 부분을 참조 where rn > #({cri.pageNumber} 
-         - 1) * #{cri.amount} -->
-
-
-      <!-- 위의 getlist의 함수 원복 Code <![CDATA[ select p.*, w.name w_name, w.descrim 
-         w_descrim from( select p.*, rownum rn from s_reply p where board_id = #{boardId} 
-         and rownum <= #{cri.pageNumber} * #{cri.amount} order by id desc ) p, s_party 
-         w where p.rn > (#{cri.pageNumber} - 1) * #{cri.amount} and p.writer_id = 
-         w.user_id ]]> -->
-
    </select>
    
    <!--06.04 作 public List<PostVO> getListByHashTag(@Param("boardId") int boardId, @Param("cri") Criteria cri); -->
@@ -286,21 +315,69 @@
    
       <!-- public ProductVO findProductById(@Param("productId") String id, @Param("child") int child);  -->
    <select id="findProductById" resultMap="rmPost"> 
-   <![CDATA[ 
-   select p.*, w.user_id w_user_id, w.name w_name, w.descrim w_descrim, 
-      af.uuid af_uuid, sp.product_price sp_product_price,
-      af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
-      af.multimedia_type af_multimedia_type      
-        from s_reply p
-               left outer join sm_product_attach am on p.id = am.product_id
-               left outer join s_attach_file af on am.uuid = af.uuid
-               , s_party w, s_trade_product sp
-       where p.id = #{productId}
-          and p.child_board_id = #{child} 
-         and p.writer_id = w.user_id
+  <![CDATA[ 
+      select distinct p.*, w.name w_name, w.descrim w_descrim    
+         from s_trade_product sp,(  
+             select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
+                  af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+                  af.multimedia_type af_multimedia_type
+               from (
+                  select p.id, count(r.id) reply_cnt
+                  from(  
+                       SELECT *
+                         FROM s_reply re
+                        where board_id = #{boardId}
+                        and child_board_id = #{child}
+                             ORDER BY id DESC
+                     OFFSET  (#{cri.pageNumber} - 1) * #{cri.amount}  rows fetch first #{cri.amount} rows only
+                      ) p left outer join s_reply r 
+                     on r.id like p.id || '%'
+                  and length(r.id) > length(p.id)
+                  group by p.id) pc, s_reply p,  (select product_id, max(uuid) as uuid
+                            from sm_product_attach  
+                            group by product_id) pa, s_attach_file af
+               where pc.id = p.id
+                  and pa.product_id = p.id
+                  and af.uuid = pa.uuid
+               ORDER BY p.id DESC   
+                ) p, s_party w
+         where p.writer_id = w.user_id
+         and sp.selled = 0
          and p.product_id = sp.product_id
    ]]>
    </select>
+   
+   <!-- +1이 된 글들은 거래완료 게시글로 이동하게 만든다. -->
+   <!-- public List<PostVO> getfindSelledProdutList(@Param("boardId") int boardId, @Param("cri") Criteria cri); -->
+   <select id="getfindSelledProdutList" resultMap="rmPost">
+     select distinct p.*, w.name w_name, w.descrim w_descrim    
+         from s_trade_product sp,(  
+             select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
+                  af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+                  af.multimedia_type af_multimedia_type
+               from (
+                  select p.id, count(r.id) reply_cnt
+                  from(  
+                       SELECT *
+                         FROM s_reply re
+                        where board_id = #{boardId}
+                             ORDER BY id DESC
+                     OFFSET  (#{cri.pageNumber} - 1) * #{cri.amount}  rows fetch first #{cri.amount} rows only
+                      ) p left outer join s_reply r 
+                     on r.id like p.id || '%'
+                  and length(r.id) > length(p.id)
+                  group by p.id) pc, s_reply p,  (select product_id, max(uuid) as uuid
+                            from sm_product_attach  
+                            group by product_id) pa, s_attach_file af
+               where pc.id = p.id
+                  and pa.product_id = p.id
+                  and af.uuid = pa.uuid
+               ORDER BY p.id DESC   
+                ) p, s_party w
+         where p.writer_id = w.user_id
+         and sp.selled = 1
+         and p.product_id = sp.product_id
+    </select>
    
    <!-- public PostVO findProductPurchaseRepresentById(@Param("productId") String id, @Param("child") int child); -->
 	<select id="findProductPurchaseRepresentById" resultMap="rmPost"> 

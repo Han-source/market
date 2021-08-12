@@ -59,17 +59,20 @@ public class PostService {
 
 	// 이전 버전에 있던 getTotalCount getList 함수는 더이상 사용하지 않음 06.07
 
-	public List<PostVO> getListByHashTag(Party curUser, int boardId, int child, Criteria cri) {
-		if (cri.hasSearching()) {
-			String[] searchingHashtags = cri.getSearchingHashtags();
-			if (curUser != null) {
-				mngPersonalSearFavorite(curUser, searchingHashtags);
-			}
-			return replyMapper.getListByHashTag(boardId, child, cri);
-		} else {
-			return replyMapper.getList(boardId, child, cri);
-		}
-	}
+	// 이전 버전에 있던 getTotalCount getList 함수는 더이상 사용하지 않음 06.07
+	   public List<PostVO> getListByHashTag(Party curUser, int boardId, int child, Criteria cri){
+	      if (cri.hasSearching()) {
+	         String[] searchingHashtags = cri.getSearchingHashtags();
+	         if (curUser != null) {
+	            mngPersonalSearFavorite(curUser, searchingHashtags);
+	         }
+	         return replyMapper.getListByHashTag(boardId, child, cri);
+	      } else if (cri.getListFromLike() == 1){
+	         return replyMapper.getListFromLike(boardId, child, cri);   //좋아요순의 따른 게시글 보여주기
+	      } else {
+	         return replyMapper.getList(boardId, child, cri);         //전체글 보여주기
+	      }
+	   }
 
 	public long getSearchTotalCount(int boardId, int child, Criteria cri) {
 
@@ -80,6 +83,16 @@ public class PostService {
 			return replyMapper.getTotalCount(boardId, child);
 		}
 	}
+	
+	public long getProductSearchTotalCount(int boardId, int child, Criteria cri) {
+
+	      if (cri.hasSearching()) {
+	         return replyMapper.getSearchTotalCount(boardId, child, cri);
+	      } else {
+	         // return postMapper.getTotalCount(boardId, PostVO.DESCRIM4POST);
+	         return replyMapper.getProductTotalCount(boardId, child);
+	      }
+	   }
 
 	/** id 값으로 Post 객체 조회 */
 	public PostVO findPostById(String id, int child) {
@@ -91,16 +104,18 @@ public class PostService {
 	}
 
 	public List<PostVO> findProductList(Party curUser, int boardId, int child, Criteria cri) {
-		if (cri.hasSearching()) {
-			String[] searchingHashtags = cri.getSearchingHashtags();
-			if (curUser != null) {
-				mngPersonalSearFavorite(curUser, searchingHashtags);
-			}
-			return replyMapper.getProductListByHashTag(boardId, child, cri);
-		} else {
-			return replyMapper.findProductList(boardId, child, cri);
-		}
-	}
+	      if (cri.hasSearching()) {
+	         String[] searchingHashtags = cri.getSearchingHashtags();
+	         if (curUser != null) {
+	            mngPersonalSearFavorite(curUser, searchingHashtags);
+	         }
+	         return replyMapper.getProductListByHashTag(boardId, child, cri);
+	      } else if (cri.getFindSelledProdutList() == 1) {
+	         return replyMapper.getfindSelledProdutList(boardId, cri);      //거래완료된 글
+	      } else {
+	         return replyMapper.findProductList(boardId, child, cri);   //거래중인 글 
+	      }   
+	   }
 
 	/** boardId, childBoardId, userId로 내가 장바구니에 담은 상품 조회 */
 	public List<PostVO> findProductShoppingCart(String userId) {
