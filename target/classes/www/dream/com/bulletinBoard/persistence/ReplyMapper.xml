@@ -313,36 +313,20 @@
    </select>
    
    
-      <!-- public ProductVO findProductById(@Param("productId") String id, @Param("child") int child);  -->
+   <!-- public ProductVO findProductById(@Param("productId") String id, @Param("child") int child);  -->
    <select id="findProductById" resultMap="rmPost"> 
-  <![CDATA[ 
-      select distinct p.*, w.name w_name, w.descrim w_descrim    
-         from s_trade_product sp,(  
-             select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
-                  af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
-                  af.multimedia_type af_multimedia_type
-               from (
-                  select p.id, count(r.id) reply_cnt
-                  from(  
-                       SELECT *
-                         FROM s_reply re
-                        where board_id = #{boardId}
-                        and child_board_id = #{child}
-                             ORDER BY id DESC
-                     OFFSET  (#{cri.pageNumber} - 1) * #{cri.amount}  rows fetch first #{cri.amount} rows only
-                      ) p left outer join s_reply r 
-                     on r.id like p.id || '%'
-                  and length(r.id) > length(p.id)
-                  group by p.id) pc, s_reply p,  (select product_id, max(uuid) as uuid
-                            from sm_product_attach  
-                            group by product_id) pa, s_attach_file af
-               where pc.id = p.id
-                  and pa.product_id = p.id
-                  and af.uuid = pa.uuid
-               ORDER BY p.id DESC   
-                ) p, s_party w
-         where p.writer_id = w.user_id
-         and sp.selled = 0
+   <![CDATA[ 
+   select p.*, w.user_id w_user_id, w.name w_name, w.descrim w_descrim, 
+      af.uuid af_uuid, sp.product_price sp_product_price,
+      af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+      af.multimedia_type af_multimedia_type      
+        from s_reply p
+               left outer join sm_product_attach am on p.id = am.product_id
+               left outer join s_attach_file af on am.uuid = af.uuid
+               , s_party w, s_trade_product sp
+       where p.id = #{productId}
+          and p.child_board_id = #{child} 
+         and p.writer_id = w.user_id
          and p.product_id = sp.product_id
    ]]>
    </select>
@@ -403,8 +387,8 @@
    <!-- public List<PostVO> findProductList(@Param("boardId") int boardId, @Param("child") int child); -->
    <select id="findProductList" resultMap="rmPost"> 
    <![CDATA[ 
-      select p.*, w.name w_name, w.descrim w_descrim    
-         from(  
+      select distinct p.*, w.name w_name, w.descrim w_descrim    
+         from s_trade_product sp,(  
              select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
                   af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
                   af.multimedia_type af_multimedia_type
@@ -429,6 +413,8 @@
                ORDER BY p.id DESC   
                 ) p, s_party w
          where p.writer_id = w.user_id
+         and sp.selled = 0
+         and p.product_id = sp.product_id
    ]]>
    </select>
    
