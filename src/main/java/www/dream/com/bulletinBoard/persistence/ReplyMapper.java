@@ -55,9 +55,10 @@ public interface ReplyMapper { // 추후 Data를 가져오기 위해서 Interfac
 	 //좋아요 순에 따른 개념글 만들기
 	public List<PostVO> getListFromLike(@Param("boardId") int boardId, @Param("child") int child, @Param("cri") Criteria cri);
 	
-	
+	// 내가 결제한 상품 목록만 조회하기.
+	public List<PostVO> getMyPaymentList(@Param("boardId") int boardId, @Param("buyerId") String buyerId, @Param("cri") Criteria cri);
 	//상품 페이지 처리
-	   public long  getProductTotalCount(@Param("boardId") int boardId, @Param("child") int child);
+	public long  getProductTotalCount(@Param("boardId") int boardId, @Param("child") int child);
 	
 	   
 	/** 조회수 증가 처리 */

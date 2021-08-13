@@ -31,7 +31,8 @@
 <!-- <link href="/resources/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
 <!-- Css Styles -->
 <link rel="stylesheet" href="/resources/css/bootstrap.min.css" type="text/css">
-<link rel="stylesheet" href="/resources/css/font-awesome.min.css" type="text/css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<!-- <link rel="stylesheet" href="/resources/css/font-awesome.min.css" type="text/css"> -->
 <link rel="stylesheet" href="/resources/css/nice-select.css" type="text/css">
 <link rel="stylesheet" href="/resources/css/owl.carousel.min.css" type="text/css">
 <link rel="stylesheet" href="/resources/css/magnific-popup.css" type="text/css">
@@ -109,6 +110,7 @@
                                 <li><a href="/party/modifyMember">회원 정보 수정</a></li>
                                 <li><a href="/chat/chatBox">채팅방</a></li>
                                 <li><a href="/party/shoppingCart">장바구니</a></li>
+                                <li><a href="/business/paymentHistory">결제내역</a></li>
                                 <li><a href="party/removeMember">회원탈퇴</a></li>
 		            	        <form action="/" method="POST">
 	                    		    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />

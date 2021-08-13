@@ -10,9 +10,9 @@ var imgService = (function() {
 				if(attachVo.uuid === uuid){
 					liTags+= "<li>"
 						+ "<img src='/uploadFiles/display?fileName=" 
-						+ encodeURIComponent(attachVo.fileCallPath) + "' style = 'float: left;  width: 100px; height: 100px; object-fit: cover; display: inline-block; font-size: 0;'>"
+						+ encodeURIComponent(attachVo.fileProductCallPath) + "' style = 'float: left;  width: 271px; height: 316px; font-size: 0;'>"
 						+ "</li>";
-						$("#"+ id +" ul.slider__images" ).append(liTags);
+						$("#"+ id).append(liTags);
 				}
 	}
 

@@ -117,6 +117,14 @@ public class PostService {
 	      }   
 	   }
 
+	
+	// 내가 결제한 상품 목록만 조회하기
+	public List<PostVO> getMyPaymentList( int boardId,  String buyerId, Criteria cri){
+		return replyMapper.getMyPaymentList(boardId, buyerId, cri);
+	}
+	
+	
+	
 	/** boardId, childBoardId, userId로 내가 장바구니에 담은 상품 조회 */
 	public List<PostVO> findProductShoppingCart(String userId) {
 		return replyMapper.findProductShoppingCart(userId);
@@ -190,8 +198,8 @@ public class PostService {
 		});
 
 		hashTagService.mngHashTagAndMapping(curUser, mapOccur);
-
 		hashTagService.CreateHashTagAndMapping(curUser, mapOccur);
+
 	}
 
 	/* 게시글 조회수 증가 처리 */

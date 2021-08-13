@@ -174,8 +174,6 @@
 		frmSearching.append("<input name='productId' type='hidden' value='" + productId + "'>"); // 문자열을 끝내고 이어받아서 return값 호출
 		frmSearching.append("<input name='boardId' type='hidden' value='" + $('#boardId').val() + "'>"); // 문자열을 끝내고 이어받아서 return값 호출
 		frmSearching.append("<input name='child' type='hidden' value='" + $(this).children('input#child').val() + "'>"); // 문자열을 끝내고 이어받아서 return값 호출
-		
-		
 		frmSearching.attr('action', '/business/readProduct');
 		frmSearching.attr('method', 'get');
 		frmSearching.submit();

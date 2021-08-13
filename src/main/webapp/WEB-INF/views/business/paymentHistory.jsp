@@ -1,309 +1,157 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ include file="../includes/header.jsp"%>
+
+<%@ page import="www.dream.com.bulletinBoard.model.PostVO"%>
+<%@include file="../includes/header.jsp"%>
+
+<!--  TableHeader에 정의된 static method를 사용하기 위함 -->
 <jsp:useBean id="tablePrinter"
-   class="www.dream.com.framework.printer.TablePrinter" />
+	class="www.dream.com.framework.printer.TablePrinter" />
 <style>
 #sliderBody{float: left; width:20%; height: 100px; padding:0px; margin-right:1%; } 
 #header1{ height: 100px; border-bottom: 1px solid dimgrey; box-sizing: border-box; text-align: center; line-height: 100px; font-size: 1.5rem; }
 .slider {
-   float: left; width:50%; padding:10px; height: 100%; overflow: hidden;}
-
-
-table {
-    width: 100%;
-    border: 1px solid #444444;
-    border-collapse: collapse;
-  }
-  th, td {
-    border: 1px solid #444444;
-    padding: 10px;
-  }
+   float: left; width:50%; padding:10px; height: 100%; overflow: hidden; 
+}
 </style>
-<body>
-       <!-- Header Info Begin -->
-    <div class="header-info">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3 text-center text-lg-center">
-                    <div class="header-item ">
-                        <img src="/resources/img/icons/delivery.png" alt="">
-                        <p>빠른 배송!</p>
-                    </div>
-                </div>
-                <div class="col-md-3 text-center text-lg-center">
-                    <div class="header-item">
-                        <img src="/resources/img/icons/voucher.png" alt="">
-                        <p>안전 거래!</p>
-                    </div>
-                </div>
-                <div class="col-md-3 text-center text-lg-center">
-                    <div class="header-item">
-                    <img src="/resources/img/icons/sales.png" alt="">
-                    <p>판매자에게 할인된 금액으로 요청해보세요!</p>
-                </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--상품 결제 header -->
-    <section class="payment_wrap">
-        <div class="payment_box">
-            <h3>택배거래, 번개페이로 결제합니다</h3>
-            	<div class="payment_list">
-            	<!-- 이미지  -->
-            		<div class="payment_img" id="imageeDiv">
-						 <c:forEach var="attachVoInStr" items="${post.attachListInGson}" varStatus="sta">
-							<script>
-								$(document).ready(function() {
-									appendFunction('<c:out value="${attachVoInStr}" />', "${product.id}");
-								});
-							</script>							
-						</c:forEach>
-	                </div>
-							
-							<div class="payment_details">
-                		<c:choose>
-					        <c:when test="${negoBuyer eq null}"> 
-					            <h5 id="finalPrice">${product.productPrice}원</h5>
-					        </c:when>
-					        <c:otherwise> 
-					             <h5 id="finalPrice">${negoBuyer.discountPrice}원</h5>
-					        </c:otherwise>
-					   	 </c:choose>
-	                    <p>${post.content}</p>
-	                </div>
-						                </div>
-					
-				
-              
-                <!--  배송지  -->
-            <div class="shipping_address">
-            	<h3>수령인</h3>
-           			<div>
-                        <select id="userNameSelection" name="userNameSelection">
-							<option value="1" selected="selected">직접입력</option>
-							<option id="loginUser" value='${userName}'>${userName}</option>
-						</select>
-					</div>
-	                <div class="shipping_registration">
-	                    <input type="text" id="recipient" name="buyerName" placeholder="이름">
-	                </div>
-	            
-	            <h3>휴대폰 번호</h3>
-	                <div class="shipping_registration">
-	                    <input type="number" id="buyerForphonNum" name="phonNum" placeholder="휴대폰 번호를 입력해주세요.">
-	                </div>
-	                
-	            <h3>집 전화 번호</h3>
-	                <div class="shipping_registration">
-                         <input type="number" id="buyerForReserveNum" name="reserveNum" placeholder="예비 연락처를 입력해주세요.">
-	                </div>
-	                
-                <h3>배송지 주소</h3>
-	                <div class="shipping_registration">
-	                    <input type="text" id="buyerForAddress" name="address"  placeholder="배송지 등록">
-	                </div>
-                <div class="shipping_req">
-                	<input type="hidden" id="buyerForAbsentMsg" name="absentMsg" placeholder="배송 메모를 입력하세요.">
-                    <select id="absentMsgSelection" name="absentMsgSelection">
-                        <option id="absentMsg" value="1">배송 요청사항(선택)</option>
-                        <option id="absentMsg" value="배송전에 미리 연락주세요">배송전에 미리 연락주세요</option>
-                        <option id="absentMsg" value="부재시 문앞에 놓아주세요">부재시 문앞에 놓아주세요</option>
-                        <option id="absentMsg" value="부재시 경비실에 맡겨주세요">부재시 경비실에 맡겨주세요</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="points_wrap">
-                <h3>포인트</h3>
-                <div class="remaining_points">
-                    <span>0</span>
-                    <button>전액사용</button>
-                </div>
-                <p class="points_available">
-                    <span>사용 가능한 번개 포인트</span>
-                    <span>0</span>
-                </p>
-            </div>
-            <div class="payment_amountt">
-                <h3>결제금액</h3>
-                <div class="payment_amount_box">
-                    <div class="total_paymentt">
-                        <p class="product_aamount">
-                            <span class="lefttt">상품금액</span>
-                            <span class="righttt">${product.productPrice}원</span>
-                        </p>
-                        <p class="commissionn">
-                            <span class="lefttt">할인된 금액</span>
-                            	<c:choose>
-							        <c:when test="${negoBuyer eq null}"> 
-							            <span class="righttt">0원</span>
-							        </c:when>
-							        <c:otherwise> 
-							             <span class="righttt">${product.productPrice - negoBuyer.discountPrice}원</span>
-							        </c:otherwise>
-								 </c:choose>                            
-                        </p>
-                        <p class="shipping_feeee">
-                            <span class="lefttt">배송비</span>
-                            <span class="righttt">무료배송</span>
-                        </p>
-                        <p class="total_payment_amountt">
-                            <span class="lefttt total_left">총 결제금액</span>
-                            	<c:choose>
-							        <c:when test="${negoBuyer eq null}">
-							            <span class="righttt total_right" id="finalPrice">${product.productPrice}원</span>
-							        </c:when>
-							        <c:otherwise> 
-							             <span class="righttt total_right" id="finalPrice">${negoBuyer.discountPrice}원</span>
-							        </c:otherwise>
-							    </c:choose>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <form id="frmPayment" method="post" action="/business/payment">
-               <div class="make_paymentt">
-			       <button  type="button" id="kakao_trade">결제하기</button>
-			   </div>      
-               <input type="hidden" name="productFinalPrice" value="${product.productPrice}">
-               <input type="hidden" name="sellerId" value="${post.writer.userId}">
-               <input type="hidden" name="buyerId" value="${buyerId}">
-               <input type="hidden" name="boardId" value="${boardId}">
-       	       <input type="hidden" name="child" value="${child}">
-               <input type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}'>
-            </form>
-            
-          </div>
-    </section>
- </body>
+<div class="container-fluid">
+	<p> </p>
+	<!-- DataTales Example -->
+	<div class="card shadow mb-4">
 
-<%@ include file="../includes/footer.jsp"%>
+		<div class="card-body">
+
+			<form id="frmSearching" action="/product/readProduct" method="get">
+			</form>
+			<!--  내가 결제한 상품 목록만 조회  -->			
+			<div >
+				<div>
+					<c:forEach items="${paymentList}" var="product" varStatus="status">
+						<div id="sliderBody" class="sliderBody" >
+							<div class="slider" id="${product.id}">
+								 <ul class="slider__images" style="list-style:none;">
+									 <c:forEach var="attachVoInStr" items="${product.attachListInGson}" varStatus="sta">
+										<script>
+											$(document).ready(function() {
+												productImgListFunction('<c:out value="${paymentList[status.index].attachListInGson[sta.index]}" />', '<c:out value="${paymentList[status.index].listAttach[sta.index].uuid}" />', '<c:out value="${paymentList[status.index].id}" />');
+											});
+										</script>							
+									</c:forEach>
+								</ul>
+								</div>
+								<div class="card-body" style="float: left; width: 50%; padding:10px;">
+									<a class='anchor4product' href="${product.id}" >${product.title}
+										<input type="hidden" id="boardId" name="boardId" value="${paymentList[status.index].board.id}">
+										<input type="hidden" id="child" name="child" value="${paymentList[status.index].board.parentId}">
+									</a>	
+									<br>
+									판매자 : ${product.writer.name}
+									<br>
+									가격 : ${paymentList[status.index].product.productPrice}원
+								</div> 
+						</div>									
+					</c:forEach>
+				</div>
+				<!-- Paging 처리 05.27 -->
+				<!-- EL로 처리, Criteria.java에 있음  -->
+				<div class='fa-pull-right'>${page.pagingDiv}</div>
+	
+	
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<%@include file="../includes/footer.jsp"%>
 <script src="\resources\js\util\utf8.js"></script>
 <script src="\resources\js\imgList\imgList.js"></script>
+<!-- End of Main Content -->
 <script type="text/javascript">
+	$(document).ready(function() {
 
-function appendFunction(attachVOInJson, postId){
-	imgService.append(attachVOInJson, false, postId);
-}
-
-
-
-$('#userNameSelection').change(function() {
-	var addr;
-	var phoneNum;
-	var homeNum;
-	var recipient = $('#recipient');
-	var buyerForAddress = $('#buyerForAddress');
-	var buyerForphonNum = $('#buyerForphonNum');
-	var buyerForReserveNum = $('#buyerForReserveNum');
-
-   	addr = "${loginPersonInfo[0].info}";
-	phoneNum = "${loginPersonInfo[1].info}";
-	homeNum = "${loginPersonInfo[2].info}";
- 	
+	$("#btnRegisterProduct").on("click", function(e) {
+		$("#productModal").modal("show");					
+	});
+	 
 	
- 	
-	if($(this).val()=="1"){
-		recipient.val("");
-		buyerForAddress.val("");
-		buyerForphonNum.val("");
-		buyerForReserveNum.val("");
+	$("#btnCloseModal").on("click", function(e) {
+		$("#productModal").modal("hide");
+	});
 		
-		recipient.attr("readonly", false);
-		buyerForAddress.attr("readonly", false);
-		buyerForphonNum.attr("readonly", false);
-		buyerForReserveNum.attr("readonly", false);
-	} else {
-		recipient.val(document.getElementById('loginUser').innerHTML);
-		buyerForAddress.val(addr);
-		buyerForphonNum.val(phoneNum);
-		buyerForReserveNum.val(homeNum);
-	}
-});
-
-
-$('select[name=absentMsgSelection]').change(function() {
-	if($(this).val()=="1"){
-		$('#buyerForAbsentMsg').val("");
-		$("#buyerForAbsentMsg").attr("readonly", false);
-	} else {
-		$('#buyerForAbsentMsg').val($(this).val());
-		$("#buyerForAbsentMsg").attr("readonly", true);
-	}
-});
-
-
-$('#kakao_trade').click(function () {
-    // getter
-    var IMP = window.IMP;
-    IMP.init('imp24192490');
-    var money = document.getElementById('finalPrice').innerHTML;
-    var csrfHN = "${_csrf.headerName}";
-	var csrfTV = "${_csrf.token}";
-	// 로그인한 사용자 정보
-	var address;
-	var phoneNum;
-	var mobileNum;
+	 var result = '<c:out value="${result}"/>';
 	
-	//구매하면 보낼 곳의 정보, 주소, 폰번호, 예비번호, 부재시 메시지를 받아야함.
-	//결재시 받을 주소
-	var buyerForAddress = $('#buyerForAddress').val();
-	//결제시 받을 연락 받을 번호
-	var buyerForphonNum = $('#buyerForphonNum').val();
-	//집 전화번호
-	var buyerForReserveNum = $('#buyerForReserveNum').val();
-	//부재시 메세지
-	var buyerForAbsentMsg = $('#buyerForAbsentMsg').val();
+	checkModal(result); // checkModal 함수 호출
 	
-	var param = {"address":buyerForAddress, "phonNum":buyerForphonNum, 
-			"reserveNum":buyerForReserveNum, "absentMsg":buyerForAbsentMsg,
-			"productFinalPrice":parseInt(money), "buyerId":"${buyerId}" , "sellerId":"${post.writer.userId}"
-			};
-	var shippingInfoVO = JSON.stringify(param);
-    IMP.request_pay({
-        pg: 'kakao',
-        merchant_uid: 'merchant_' + new Date().getTime(),
-        amount: parseInt(money),
-        buyer_name: "${buyerId}",
-        seller_id: "${post.writer.userId}",
-   	 	name: '주문명 : 주문명 설정',
-        buyer_email: 'iamport@siot.do',
-        buyer_tel: phoneNum,
-        buyer_mobile:mobileNum,
-        buyer_addr: address,
-      
-    }, function (rsp) {
-        console.log(rsp);
-        if (rsp.success) {
-            var msg = '결제가 완료되었습니다.';
-            msg += '고유ID : ' + rsp.imp_uid;
-            msg += '상점 거래ID : ' + rsp.merchant_uid;
-            msg += '결제 금액 : ' + rsp.paid_amount;
-            msg += '카드 승인번호 : ' + rsp.apply_num;
-            $.ajax({
-                type: "POST", 
-                dataType: 'json',
-                url: "/business/purchase",
-                headers: {
-                	'Content-Type' : 'application/json'
-                },
-                data: JSON.stringify(param),
-                beforeSend : function(xhr) {
-    				xhr.setRequestHeader(csrfHN, csrfTV);
-    			},
-            });
-        } else {
-            var msg = '결제에 실패하였습니다.';
-            msg += '에러내용 : ' + rsp.error_msg;
-        }
-        alert(msg);
-        document.location.href="/business/productList?boardId=" + ${boardId} + "&child=" + ${child}; 
-    });
+	history.replaceState({}, null, null);
+
+	function checkModal(result){
+		if (result === '' || history.state){ 
+			return;
+		}
+		if (result.length == ${PostVO.ID_LENGTH}) { 
+
+			$("#modalBody").html("상품 " + result + "번으로 등록되었습니다.");
+		} else {
+			$("#modalBody").html("상품" + result + "하였습니다.");
+		}
+		
+		$("#myModal").modal("show");
+	}
+	
+	/*05.31 검색에 관한 처리 -> 06.04 frmPaging 기능 새로 작성하기*/
+	var frmSearching = $('#frmSearching');
+	$('#btnSearch').on('click', function(eInfo) {
+		eInfo.preventDefault();
+		
+		if ($('input[name="searching"]').val().trim() === '') {
+			alert('검색어를 입력하세요');
+			return;
+		}
+		// 신규 조회 이므로 1쪽을 보여줘야 합니다.
+		$("input[name='pageNumber']").val("1");
+		
+		frmSearching.submit();
+	});
+		//거래완료 글 페이징처리
+	   var frmSelledproductList = $('#frmSelledproductList');
+	   $('#btnSelledproductList').on('click', function(eInfo) {
+	        eInfo.preventDefault();
+
+	        //신규 조회이므로 1쪽을 보여줘야합니다
+	        $("input[name='pageNumber']").val("1");
+
+	        frmSelledproductList.submit();
+	     });	   
+	/*Paging 처리에서 특정 쪽 번호를 클릭하였을때 해당 page의 정보를 조회하여 목록을 재출력 해줍니다. */
+	var frmPaging = $('#frmPaging');
+	$('.page-item a').on('click', function(eInfo) {
+		eInfo.preventDefault();
+		$("input[name='pageNumber']").val($(this).attr('href')); //여기 val이 중요하다. Click이 일어난 곳=this 거기가 href 처리해둔곳
+		frmSearching.submit();
+	});
+	
+	
+	$('.anchor4product').on('click', function(e) {
+		e.preventDefault();
+		var productId = $(this).attr('href')
+		frmSearching.append("<input name='productId' type='hidden' value='" + productId + "'>"); // 문자열을 끝내고 이어받아서 return값 호출
+		var board = $('#boardId').val();
+		var child = $(this).children('input#child').val();
+		frmSearching.append("<input name='boardId' type='hidden' value='" + $('#boardId').val() + "'>"); // 문자열을 끝내고 이어받아서 return값 호출
+		frmSearching.append("<input name='child' type='hidden' value='" + $(this).children('input#child').val() + "'>"); // 문자열을 끝내고 이어받아서 return값 호출
+		frmSearching.attr('action', '/business/readProduct');
+		frmSearching.attr('method', 'get');
+		frmSearching.submit();
+	});
 });
+	
+	
+	function productImgListFunction(attachVOInJson, uuid, id){
+		imgService.productImgList(attachVOInJson, uuid, id);
+	}
+
+
 </script>
-
-

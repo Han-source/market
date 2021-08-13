@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import www.dream.com.business.model.ProductVO;
+import www.dream.com.business.model.TradeVO;
 import www.dream.com.common.attachFile.model.AttachFileVO;
 import www.dream.com.framework.lengPosAnalyzer.HashTarget;
 import www.dream.com.framework.printer.ClassPrintTarget;
@@ -36,9 +38,11 @@ public class PostVO extends ReplyVO implements IHashTagOpponent{
     private int dislikeCnt; // 싫어요 수
     
     private BoardVO board;
+    private TradeVO trade;
     private String representImage;
+    
     private List<String> listAttachInStringFormat;
-
+    private ProductVO product;
     @HashTarget
     private List<AttachFileVO> listAttach;
 

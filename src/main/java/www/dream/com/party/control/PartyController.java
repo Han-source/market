@@ -184,7 +184,6 @@ public class PartyController implements AuthenticationSuccessHandler, AccessDeni
 			CustomUser cu = (CustomUser) upat.getPrincipal();
 			curUser = cu.getCurUser();
 			model.addAttribute("partyId", curUser.getUserId());
-			List<PostVO> a = postService.findProductShoppingCart(curUser.getUserId());
 			model.addAttribute("childBoardList", boardService.getChildBoardList(4));
 			model.addAttribute("shopCart", postService.findProductShoppingCart(curUser.getUserId()));
 		}

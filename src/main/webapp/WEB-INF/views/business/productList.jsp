@@ -16,7 +16,6 @@
    float: left; width:50%; padding:10px; height: 100%; overflow: hidden; 
 }
 </style>
-<div class="container-fluid">
 	
     <c:forEach items="${childBoardList}" var="child">
    		<a href="/business/productList?boardId=4&child=${child.id}">${child.name}</a>
@@ -25,7 +24,6 @@
 	<a><button id="btnSelledproductList" class="btn btn-default">거래완료글</button></a>
 
 	<!-- DataTales Example -->
-	<div class="card shadow mb-4">
 		<div class="card-header py-3">
 			<h6 class="m-0 font-weight-bold text-primary">${boardName}글목록</h6>
 			<c:if test="${boardId == 4}">
@@ -43,18 +41,6 @@
 			</c:if>
 		</div>
 		<div class="card-body">
-			<!--  거래가 완료 안된 상품 리스트 -->
-			<form id="frmSearching" action="/business/productList" method="get">
-				<input type="text" name='searching' value="${page.searching}">
-				<button id="btnSearch" class='btn btn-default'>검색</button>
-                <button type="button" id="btnRegisterProduct">상품등록</button> 
-				<input type="hidden" name="boardId" value="${boardId}">
-				<input type="hidden" name="child" value="${child}">
-				<input type="hidden" name="parentBoardName" value="${parentBoardName}">
-				<input type="hidden" name="pageNumber" value="${page.pageNumber}">
-				<input type="hidden" name="amount" value="${page.amount}">
-				<input type="hidden" name="findSelledProdutList" value="0">
-			</form>
 			
 			<!--  거래 완료된 상품리스트  -->			
 			<form id="frmSelledproductList" action="/business/productList" method="get">
@@ -62,34 +48,54 @@
                <input type="hidden" name="child" value="${child}">
                <input type="hidden" name="findSelledProdutList" value="1">
             </form>
-			<div >
-				<div>
-					<c:forEach items="${productList}" var="product" varStatus="status">
-						<div id="sliderBody" class="sliderBody" >
-							<div class="slider" id="${product.id}">
-								 <ul class="slider__images" style="list-style:none;">
-									 <c:forEach var="attachVoInStr" items="${product.attachListInGson}" varStatus="sta">
+			<div class="itemm_wrapper">
+        		<div class="itemm_container"> 		
+        			<div class="itemm_heading_title">
+       				
+       					<form id="frmSearching" action="/business/productList" method="get">
+							<input type="text" name='searching' value="${page.searching}">
+							<button id="btnSearch" class='btn btn-default'>검색</button>
+							    <button class="icon"><i class="fa fa-search"></i></button>
+							
+			                <button type="button" id="btnRegisterProduct" class="productBtn" >상품등록</button> 
+							<input type="hidden" name="boardId" value="${boardId}">
+							<input type="hidden" name="child" value="${child}">
+							<input type="hidden" name="parentBoardName" value="${parentBoardName}">
+							<input type="hidden" name="pageNumber" value="${page.pageNumber}">
+							<input type="hidden" name="amount" value="${page.amount}">
+							<input type="hidden" name="findSelledProdutList" value="0">
+						</form>
+						
+						<p>
+							안녕하세요 Fleax마켓입니다.
+						</p>
+						
+        			</div>
+        		
+	        		 <div class="itemm_grid">
+	                    <!-- 상품  -->  	  
+	                		<!--  상품 사진 출력 부분. -->          
+        				<c:forEach items="${productList}" var="product" varStatus="status">
+							 <c:forEach var="attachVoInStr" items="${product.attachListInGson}" varStatus="sta">
+               					<div class="itemm">								
+							 		<div class="itemm_img" id="${product.id}">
 										<script>
 											$(document).ready(function() {
 												productImgListFunction('<c:out value="${productList[status.index].attachListInGson[sta.index]}" />', '<c:out value="${productList[status.index].listAttach[sta.index].uuid}" />', '<c:out value="${productList[status.index].id}" />');
 											});
-										</script>							
-									</c:forEach>
-								</ul>
+										</script>
+									</div>
+									<!--  상품 추가 정보 입력하기. -->
+									<div class="itemm_details">								
+			                       		<p class="name">상품명 : ${product.title}</p>
+			                       		<p class="price">가격 : ${productList[status.index].product.productPrice}</p>			                       	                    
+			               	     	</div>								
 								</div>
-								<div class="card-body" style="float: left; width: 50%; padding:10px;">
-									<a class='anchor4product' href="${product.id}" >${product.title}</a>
-									<br>
-									${product.writer.name}
-									<br>
-									${product.readCnt}
-									<br>
-									<fmt:formatDate pattern="yyyy-MM-dd" value="${product.updateDate}" />
-									<br>
-								</div> 
-						</div>									
-					</c:forEach>
-				</div>
+							</c:forEach>
+						</c:forEach>
+					</div>
+				</div>	
+			</div>
 				<!-- Paging 처리 05.27 -->
 				<!-- EL로 처리, Criteria.java에 있음  -->
 				<div class='fa-pull-right'>${page.pagingDiv}</div>
@@ -133,9 +139,7 @@
 				<!-- /.modal -->
 
 			</div>
-		</div>
-	</div>
-</div>
+		
 
 <%@include file="../includes/footer.jsp"%>
 <script src="\resources\js\util\utf8.js"></script>
@@ -209,6 +213,16 @@
 	$('.anchor4product').on('click', function(e) {
 		e.preventDefault();
 		var productId = $(this).attr('href')
+		frmSearching.append("<input name='productId' type='hidden' value='" + productId + "'>"); // 문자열을 끝내고 이어받아서 return값 호출
+		frmSearching.attr('action', '/business/readProduct');
+		frmSearching.attr('method', 'get');
+		frmSearching.submit();
+	});
+	
+	
+	$('.itemm').on('click', function(e) {
+		e.preventDefault();
+		var productId = $(this).children('.itemm_img').attr('id')
 		frmSearching.append("<input name='productId' type='hidden' value='" + productId + "'>"); // 문자열을 끝내고 이어받아서 return값 호출
 		frmSearching.attr('action', '/business/readProduct');
 		frmSearching.attr('method', 'get');
