@@ -86,6 +86,21 @@ public class BusinessController {
 		model.addAttribute("page", userCriteria);
 		model.addAttribute("paymentList", postService.getMyPaymentList(4, curUser.getUserId(), userCriteria));
 	}
+	
+	// 내가 올린 상품들 목록 전체 조회
+	@GetMapping(value = "myProductUploaded") // LCRUD 에서 L:list
+	public void myProductUploaded(@ModelAttribute("pagination") Criteria userCriteria, @AuthenticationPrincipal Principal principal,Model model) {
+		Party curUser = getPricipalUser(principal);
+		if(curUser != null) {
+			model.addAttribute("userId", curUser.getUserId());
+		}
+		model.addAttribute("boardId", 4);
+		model.addAttribute("boardName", boardService.getBoard(4).getName());
+		model.addAttribute("boardList", boardService.getList());
+		model.addAttribute("page", userCriteria);
+		model.addAttribute("productUploaded", postService.getMyProductUploaded(4, curUser.getUserId(), userCriteria));
+	}
+	
 
 	private Party getPricipalUser(Principal principal) {
 		Party curUser = null;

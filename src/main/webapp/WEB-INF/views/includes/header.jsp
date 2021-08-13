@@ -111,6 +111,7 @@
                                 <li><a href="/chat/chatBox">채팅방</a></li>
                                 <li><a href="/party/shoppingCart">장바구니</a></li>
                                 <li><a href="/business/paymentHistory">결제내역</a></li>
+                                <li><a href="/business/myProductUploaded">내 상품 목록</a></li>
                                 <li><a href="party/removeMember">회원탈퇴</a></li>
 		            	        <form action="/" method="POST">
 	                    		    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />

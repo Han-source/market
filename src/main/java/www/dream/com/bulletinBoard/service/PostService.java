@@ -123,7 +123,10 @@ public class PostService {
 		return replyMapper.getMyPaymentList(boardId, buyerId, cri);
 	}
 	
-	
+	//내가 올린 상품들 전체 목록 조회
+	public List<PostVO> getMyProductUploaded(@Param("boardId") int boardId, @Param("writerId") String writerId, @Param("cri") Criteria cri){
+		return replyMapper.getMyProductUploaded(boardId, writerId, cri);
+	}
 	
 	/** boardId, childBoardId, userId로 내가 장바구니에 담은 상품 조회 */
 	public List<PostVO> findProductShoppingCart(String userId) {

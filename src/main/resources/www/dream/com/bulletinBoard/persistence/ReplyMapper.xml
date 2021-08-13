@@ -411,8 +411,40 @@
    
    	</select>
    
+   <!--  내가 올린상품 목록 조회 -->
+   <!-- public List<PostVO> getMyProductUploaded(@Param("boardId") int boardId, @Param("writerId") String writerId, @Param("cri") Criteria cri); -->
+   <select id="getMyProductUploaded" resultMap="rmPost">
+   select distinct p.*, w.name w_name, w.descrim w_descrim, sp.product_price tp_product_price, p.child_board_id board_parent_id,
+   			st.trade_id tm_trade_id, st.product_final_price tm_product_final_price, st.trade_date tm_trade_date
+         from s_trade_product sp,(  
+             select p.*, pc.reply_cnt,  pa.uuid pa_uuid, af.uuid af_uuid,
+                  af.saved_folder_path af_saved_folder_path, af.pure_file_name af_pure_file_name,
+                  af.multimedia_type af_multimedia_type
+               from (
+                  select p.id, count(r.id) reply_cnt
+                  from(  
+                       SELECT *
+                         FROM s_reply re
+                        where board_id = #{boardId}
+                             ORDER BY id DESC
+                     OFFSET  (#{cri.pageNumber} - 1) * #{cri.amount}  rows fetch first #{cri.amount} rows only
+                      ) p left outer join s_reply r 
+                     on r.id like p.id || '%'
+                  and length(r.id) > length(p.id)
+                  group by p.id) pc, s_reply p,  (select product_id, max(uuid) as uuid
+                            from sm_product_attach  
+                            group by product_id) pa, s_attach_file af
+               where pc.id = p.id
+                  and pa.product_id = p.id
+                  and af.uuid = pa.uuid
+               ORDER BY p.id DESC   
+                ) p, s_party w, s_trade st
+         where p.writer_id = w.user_id
+         and p.product_id = sp.product_id
+         and p.writer_id = #{writerId}
+         
    
-   
+   	</select>
    
    
    <!-- public PostVO findProductPurchaseRepresentById(@Param("productId") String id, @Param("child") int child); -->
